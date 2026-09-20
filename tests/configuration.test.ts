@@ -118,6 +118,26 @@ describe('configuración de persistencia', () => {
     expect(envDiagnostics().unrecognizedNames).not.toContain('AWS_SECRET_ACCESS_KEY');
   });
 
+  it('reconoce el formato nuevo de clave de AI Studio (prefijo AQ.)', () => {
+    // AI Studio now issues only authorization keys. Rejecting them as
+    // malformed would send someone hunting for a key that no longer exists.
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AQ.Ab8RN6JzFAKE0000000000000000000000000000000000');
+
+    const shape = envDiagnostics().geminiKeyShape;
+    expect(shape?.format).toBe('authorization-key');
+    expect(shape?.looksLikeGoogleApiKey).toBe(true);
+  });
+
+  it('sigue reconociendo el formato heredado AIza', () => {
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyFAKE1111111111111111111111111111');
+
+    const shape = envDiagnostics().geminiKeyShape;
+    expect(shape?.format).toBe('standard-key-legacy');
+    expect(shape?.looksLikeGoogleApiKey).toBe(true);
+  });
+
   it('detecta una clave de Gemini que no tiene forma de API key', () => {
     // The real failure this catches: Google rejects a non-API-key credential
     // with an opaque 401 ACCESS_TOKEN_TYPE_UNSUPPORTED that names no cause.
@@ -126,6 +146,7 @@ describe('configuración de persistencia', () => {
 
     const shape = envDiagnostics().geminiKeyShape;
     expect(shape?.looksLikeGoogleApiKey).toBe(false);
+    expect(shape?.format).toBe('unrecognized');
   });
 
   it('reconoce una clave con forma válida y delata los espacios en blanco', () => {

@@ -54,6 +54,12 @@ archivo. El resto del sistema no importa nunca el SDK de Google.
 `src/core/ai/prompts.ts` y `src/core/domain/schemas.ts`, no dentro del
 proveedor.
 
+**Claves (revisado 2026-09-20):** AI Studio solo emite ya *authorization keys*
+con prefijo `AQ.`; las *standard keys* `AIza` se están apagando durante 2026.
+Ambas viajan en la cabecera `x-goog-api-key`. `Authorization: Bearer` es la vía
+de OAuth y devuelve `401 ACCESS_TOKEN_TYPE_UNSUPPORTED` para una clave de
+Studio. `/api/health` reporta qué formato ve, solo por forma.
+
 **Modelo (revisado 2026-09-20):** por defecto `gemini-3.5-flash`.
 `gemini-2.5-flash` **se apaga el 16 de octubre de 2026**, así que no se entrega
 nada apuntando a él. Cambiar de modelo —por ejemplo a `gemini-3.8-flash`, el

@@ -129,18 +129,33 @@ export function envDiagnostics() {
   const present: Record<string, boolean> = {};
   for (const name of EXPECTED_ENV_VARS) present[name] = Boolean(read(name));
 
-  // Shape only — never the value. A Google AI Studio key looks like
-  // `AIza...`; anything else (an OAuth token, a service-account field, a
-  // truncated paste) fails with an opaque ACCESS_TOKEN_TYPE_UNSUPPORTED.
+  // Shape only — never the value.
+  //
+  // Google issues two key formats. Legacy "standard" keys start with `AIza`;
+  // AI Studio now issues only "authorization" keys starting with `AQ.`, and
+  // the AIza ones are being switched off during 2026. BOTH travel in the
+  // `x-goog-api-key` header — `Authorization: Bearer` is the OAuth path and
+  // would be rejected. Anything that matches neither shape (an OAuth token, a
+  // service-account field, a truncated paste) fails with an opaque
+  // ACCESS_TOKEN_TYPE_UNSUPPORTED that names no cause.
   // Read RAW, not through read(): that helper trims, which would hide exactly
   // the stray whitespace this check exists to surface.
   const rawGeminiKey = process.env.GEMINI_API_KEY;
   const geminiKeyShape = rawGeminiKey
-    ? {
-        length: rawGeminiKey.replace(/\s+/g, '').length,
-        looksLikeGoogleApiKey: /^AIza[A-Za-z0-9_-]{30,}$/.test(rawGeminiKey.replace(/\s+/g, '')),
-        hadWhitespace: /\s/.test(rawGeminiKey),
-      }
+    ? (() => {
+        const cleaned = rawGeminiKey.replace(/\s+/g, '');
+        const format = /^AQ\.[A-Za-z0-9_.-]{20,}$/.test(cleaned)
+          ? ('authorization-key' as const)
+          : /^AIza[A-Za-z0-9_-]{30,}$/.test(cleaned)
+            ? ('standard-key-legacy' as const)
+            : ('unrecognized' as const);
+        return {
+          length: cleaned.length,
+          format,
+          looksLikeGoogleApiKey: format !== 'unrecognized',
+          hadWhitespace: /\s/.test(rawGeminiKey),
+        };
+      })()
     : null;
 
   const expected = EXPECTED_ENV_VARS as readonly string[];
