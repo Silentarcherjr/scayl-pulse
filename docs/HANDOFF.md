@@ -137,7 +137,7 @@ Después cargar las 3 variables en Vercel, redesplegar y correr
 `npm run verify:deployment -- <url>`.
 
 ### Tests
-**59 passing · 0 failing.** `npm run verify` limpio, CI verde.
+**87 passing · 0 failing.** `npm run verify` limpio, CI verde.
 `npm run verify:deployment -- https://scayl-pulse.vercel.app` → **12/12 contra producción con Supabase real**.
 
 ### Bugs conocidos
@@ -184,6 +184,9 @@ Ninguno abierto.
   ejemplo. **Es lo que convierte esto en IA auditable; priorízalo.**
 - **IDEA-004** — formulario de ingreso libre contra `POST /api/admissions`,
   para que un evaluador escriba su propio caso.
+- **IDEA-003 ya está en el backend**: `GET /api/cases/:id/summary`. Llámalo
+  desde un botón explícito, no al cargar la página: la primera generación
+  tarda ~10 s y las siguientes vienen de caché en menos de 1 s.
 
 **Archivos modificados:** —
 **Próximo paso exacto:** lista de casos contra `GET /api/cases`.

@@ -7,7 +7,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-20 07:20
+**Última actualización:** 2026-09-20 07:35
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-20 07:20
+**Última actualización:** 2026-09-20 07:35
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -63,6 +63,9 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **IDEA-006 entregada (backend)**: `AgentDecision.checks` expone las doce
   comprobaciones con su estado, evidencia y el suelo que imponen — incluidas
   las que pasan. Falta el panel, que es del Workstream B.
+- **IDEA-003 entregada**: `GET /api/cases/:id/summary`, resumen para el gestor
+  generado bajo demanda y cacheado como evento del timeline. Verificado en
+  producción: 9,7 s la primera vez, 0,7 s desde caché.
 - **CI en GitHub Actions**: typecheck, lint, tests, build y las 12
   comprobaciones de extremo a extremo en cada push. Detectó en su primer
   intento que `npm run verify` fallaba en un clon limpio (dependíamos de un
@@ -90,7 +93,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests
-**79 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
+**87 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
 `verify:deployment` **12/12 contra producción con Supabase y Gemini reales**.
 
 ---
