@@ -15,7 +15,7 @@ import type { AiProvider } from './provider';
  * inside the platform's function limit. Exceeding it degrades to the
  * deterministic analyzer, which is safe and honestly labelled.
  */
-export const ANALYZER_TIMEOUT_MS = 10_000;
+export const ANALYZER_TIMEOUT_MS = 8_000;
 
 export interface AnalyzeResult {
   analysis: AiAnalysis | null;
@@ -120,12 +120,14 @@ async function runProvider(
   let raw: string | null = null;
   let error: string | null = null;
   let latencyMs = 0;
+  let modelUsed = provider.model;
 
   try {
     const response = await provider.analyze(request);
     raw = response.raw;
     error = response.error;
     latencyMs = response.latencyMs;
+    modelUsed = response.modelUsed ?? provider.model;
   } catch (unexpected) {
     // A provider SDK throwing must never take a case down.
     error = unexpected instanceof Error ? unexpected.message : String(unexpected);
@@ -138,7 +140,7 @@ async function runProvider(
     await repository.recordAiInteraction({
       caseId: facts.case.id,
       provider: provider.name,
-      model: provider.model,
+      model: modelUsed,
       valid: analysis !== null,
       latencyMs,
       error: finalError,
@@ -152,7 +154,7 @@ async function runProvider(
   return {
     analysis,
     providerName: provider.name,
-    model: provider.model,
+    model: modelUsed,
     modelBacked: provider.isModelBacked,
     error: finalError,
     latencyMs,

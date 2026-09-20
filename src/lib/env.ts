@@ -32,6 +32,18 @@ export const env = {
     // the point of keeping the provider behind a port (DEC-003).
     return read('GEMINI_MODEL') ?? 'gemini-3.5-flash';
   },
+  /**
+   * Tried in order when the primary model answers with a transient error.
+   * Switching model is a far better response to "high demand" than retrying
+   * the same one, which in practice just returns 503 again.
+   */
+  get geminiFallbackModels(): string[] {
+    const raw = read('GEMINI_FALLBACK_MODELS') ?? 'gemini-3.5-flash-lite';
+    return raw
+      .split(',')
+      .map((m) => m.trim())
+      .filter((m) => m.length > 0 && looksLikeModelName(m));
+  },
   get admissionWebhookSecret() {
     return read('ADMISSION_WEBHOOK_SECRET');
   },

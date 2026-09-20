@@ -17,6 +17,8 @@ export interface AnalyzerResponse {
   raw: string | null;
   error: string | null;
   latencyMs: number;
+  /** Which model actually answered, when the provider tried more than one. */
+  modelUsed?: string;
 }
 
 export interface AiProvider {

@@ -12,13 +12,18 @@ import type { AiProvider, AnalyzerRequest, AnalyzerResponse } from './provider';
 export class GeminiProvider implements AiProvider {
   readonly name = 'google-gemini';
   readonly isModelBacked = true;
+  /** Primary model; reported for identification. */
   readonly model: string;
+  /** Primary first, then the configured fallbacks. */
+  private readonly models: string[];
   private readonly client: GoogleGenAI;
 
-  constructor(apiKey?: string, model?: string) {
+  constructor(apiKey?: string, models?: string[]) {
     const key = apiKey ?? env.geminiApiKey;
     if (!key) throw new Error('GEMINI_API_KEY is not configured');
-    this.model = model ?? env.geminiModel;
+    const chain = models ?? [env.geminiModel, ...env.geminiFallbackModels];
+    this.models = [...new Set(chain.filter(Boolean))];
+    this.model = this.models[0];
     this.client = new GoogleGenAI({ apiKey: key });
   }
 
@@ -27,34 +32,42 @@ export class GeminiProvider implements AiProvider {
     return /\b(429|500|502|503|504)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(message);
   }
 
+  /**
+   * Walks the model chain. A transient failure moves to the next model rather
+   * than retrying the same one: "high demand" on a given model returns 503
+   * again on an immediate retry, whereas a sibling model usually has capacity.
+   * A non-transient failure (bad key, bad schema) stops immediately — trying
+   * another model would only burn the request budget.
+   */
   async analyze(request: AnalyzerRequest): Promise<AnalyzerResponse> {
     const startedAt = Date.now();
-    // One retry only. Gemini returned a genuine 503 "high demand" during
-    // testing; retrying once turns a transient spike into a successful call
-    // instead of a silent drop to the deterministic fallback. Retrying an
-    // auth or schema failure would only burn the request budget.
-    const first = await this.attempt(request);
-    if (first.raw || !GeminiProvider.isTransient(first.error ?? '')) {
-      return { ...first, latencyMs: Date.now() - startedAt };
+    const errors: string[] = [];
+
+    for (const model of this.models) {
+      const result = await this.attempt(request, model);
+      if (result.raw) {
+        return { ...result, modelUsed: model, latencyMs: Date.now() - startedAt };
+      }
+      errors.push(`${model}: ${result.error}`);
+      if (!GeminiProvider.isTransient(result.error ?? '')) break;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    const second = await this.attempt(request);
     return {
-      ...second,
-      error: second.raw ? null : `${first.error} (reintento: ${second.error})`,
+      raw: null,
+      error: errors.join(' | '),
       latencyMs: Date.now() - startedAt,
+      modelUsed: this.models[this.models.length - 1],
     };
   }
 
-  private async attempt(request: AnalyzerRequest): Promise<AnalyzerResponse> {
+  private async attempt(request: AnalyzerRequest, model: string): Promise<AnalyzerResponse> {
     const startedAt = Date.now();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), request.timeoutMs);
 
     try {
       const response = await this.client.models.generateContent({
-        model: this.model,
+        model,
         contents: request.userPrompt,
         config: {
           systemInstruction: request.systemInstruction,
