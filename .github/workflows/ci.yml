@@ -73,3 +73,35 @@ jobs:
 
       - name: Verificar el despliegue de extremo a extremo
         run: npm run verify:deployment -- http://localhost:3000
+
+  smoke-produccion:
+    name: el despliegue sigue en pie
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Solo tras integrar en main, que es lo que Vercel despliega.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Esperar al despliegue y comprobar /api/health
+        # Solo lectura: no crea casos, así que puede correr en cada push sin
+        # gastar el tope de la base de producción.
+        run: |
+          URL=https://scayl-pulse.vercel.app
+          for i in $(seq 1 30); do
+            BODY=$(curl -sf --max-time 15 "$URL/api/health" || true)
+            if [ -n "$BODY" ]; then
+              echo "$BODY"
+              PERSIST=$(echo "$BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['data']['persistence'])")
+              PROVIDER=$(echo "$BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['data']['aiProvider'])")
+              NOTE=$(echo "$BODY" | python3 -c "import json,sys;print(json.load(sys.stdin)['data']['persistenceNote'] or '')")
+              echo "::notice::persistencia=$PERSIST proveedor=$PROVIDER"
+              if [ "$PERSIST" != "supabase" ]; then
+                echo "::error::El despliegue no está usando Supabase. $NOTE"
+                exit 1
+              fi
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::error::El despliegue no respondió a tiempo"
+          exit 1

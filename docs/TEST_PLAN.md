@@ -15,6 +15,11 @@ real, secuencia del timeline, notificación a ambos canales, rastro del Safety
 Gate, y que una entrada inválida devuelva 422 en lugar de 500. Sale con código
 distinto de cero si algo falla, así que sirve de puerta antes de una demo.
 
+**Sin computadora a mano:** el mismo script corre como workflow manual
+«Verificar producción» en la pestaña Actions de GitHub. Existe porque las
+sesiones en la nube no alcanzan Vercel: su salida a internet está limitada por
+allowlist a GitHub, npm y Gemini.
+
 Los tests corren con `SCAYL_FORCE_IN_MEMORY=true` y
 `SCAYL_FORCE_FIXTURE_AI=true` (ver `vitest.config.mts`): **nunca llaman a una
 API de pago y son reproducibles en cualquier máquina**, con o sin credenciales.

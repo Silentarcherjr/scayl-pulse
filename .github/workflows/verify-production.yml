@@ -1,0 +1,34 @@
+name: Verificar producción
+
+# El despliegue solo se puede comprobar desde una máquina con salida a
+# internet hacia Vercel. Las sesiones en la nube tienen el tráfico limitado por
+# allowlist y no alcanzan el despliegue, así que este workflow existe para que
+# esa verificación se pueda lanzar desde el móvil, desde la web de GitHub o
+# desde cualquier sitio, sin necesitar la computadora de nadie.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL del despliegue a verificar
+        required: false
+        default: https://scayl-pulse.vercel.app
+
+jobs:
+  verify:
+    name: 12 comprobaciones contra el despliegue real
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Verificar el despliegue
+        # Crea 5 casos reales en la base de producción, uno por escenario.
+        # Por eso es manual y no automático en cada push: el tope de casos es
+        # 200 y no queremos gastarlo en CI.
+        run: npm run verify:deployment -- "${{ inputs.url || 'https://scayl-pulse.vercel.app' }}"

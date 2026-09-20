@@ -60,6 +60,17 @@ gh repo edit Silentarcherjr/scayl-pulse --visibility public --accept-visibility-
 ```bash
 npm run verify:deployment -- https://<tu-url>.vercel.app
 ```
+
+**Desde el móvil, sin computadora:** las sesiones en la nube tienen el tráfico
+limitado por allowlist y **no alcanzan Vercel ni Supabase** (sí GitHub, npm y
+Gemini). Para verificar producción desde donde estés, lanza el workflow
+**«Verificar producción»** desde la pestaña Actions de GitHub: corre las mismas
+12 comprobaciones desde un runner con salida libre.
+
+Es manual a propósito: cada ejecución crea 5 casos reales en producción y el
+tope es 200. El smoke de `/api/health` sí corre solo tras cada push a `main`,
+porque es de solo lectura, y falla el CI si el despliegue deja de usar
+Supabase.
 Comprueba salud, los cinco escenarios, el timeline, ambas notificaciones y el
 manejo de errores. 12 comprobaciones; sale con código distinto de cero si algo
 falla. La aplicación **funciona desplegada sin ninguna variable de entorno**
