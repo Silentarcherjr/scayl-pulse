@@ -147,7 +147,7 @@ Después cargar las 3 variables en Vercel, redesplegar y correr
 `npm run verify:deployment -- <url>`.
 
 ### Tests
-**87 passing · 0 failing.** `npm run verify` limpio, CI verde.
+**94 passing · 0 failing.** `npm run verify` limpio, CI verde.
 `npm run verify:deployment -- https://scayl-pulse.vercel.app` → **12/12 contra producción con Supabase real**.
 
 ### Bugs conocidos

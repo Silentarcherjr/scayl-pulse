@@ -7,7 +7,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-20 07:35
+**Última actualización:** 2026-09-20 08:30
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-20 07:35
+**Última actualización:** 2026-09-20 08:30
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -66,6 +66,11 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **IDEA-003 entregada**: `GET /api/cases/:id/summary`, resumen para el gestor
   generado bajo demanda y cacheado como evento del timeline. Verificado en
   producción: 9,7 s la primera vez, 0,7 s desde caché.
+- **Cierre humano del caso**: `POST /api/cases/:id/resolve` (DEC-011). Exige
+  quién cierra y por qué, marca si la persona contradijo al sistema, notifica a
+  ambas partes y es terminal. **El backend ya no tiene huecos funcionales.**
+- **Verificación de producción sin computadora**: workflow manual en Actions,
+  más un smoke de solo lectura tras cada push a `main`.
 - **CI en GitHub Actions**: typecheck, lint, tests, build y las 12
   comprobaciones de extremo a extremo en cada push. Detectó en su primer
   intento que `npm run verify` fallaba en un clon limpio (dependíamos de un
@@ -79,7 +84,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - Documentación completa: `README`, `AGENTS.md`, `CLAUDE.md` y 13 documentos en `docs/`.
 
 ### In Progress
-- Nada abierto. Sesión cerrada en estado estable.
+- Nada abierto. El backend está completo.
 
 ### Next
 1. ~~Aplicar el esquema en Supabase~~ ✅
@@ -93,7 +98,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests
-**87 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
+**94 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
 `verify:deployment` **12/12 contra producción con Supabase y Gemini reales**.
 
 ---
