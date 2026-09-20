@@ -73,6 +73,42 @@ function persistenceNote(): string | null {
   return null;
 }
 
+/** Variables the app actually reads. */
+const EXPECTED_ENV_VARS = [
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'GEMINI_API_KEY',
+  'GEMINI_MODEL',
+  'ADMISSION_WEBHOOK_SECRET',
+  'SCAYL_FORCE_IN_MEMORY',
+  'SCAYL_FORCE_FIXTURE_AI',
+] as const;
+
+/** Only names in this family are inspected — never the whole environment. */
+const RELATED_NAME = /SUPABASE|GEMINI|SCAYL|ADMISSION/i;
+
+/**
+ * Reports WHICH configuration variables are present, by NAME ONLY — never a
+ * value, not even a fragment.
+ *
+ * A misspelled variable name is otherwise a completely silent failure: the app
+ * just quietly runs in memory and nobody can tell why. `unrecognizedNames`
+ * lists variables that look like they were meant for this app but that nothing
+ * reads, which makes a typo obvious at a glance.
+ */
+export function envDiagnostics() {
+  const present: Record<string, boolean> = {};
+  for (const name of EXPECTED_ENV_VARS) present[name] = Boolean(read(name));
+
+  const expected = EXPECTED_ENV_VARS as readonly string[];
+  const unrecognizedNames = Object.keys(process.env)
+    .filter((name) => RELATED_NAME.test(name) && !expected.includes(name))
+    .sort();
+
+  return { present, unrecognizedNames };
+}
+
 /** Reported by GET /api/health so the team can see what is live at a glance. */
 export function runtimeCapabilities() {
   const usingSupabase = !env.forceInMemory && isSupabaseWriteConfigured();
@@ -82,5 +118,6 @@ export function runtimeCapabilities() {
     realtimeAvailable: isSupabaseRealtimeConfigured(),
     aiProvider: !env.forceFixtureAi && isGeminiConfigured() ? 'gemini' : 'deterministic-fixture',
     geminiModel: isGeminiConfigured() ? env.geminiModel : null,
+    env: envDiagnostics(),
   } as const;
 }

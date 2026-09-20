@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  envDiagnostics,
   isSupabaseRealtimeConfigured,
   isSupabaseWriteConfigured,
   runtimeCapabilities,
@@ -84,5 +85,36 @@ describe('configuración de persistencia', () => {
     vi.stubEnv('GEMINI_API_KEY', 'test-key');
     expect(runtimeCapabilities().aiProvider).toBe('gemini');
     expect(runtimeCapabilities().geminiModel).toBe('gemini-2.5-flash');
+  });
+
+  it('un nombre mal escrito se delata en el diagnóstico', () => {
+    // The failure this catches: a variable typed wrong in a dashboard is
+    // completely silent — the app just runs in memory and nobody knows why.
+    baseline();
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://demo.supabase.co');
+    vi.stubEnv('SUPABASE_SERVICE_ROL_KEY', 'oops-typo');
+
+    const diag = envDiagnostics();
+    expect(diag.present.SUPABASE_SERVICE_ROLE_KEY).toBe(false);
+    expect(diag.present.NEXT_PUBLIC_SUPABASE_URL).toBe(true);
+    expect(diag.unrecognizedNames).toContain('SUPABASE_SERVICE_ROL_KEY');
+  });
+
+  it('el diagnóstico nunca expone valores, solo nombres', () => {
+    baseline();
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'sb_secret_super_confidencial');
+    vi.stubEnv('GEMINI_API_KEY', 'clave-de-gemini');
+
+    const serialized = JSON.stringify(envDiagnostics());
+    expect(serialized).not.toContain('sb_secret_super_confidencial');
+    expect(serialized).not.toContain('clave-de-gemini');
+    expect(serialized).toContain('SUPABASE_SERVICE_ROLE_KEY');
+  });
+
+  it('no inspecciona variables ajenas a la aplicación', () => {
+    baseline();
+    vi.stubEnv('AWS_SECRET_ACCESS_KEY', 'no-es-asunto-nuestro');
+
+    expect(envDiagnostics().unrecognizedNames).not.toContain('AWS_SECRET_ACCESS_KEY');
   });
 });
