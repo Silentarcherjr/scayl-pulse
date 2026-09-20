@@ -97,15 +97,59 @@ faltantes, condiciones potencialmente relacionadas y preguntas abiertas.
 - Toda respuesta se valida con Zod antes de que ningún consumidor la vea.
 - El modelo produce una **propuesta**; el Safety Gate determinístico decide.
 
-**Resultados obtenidos.** _(a completar con llamadas reales cuando la
-`GEMINI_API_KEY` esté disponible: latencia media, tasa de respuestas válidas,
-y cuántas veces el Safety Gate tuvo que corregir al modelo — el dato más
-interesante de todo el informe.)_
+**Resultados obtenidos (medidos en producción, 2026-09-20).**
 
-Ya medido sin la clave: con el proveedor caído, los cinco escenarios siguen
-produciendo el resultado esperado mediante reglas determinísticas
-(test «los tres escenarios obligatorios siguen siendo reproducibles sin IA
-disponible»).
+Medido sobre el despliegue real en `https://scayl-pulse.vercel.app`, con
+Supabase como fuente de verdad. Todas las llamadas quedan registradas en la
+tabla `ai_interactions`, así que estas cifras son auditables y no estimadas.
+
+| Métrica | Valor |
+|---|---|
+| Llamadas a Gemini | 16 |
+| Respuestas válidas contra el esquema | 8 (**50 %**) |
+| Latencia media de una respuesta válida | **12,6 s** |
+| Latencia máxima | 19,5 s |
+| Modelo primario (`gemini-3.5-flash`) con 503 *high demand* | 3 |
+| Resueltas por el **fallback de modelo** a `gemini-2.5-flash` | 7 de 8 |
+| Decisiones etiquetadas `AI_ASSISTED` | 5 |
+| **Veces que el Safety Gate tuvo que corregir al modelo** | **0** |
+
+**Lectura honesta de estos números:**
+
+La **tasa de validez del 50 %** no mide la calidad del modelo: mide la carga
+de la infraestructura de Google en el momento de la prueba. Los fallos son
+`503 high demand` y timeouts, no respuestas malformadas. De hecho **ninguna
+respuesta de Gemini falló la validación de esquema**: cuando contesta,
+contesta bien formada.
+
+La latencia de ~12 s es alta para una interacción síncrona y es la razón por
+la que el sistema reparte un presupuesto de tiempo entre los pasos de un
+escenario en lugar de usar un timeout fijo.
+
+**Que el Safety Gate no haya tenido que corregir al modelo ni una vez es un
+buen resultado, no una prueba fallida.** Significa que, con hechos
+estructurados como entrada, el modelo llegó a la misma conclusión que las
+reglas en los cinco escenarios. La capacidad de corregirlo está demostrada
+aparte, en tests que lo enfrentan a un modelo adversario que propone
+`VERIFIED` para una póliza vencida y cita pólizas inexistentes: ahí el Gate lo
+restringe y descarta las citas inventadas.
+
+**Ejemplo real de salida del modelo** (escenario RED, confianza 0,7):
+
+> «La póliza está activa y el hospital está en red, y toda la documentación
+> requerida ha sido presentada. Sin embargo, existen condiciones preexistentes
+> (Hipertensión arterial esencial y Dislipidemia mixta) que podrían estar
+> relacionadas con el motivo de ingreso actual (dolor torácico) y no han sido
+> aclaradas por la evidencia actual.»
+
+El modelo propuso `HUMAN_REVIEW` por su cuenta, coincidiendo con la regla
+determinística, y **citó únicamente registros que existen** en la base de
+datos: las dos entradas de historial, la póliza, el hospital y los cinco
+documentos del expediente.
+
+**Resiliencia verificada.** Con el proveedor caído, los cinco escenarios
+siguen produciendo el resultado esperado mediante reglas determinísticas, y la
+decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 
 **Validación humana.**
 - El modelo nunca decide por sí solo: el Safety Gate puede endurecer su
@@ -125,3 +169,24 @@ disponible»).
 | Fecha | Herramienta | Workstream | Qué se hizo | Validado por |
 |---|---|---|---|---|
 | 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
+| 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
+
+### Incidencias reales durante la integración (útiles para el informe)
+
+Merecen aparecer en el PDF porque muestran verificación real, no una
+integración de escaparate:
+
+1. **Formato de clave.** Google migró las claves de Gemini de `AIza`
+   (*standard keys*) a `AQ.` (*authorization keys*) durante 2026. Nuestra
+   validación reconocía solo el formato antiguo y rechazaba una clave válida.
+   Corregido: ahora reconoce ambos e informa del formato detectado.
+2. **Modelo en retirada.** El modelo elegido inicialmente, `gemini-2.5-flash`,
+   se apaga el 16 de octubre de 2026. Se cambió el predeterminado a
+   `gemini-3.5-flash` y se dejó el anterior como respaldo mientras siga vivo.
+3. **Saturación del proveedor.** `gemini-3.5-flash` devuelve `503 high demand`
+   con frecuencia. Reintentar el mismo modelo no sirve —devuelve 503 otra
+   vez—, así que el sistema recorre una cadena de modelos. 7 de 8 respuestas
+   válidas llegaron por esa vía.
+4. **Presupuesto de tiempo.** Un timeout fijo demasiado corto convirtió un
+   servicio lento en uno que fallaba siempre. Se sustituyó por un presupuesto
+   total repartido entre los pasos de un escenario.
