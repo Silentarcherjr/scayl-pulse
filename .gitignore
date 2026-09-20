@@ -75,3 +75,6 @@ supabase/.branches/
 !.vscode/extensions.json
 .DS_Store
 Thumbs.db
+
+# entregable generado: se regenera con `npm run build:pdf` al cerrar el proyecto
+docs/deliverables/*.pdf

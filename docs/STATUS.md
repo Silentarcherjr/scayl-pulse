@@ -14,7 +14,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 |---|---|
 | 1 · Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado · **sigue privado, hay que publicarlo antes de entregar** |
 | 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · desplegado, con Supabase conectado, 12/12 comprobaciones |
-| 3 · PDF de herramientas de IA | ✅ `docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf` · regenerar si cambian las cifras |
+| 3 · PDF de herramientas de IA | 🟡 plantilla y generador listos (`npm run build:pdf`) · **generar al cerrar**, con las cifras finales |
 
 | Escenario obligatorio | Resultado | Verificado |
 |---|---|---|

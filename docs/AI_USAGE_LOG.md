@@ -7,17 +7,17 @@ Para cada herramienta la organización exige: **propósito**, **aplicación** y
 **resultados obtenidos**. Añadimos **validación humana** porque es lo que
 distingue un proyecto serio de una demo generada.
 
-> **PDF ya generado:**
-> [`docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf`](deliverables/SCAYL_Pulse_Herramientas_IA.pdf)
-> (4 páginas). Su fuente es
-> [`deliverables/ai-tools-report.html`](deliverables/ai-tools-report.html).
+> **El PDF se genera al final, no ahora.** Este archivo es la fuente viva: se
+> actualiza durante el desarrollo, y las cifras de Gemini cambiarán cuando el
+> frontend genere tráfico real.
 >
-> Para regenerarlo tras actualizar las cifras:
+> Cuando el proyecto esté cerrado:
 > ```bash
-> npm run build:pdf
+> npm run build:pdf   # → docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf
 > ```
-> Este archivo sigue siendo la fuente viva: se actualiza durante el desarrollo
-> y el PDF se regenera antes de entregar.
+> La plantilla es [`deliverables/ai-tools-report.html`](deliverables/ai-tools-report.html);
+> actualiza ahí las cifras finales antes de generar. El PDF está en
+> `.gitignore` a propósito: es un artefacto, no fuente.
 
 ---
 
