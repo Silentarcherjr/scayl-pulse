@@ -190,6 +190,25 @@ export interface AiAnalysis {
   openQuestions: string[];
 }
 
+/**
+ * Narrative written for a case manager opening the case. Produced AFTER the
+ * Safety Gate, from the final decision and the whole timeline, so it can
+ * explain a decision but never change one (docs/IDEAS.md IDEA-003).
+ */
+export interface CaseSummary {
+  headline: string;
+  whatHappened: string;
+  /** Null on a first assessment: nothing to compare against yet. */
+  whatChanged: string | null;
+  whatIsNeeded: string;
+  keyPoints: string[];
+  source: DecisionSource;
+  model: string | null;
+  generatedAt: string;
+  /** Which decision this summary describes; used to invalidate the cache. */
+  decisionGeneratedAt: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Case events — immutable audit timeline
 // ---------------------------------------------------------------------------
@@ -212,6 +231,7 @@ export const CASE_EVENT_TYPES = [
   'NEW_EVIDENCE_RECEIVED',
   'REASSESSMENT_STARTED',
   'DECISION_UPDATED',
+  'CASE_SUMMARY_GENERATED',
   'CASE_RESOLVED',
 ] as const;
 

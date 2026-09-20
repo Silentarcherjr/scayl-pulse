@@ -77,7 +77,7 @@ prisa. **No abordarlo antes del 23 de septiembre.**
 ---
 
 ## IDEA-003 — Resumen de caso en un párrafo para el gestor
-**Status:** APPROVED — aprobada por Anthony el 2026-09-20
+**Status:** DONE — entregada el 2026-09-20 como `GET /api/cases/:id/summary`, bajo demanda y cacheada en el timeline
 **Propuesta por:** Claude Code (Workstream A) · 2026-09-19
 
 **Problem.** Un gestor que abre un caso `HUMAN_REVIEW` a las 3 a.m. necesita

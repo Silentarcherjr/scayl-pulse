@@ -179,3 +179,33 @@ export const agentDecisionSchema = z.object({
     }),
   ),
 });
+
+// ---------------------------------------------------------------------------
+// Case-manager summary (docs/IDEAS.md IDEA-003)
+//
+// Narrative only. It is produced AFTER the Safety Gate and receives the final
+// decision as input, so it can explain a decision but never change one.
+// ---------------------------------------------------------------------------
+
+export const caseSummarySchema = z.object({
+  headline: z.string().min(1).max(200),
+  whatHappened: z.string().min(1).max(1_500),
+  /** Null on a first assessment: there is nothing to compare against yet. */
+  whatChanged: z.string().max(1_000).nullable(),
+  whatIsNeeded: z.string().min(1).max(800),
+  keyPoints: z.array(z.string().max(300)).max(8).default([]),
+});
+
+export type CaseSummaryParsed = z.infer<typeof caseSummarySchema>;
+
+export const CASE_SUMMARY_RESPONSE_SCHEMA = {
+  type: 'object',
+  properties: {
+    headline: { type: 'string' },
+    whatHappened: { type: 'string' },
+    whatChanged: { type: 'string', nullable: true },
+    whatIsNeeded: { type: 'string' },
+    keyPoints: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['headline', 'whatHappened', 'whatChanged', 'whatIsNeeded', 'keyPoints'],
+} as const;

@@ -174,7 +174,8 @@ lo restringieron las reglas.
 `AI_ANALYSIS_STARTED` · `AI_ANALYSIS_COMPLETED` · `AI_ANALYSIS_FAILED` ·
 `SAFETY_GATE_APPLIED` · `CASE_CLASSIFIED` · `HOSPITAL_NOTIFIED` ·
 `INSURER_NOTIFIED` · `NOTIFICATION_FAILED` · `NEW_EVIDENCE_RECEIVED` ·
-`REASSESSMENT_STARTED` · `DECISION_UPDATED` · `CASE_RESOLVED`
+`REASSESSMENT_STARTED` · `DECISION_UPDATED` · `CASE_SUMMARY_GENERATED` ·
+`CASE_RESOLVED`
 
 En `CASE_CLASSIFIED` y `DECISION_UPDATED`, `payload.decision` contiene el
 `AgentDecision` completo de ese momento. **Así se reconstruye el historial de
@@ -293,6 +294,47 @@ un documento aclara un antecedente concreto. También se detecta por el texto
 
 **`201`** — misma forma que `/api/admissions`.
 **`409`** si el caso está `RESOLVED` o hay una evaluación en curso.
+
+---
+
+### `GET /api/cases/:id/summary`
+Resumen narrativo escrito para un **gestor de casos** que abre el expediente.
+
+```json
+{ "ok": true, "data": { "caseId": "…", "caseNumber": "…", "status": "HUMAN_REVIEW", "summary": {
+  "headline": "…",
+  "whatHappened": "…",
+  "whatChanged": "…"  ,
+  "whatIsNeeded": "…",
+  "keyPoints": ["…"],
+  "source": "AI_ASSISTED" ,
+  "model": "gemini-2.5-flash",
+  "generatedAt": "…",
+  "decisionGeneratedAt": "…"
+} } }
+```
+
+**Se genera bajo demanda, no durante el ingreso.** El hospital espera la
+respuesta de `/api/admissions`; una segunda llamada al modelo ahí duplicaría
+su latencia por una narrativa que nadie está leyendo todavía. Aquí, en cambio,
+quien espera es una persona que acaba de abrir el caso.
+
+**Está cacheado.** El resultado se guarda como evento del timeline y se
+reutiliza mientras la decisión no cambie, así que reabrir un caso no cuesta
+nada. `?refresh=true` fuerza una regeneración.
+
+**Nunca cambia la decisión.** Se produce después del Safety Gate y recibe la
+decisión final como entrada: puede explicarla, nunca contradecirla.
+
+- `whatChanged` es `null` en la primera evaluación; con reevaluaciones cuenta
+  qué evidencia llegó y qué cambió.
+- `source` sigue la misma convención que en `AgentDecision`: `AI_ASSISTED`
+  solo si un modelo real lo escribió. **Si es `DETERMINISTIC` o
+  `AI_UNAVAILABLE`, el texto lo compuso el sistema a partir del expediente —
+  no lo presentes como generado por IA.**
+
+Notas de UI: llámalo desde un botón explícito, no al cargar la página. La
+primera generación puede tardar más de 10 s.
 
 ---
 
