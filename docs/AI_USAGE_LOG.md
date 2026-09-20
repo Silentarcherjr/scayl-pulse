@@ -11,10 +11,12 @@ distingue un proyecto serio de una demo generada.
 > actualiza durante el desarrollo, y las cifras de Gemini cambiarán cuando el
 > frontend genere tráfico real.
 >
-> Cuando el proyecto esté cerrado:
+> Cuando el proyecto esté cerrado, desde cualquier máquina con Chrome:
 > ```bash
 > npm run build:pdf   # → docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf
 > ```
+> **Sin Chrome, o desde el móvil:** lanza el workflow **«Generar PDF del
+> entregable»** en la pestaña Actions de GitHub y descarga el artefacto.
 > La plantilla es [`deliverables/ai-tools-report.html`](deliverables/ai-tools-report.html);
 > actualiza ahí las cifras finales antes de generar. El PDF está en
 > `.gitignore` a propósito: es un artefacto, no fuente.

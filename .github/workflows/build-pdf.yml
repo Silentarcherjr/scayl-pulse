@@ -1,0 +1,30 @@
+name: Generar PDF del entregable
+
+# El PDF de herramientas de IA es el entregable #3. Generarlo desde aquí
+# significa que no depende de que nadie tenga Chrome instalado ni de estar
+# delante de una computadora concreta: se lanza desde el móvil y se descarga
+# el artefacto.
+on:
+  workflow_dispatch:
+
+jobs:
+  pdf:
+    name: Construir el PDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generar
+        # Chrome viene preinstalado en los runners de ubuntu-latest.
+        run: node scripts/build-pdf.mjs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SCAYL_Pulse_Herramientas_IA
+          path: docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf
+          retention-days: 30
