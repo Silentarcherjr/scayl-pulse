@@ -4,6 +4,11 @@
 
 **hackIAthon Panamá · reto clasificatorio: Sistema de Alerta Temprana de Ingresos a Emergencias**
 
+### ▶ Pruébalo en vivo: https://scayl-pulse.vercel.app
+
+Abre el enlace y pulsa cualquier escenario. No hace falta registro ni
+explicación previa.
+
 ---
 
 ## ¿Qué es SCAYL Pulse?
@@ -89,6 +94,10 @@ tabla que la base de datos **impide** modificar o borrar.
 
 ## Cómo probarlo
 
+**En vivo:** https://scayl-pulse.vercel.app — pulsa un escenario y observa el expediente.
+
+**En local:**
+
 ```bash
 git clone https://github.com/Silentarcherjr/scayl-pulse.git
 cd scayl-pulse
@@ -104,7 +113,7 @@ exactamente qué está activo en cada momento.
 Pulsa cualquiera de los escenarios en la página principal, o:
 
 ```bash
-curl -s -X POST localhost:3000/api/demo/scenarios/red-human-review/run \
+curl -s -X POST https://scayl-pulse.vercel.app/api/demo/scenarios/red-human-review/run \
   -H 'content-type: application/json' -d '{"applyFollowUps":true}' | jq
 ```
 
@@ -222,7 +231,7 @@ npm run db:reset      # migrations + seeds sintéticos
 ## Tests
 
 ```bash
-npm test          # 48 tests
+npm test          # 59 tests
 npm run verify    # typecheck + lint + tests
 ```
 

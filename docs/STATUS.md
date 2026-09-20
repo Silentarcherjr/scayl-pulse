@@ -7,13 +7,13 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-19 23:35
+**Última actualización:** 2026-09-20 00:20
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
 | 1 · Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado · **sigue privado, hay que publicarlo antes de entregar** |
-| 2 · Enlace del agente en ejecución | 🟡 Proyecto Vercel creado en el equipo `HACKS`, conectado al repo · falta confirmar URL |
+| 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · desplegado, con Supabase conectado, 12/12 comprobaciones |
 | 3 · PDF de herramientas de IA | 🟡 Fuente viva en `AI_USAGE_LOG.md` · falta exportar |
 
 | Escenario obligatorio | Resultado | Verificado |
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-19 23:35
+**Última actualización:** 2026-09-20 00:20
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -49,6 +49,14 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **`npm run verify:deployment <url>`** — verifica un despliegue real: salud,
   los cinco escenarios, timeline, ambas notificaciones y manejo de errores.
 - Autoría de los 11 commits corregida a `amorell776@gmail.com`.
+- **Desplegado y verificado en producción** con Supabase como fuente de verdad:
+  los cinco escenarios pasan de extremo a extremo contra la base real, con sus
+  eventos, evidencia, notificaciones y auditoría de IA persistidos.
+- **Corrección de honestidad:** las decisiones tomadas sin modelo se etiquetaban
+  `AI_ASSISTED`. Ahora se distinguen `AI_ASSISTED` (modelo real),
+  `AI_UNAVAILABLE` (se intentó y falló) y `DETERMINISTIC` (sin proveedor).
+- **Tope de casos almacenados** con respuesta `429`: los endpoints de escritura
+  son públicos a propósito y sin tope cualquiera puede inflar la base.
 - **CI en GitHub Actions**: typecheck, lint, tests, build y las 12
   comprobaciones de extremo a extremo en cada push. Detectó en su primer
   intento que `npm run verify` fallaba en un clon limpio (dependíamos de un
@@ -65,10 +73,10 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - Nada abierto. Sesión cerrada en estado estable.
 
 ### Next
-1. ~~Aplicar el esquema en el proyecto Supabase~~ ✅ hecho y verificado.
-2. **Cargar las variables en Vercel** — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. Dejar `SCAYL_FORCE_*` vacías.
-3. **Ejecutar `npm run verify:deployment <url>`** y pegar el resultado aquí.
-4. **Hacer el repositorio público** antes de entregar (entregable #1).
+1. ~~Aplicar el esquema en Supabase~~ ✅
+2. ~~Cargar las variables en Vercel~~ ✅
+3. ~~Verificar el despliegue~~ ✅ **12/12 contra https://scayl-pulse.vercel.app con Supabase conectado**
+4. **Hacer el repositorio público** antes de entregar (entregable #1). ← lo único que bloquea una entrega hoy
 5. Conectar `GEMINI_API_KEY` y registrar métricas reales en `AI_USAGE_LOG.md`: latencia media, tasa de respuestas válidas y **cuántas veces el Safety Gate corrigió al modelo**.
 6. Exportar `AI_USAGE_LOG.md` a PDF.
 
@@ -76,8 +84,8 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests
-**48 passing / 0 failing** · typecheck limpio · lint limpio · build de producción correcto ·
-`verify:deployment` 12/12 en local.
+**59 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
+`verify:deployment` **12/12 contra producción con Supabase real**.
 
 ---
 

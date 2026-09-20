@@ -12,9 +12,9 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 | # | Acción | Quién | Estado |
 |---|---|---|---|
 | 1 | **Hacer público el repositorio** antes de entregar | Anthony | ⬜ pendiente · bloquea el entregable #1 |
-| 2 | Desplegar en Vercel | Anthony | ✅ proyecto `scayl-pulse` en el equipo `HACKS`, importado desde GitHub · falta pegar la URL aquí y en el README |
+| 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
-| 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ⬜ pendiente |
+| 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
 | 5 | Obtener `GEMINI_API_KEY` en https://aistudio.google.com/apikey | Anthony | ⬜ pendiente · bloquea las métricas del PDF |
 | 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ⬜ pendiente |
 | 7 | Invitar a Carlos y Sebastián | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
@@ -137,8 +137,8 @@ Después cargar las 3 variables en Vercel, redesplegar y correr
 `npm run verify:deployment -- <url>`.
 
 ### Tests
-**48 passing · 0 failing.** `npm run verify` limpio.
-`npm run verify:deployment` → 12/12 contra un build de producción local.
+**59 passing · 0 failing.** `npm run verify` limpio, CI verde.
+`npm run verify:deployment -- https://scayl-pulse.vercel.app` → **12/12 contra producción con Supabase real**.
 
 ### Bugs conocidos
 Ninguno abierto.
