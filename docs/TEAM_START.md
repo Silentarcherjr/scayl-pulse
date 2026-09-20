@@ -45,6 +45,31 @@ carpetas son tuyas, cuáles no puedes tocar, qué leer y cómo cerrar la sesión
 
 ---
 
+## No necesitas credenciales. De verdad.
+
+Vercel, Supabase y Gemini están en las cuentas personales de Anthony y **no
+vas a tener acceso**. No lo necesitas: el proyecto está construido para
+funcionar entero sin ninguna variable de entorno (ver DEC-005).
+
+Verificado sobre un clon limpio y sin credenciales:
+
+| | |
+|---|---|
+| `npm run verify` — 87 tests | ✅ |
+| Crear casos por el pipeline completo | ✅ |
+| Panel de comprobaciones `decision.checks` | ✅ |
+| Resumen del gestor `/api/cases/:id/summary` | ✅ versión determinística |
+| Supabase Realtime | ❌ requiere la clave anon |
+| Narrativa escrita por Gemini | ❌ sale la determinística, marcada como tal |
+
+Las dos últimas **no te bloquean**: el código tiene camino alternativo para
+ambas y `GET /api/health` te dice en todo momento qué está activo. Si quieres
+probar contra datos reales, usa el despliegue: **https://scayl-pulse.vercel.app**
+
+Si necesitas Realtime de verdad, pídele a Anthony la `NEXT_PUBLIC_SUPABASE_ANON_KEY`:
+es pública por diseño (viaja en el bundle del navegador) y solo concede
+lectura. **La `SUPABASE_SERVICE_ROLE_KEY` no, esa es secreta y no la necesitas.**
+
 ## Comprueba que todo funciona antes de empezar
 
 ```bash
@@ -113,18 +138,35 @@ Tres detalles que valen puntos con el jurado:
 
 Lee `docs/DEMO_SCENARIOS.md` y `docs/TEST_PLAN.md`.
 
-Lo primero que aporta valor real:
+**Ya está hecho y NO tienes que rehacerlo** (requería credenciales que no
+tienes): el esquema está aplicado y verificado contra Postgres 17, el trigger
+append-only está comprobado —rechaza `UPDATE` y `DELETE` de verdad— y Gemini
+está integrado y midiendo en producción. Los resultados están en
+`docs/AI_USAGE_LOG.md` y en `DECISIONS.md` (DEC-008).
 
-1. **Verifica los cinco escenarios a mano** y anota cualquier discrepancia
-   entre lo que dice el doc y lo que hace el sistema.
+Lo primero que aporta valor real, **todo posible sin credenciales**:
+
+1. **Verifica los cinco escenarios a mano** contra `docs/DEMO_SCENARIOS.md` y
+   anota cualquier discrepancia entre lo que dice el doc y lo que hace el
+   sistema. Puedes hacerlo en local y también contra
+   https://scayl-pulse.vercel.app
 2. **Tests de integración HTTP** sobre las rutas (`tests/e2e/`). Hoy los tests
-   llaman al orquestador directamente; falta cubrir el borde HTTP.
-3. **Supabase real:** aplica migrations y seeds, y verifica que el trigger
-   append-only rechaza de verdad un `UPDATE` sobre `case_events`.
-4. **Enriquece el dataset** — más pacientes, más pólizas, más antecedentes.
-   Si añades datos a `src/data/synthetic/reference-data.ts`, refleja lo mismo
-   en `supabase/seed.sql`, y **nunca hardcodees fechas absolutas**: caducan y
-   rompen la demo el día de la entrega.
+   llaman al orquestador directamente; falta cubrir el borde HTTP: envelope de
+   respuesta, códigos 422/404/409/429, y el contrato de `/api/cases/:id`.
+3. **Enriquece el dataset sintético** — más pacientes, más pólizas, más
+   antecedentes, más relaciones en la tabla clínica. Si tocas
+   `src/data/synthetic/reference-data.ts`, refleja lo mismo en
+   `supabase/seed.sql` (Anthony lo aplicará), y **nunca hardcodees fechas
+   absolutas**: caducan y rompen la demo el día de la entrega.
+4. **Escenarios nuevos** que expongan reglas aún no demostradas: plan sin
+   cobertura de emergencias, ingreso dentro del período de carencia, póliza de
+   otro asegurado. Cada escenario nuevo necesita su `expectedStatus` y su test.
+5. **Prueba de carga ligera** en local: 20 ingresos concurrentes sin colisión
+   de `seq` ni fugas entre casos.
+
+⚠️ El endpoint de demo tiene un tope de casos (`429` al llegar a 200). En
+local nunca lo alcanzarás; en el despliegue, si lo alcanzas, avisa a Anthony
+para que reinicie los datos.
 
 ---
 

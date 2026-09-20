@@ -211,9 +211,15 @@ no solo en memoria.
 `delete from cases` falla: la cascada hacia `case_events` choca con el trigger
 append-only y aborta el borrado entero. Es intencional (ver DEC-008).
 
-**Qué falta:** QA end-to-end, tests de integración HTTP, validación del
-despliegue con Supabase conectado. Punto de partida: `docs/DEMO_SCENARIOS.md`
-y `docs/TEST_PLAN.md`.
+**Qué falta:** QA end-to-end, tests de integración HTTP sobre las rutas,
+escenarios adicionales y dataset más rico. Punto de partida:
+`docs/DEMO_SCENARIOS.md` y `docs/TEST_PLAN.md`.
+
+⚠️ **No intentes las tareas que necesitan Supabase o Gemini**: esas cuentas son
+personales de Anthony y no tendrás acceso. Ya están hechas y verificadas por
+el Workstream A — esquema aplicado, trigger append-only comprobado contra
+Postgres, Gemini integrado y medido. Todo tu trabajo restante se puede hacer
+en local sin una sola credencial.
 **Archivos modificados:** —
 **Próximo paso exacto:** ejecutar los 5 escenarios a mano y anotar cualquier
 discrepancia con `DEMO_SCENARIOS.md`.
