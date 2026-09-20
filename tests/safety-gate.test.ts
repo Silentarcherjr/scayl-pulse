@@ -160,3 +160,46 @@ describe('Garantías de producto', () => {
     expect(decision.reason).toContain('SCAYL Pulse no emite diagnósticos');
   });
 });
+
+describe('Honestidad sobre el origen de la decisión', () => {
+  it('sin Gemini configurado, la decisión NO se etiqueta como asistida por IA', async () => {
+    // The product promise is that a deterministic fallback is never dressed up
+    // as a model call. This is the test that keeps us honest.
+    const orchestrator = new CaseOrchestrator({ repository: newRepository() });
+    const result = await orchestrator.processAdmission(green.admission);
+
+    expect(result.decision.source).toBe('DETERMINISTIC');
+    expect(result.decision.source).not.toBe('AI_ASSISTED');
+  });
+
+  it('con el modelo caído, la decisión se marca AI_UNAVAILABLE, no AI_ASSISTED', async () => {
+    const orchestrator = new CaseOrchestrator({
+      repository: newRepository(),
+      aiProvider: new FailingProvider(),
+    });
+    const result = await orchestrator.processAdmission(green.admission);
+
+    expect(result.decision.source).toBe('AI_UNAVAILABLE');
+    expect(result.decision.status).toBe('VERIFIED');
+  });
+
+  it('solo una respuesta válida de un modelo real produce AI_ASSISTED', async () => {
+    const orchestrator = new CaseOrchestrator({
+      repository: newRepository(),
+      aiProvider: new OverlyPermissiveProvider(),
+    });
+    const result = await orchestrator.processAdmission(green.admission);
+
+    expect(result.decision.source).toBe('AI_ASSISTED');
+  });
+
+  it('una respuesta malformada del modelo degrada a AI_UNAVAILABLE', async () => {
+    const orchestrator = new CaseOrchestrator({
+      repository: newRepository(),
+      aiProvider: new MalformedProvider(),
+    });
+    const result = await orchestrator.processAdmission(green.admission);
+
+    expect(result.decision.source).toBe('AI_UNAVAILABLE');
+  });
+});

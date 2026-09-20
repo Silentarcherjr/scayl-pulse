@@ -14,7 +14,10 @@ export interface SafetyGateInput {
   facts: CaseFacts;
   /** Null when the provider failed or returned an invalid payload. */
   analysis: AiAnalysis | null;
-  aiAvailable: boolean;
+  /** True only when the analysis came from an actual model call. */
+  modelBacked: boolean;
+  /** True when a model provider was configured and attempted at all. */
+  modelAttempted: boolean;
 }
 
 const STATUS_ACTIONS: Record<DecisionStatus, string> = {
@@ -60,7 +63,7 @@ function allowedSourceIds(facts: CaseFacts): Set<string> {
  *     the rules — processing never crashes (docs/DECISIONS.md DEC-006).
  */
 export function applySafetyGate(input: SafetyGateInput): AgentDecision {
-  const { facts, analysis, aiAvailable } = input;
+  const { facts, analysis, modelBacked, modelAttempted } = input;
   const findings: Finding[] = [
     ...facts.policyValidation.findings,
     ...facts.history.findings,
@@ -133,7 +136,14 @@ export function applySafetyGate(input: SafetyGateInput): AgentDecision {
   const recommendedAction =
     useModelNarrative && analysis?.recommendedAction ? analysis.recommendedAction : STATUS_ACTIONS[status];
 
-  const source: DecisionSource = analysis ? 'AI_ASSISTED' : aiAvailable ? 'AI_UNAVAILABLE' : 'DETERMINISTIC';
+  // Honesty rule: a decision is only labelled AI_ASSISTED when a model
+  // actually produced the analysis. The deterministic fallback is never
+  // dressed up as a model call — that is the whole point of DEC-005.
+  const source: DecisionSource = modelBacked
+    ? 'AI_ASSISTED'
+    : modelAttempted
+      ? 'AI_UNAVAILABLE'
+      : 'DETERMINISTIC';
 
   return {
     status,

@@ -239,7 +239,8 @@ export class CaseOrchestrator {
     const decision = applySafetyGate({
       facts,
       analysis: analysis.analysis,
-      aiAvailable: analysis.modelBacked,
+      modelBacked: analysis.modelBacked,
+      modelAttempted: analysis.modelBacked || analysis.fellBackToDeterministic,
     });
 
     await this.repository.appendEvent({
