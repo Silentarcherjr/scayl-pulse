@@ -1,0 +1,18 @@
+# Minimal local config for `supabase start` / `supabase db reset`.
+project_id = "scayl-pulse"
+
+[db]
+port = 54322
+major_version = 15
+
+[api]
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[studio]
+port = 54323
+
+[auth]
+enabled = false
