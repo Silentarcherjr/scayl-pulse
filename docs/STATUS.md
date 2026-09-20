@@ -49,13 +49,23 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **`npm run verify:deployment <url>`** — verifica un despliegue real: salud,
   los cinco escenarios, timeline, ambas notificaciones y manejo de errores.
 - Autoría de los 11 commits corregida a `amorell776@gmail.com`.
+- **CI en GitHub Actions**: typecheck, lint, tests, build y las 12
+  comprobaciones de extremo a extremo en cada push. Detectó en su primer
+  intento que `npm run verify` fallaba en un clon limpio (dependíamos de un
+  tipo que Next solo genera al construir). Corregido.
+- **Esquema aplicado y verificado en Supabase** (proyecto `Pulse`): 9 tablas
+  con RLS, Realtime publicando `cases` y `case_events`, semillas cargadas, y
+  la inmutabilidad del timeline comprobada contra Postgres 17 — `UPDATE` y
+  `DELETE` sobre `case_events` rechazados, `seq` asignada por la base de
+  datos. Migración adicional que fija `search_path` en las tres funciones de
+  trigger (aviso del linter de Supabase resuelto).
 - Documentación completa: `README`, `AGENTS.md`, `CLAUDE.md` y 13 documentos en `docs/`.
 
 ### In Progress
 - Nada abierto. Sesión cerrada en estado estable.
 
 ### Next
-1. **Aplicar el esquema en el proyecto Supabase** (SQL Editor: las 2 migrations + `seed.sql`).
+1. ~~Aplicar el esquema en el proyecto Supabase~~ ✅ hecho y verificado.
 2. **Cargar las variables en Vercel** — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. Dejar `SCAYL_FORCE_*` vacías.
 3. **Ejecutar `npm run verify:deployment <url>`** y pegar el resultado aquí.
 4. **Hacer el repositorio público** antes de entregar (entregable #1).
@@ -63,9 +73,6 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 6. Exportar `AI_USAGE_LOG.md` a PDF.
 
 ### Blocked
-- **El proyecto Supabase vive en la cuenta personal de Anthony**, no en la
-  cuenta a la que está autenticada la CLI de esta máquina. Aplicar el esquema
-  requiere el SQL Editor o conectar el conector MCP de Supabase.
 - **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests

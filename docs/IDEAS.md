@@ -94,3 +94,62 @@ valor real y sin riesgo: resume hechos ya decididos por reglas.
 
 **Risks.** Que el resumen contradiga la decisión. Mitigación: se genera
 **después** del Safety Gate y recibe el `AgentDecision` final como entrada.
+
+---
+
+## IDEA-004 — Ingreso libre: usar el sistema con un caso real, no solo con escenarios
+**Status:** PROPOSED
+**Propuesta por:** Anthony · 2026-09-19
+
+**Problem.** El pipeline ya es real —los escenarios de demo entran por
+`POST /api/admissions` exactamente igual que lo haría el webhook de un
+hospital— pero desde la interfaz solo se pueden disparar los cinco escenarios
+predefinidos. Un evaluador no puede escribir su propio ingreso y ver qué hace
+el sistema, que es justo el momento en que deja de parecer una demo enlatada.
+
+**Idea.** Un formulario de ingreso libre en la interfaz: hospital, cédula,
+motivo, código, triaje, costo estimado y documentos adjuntos, enviado al mismo
+endpoint. Sin código nuevo de backend: el contrato ya lo acepta.
+
+**Expected impact.** Alto para el jurado y muy barato. Además demuestra el
+comportamiento seguro por defecto: si inventan una cédula que no existe, el
+caso escala a `HUMAN_REVIEW` explicando que no se pudo identificar al
+asegurado, en vez de adivinar.
+
+**Complexity.** LOW — es un formulario. Cae dentro de «simulador de ingreso»,
+que ya es alcance del Workstream B en `WORKSTREAMS.md`.
+
+**Risks.** Que alguien lo confunda con uso en producción. Mitigación: la
+interfaz ya avisa de que todos los datos son sintéticos, y un ingreso contra
+un asegurado inexistente termina en revisión humana por diseño.
+
+---
+
+## IDEA-005 — Lo que faltaría para uso real (fuera del alcance de la clasificatoria)
+**Status:** PROPOSED
+**Propuesta por:** Anthony · 2026-09-19
+
+**Problem.** El agente y su pipeline son reales, pero el entorno alrededor es
+de demostración. Conviene tenerlo escrito para no confundir una cosa con la
+otra ante el jurado ni ante nosotros mismos.
+
+**Idea.** Cuatro piezas, ninguna en el alcance del 23 de septiembre:
+
+1. **Notificaciones de verdad.** Hoy se persisten en la tabla `notifications`
+   con su contenido completo, pero no se envía correo ni SMS. Falta un
+   proveedor real (Resend, Twilio) detrás de un puerto, como ya se hizo con
+   Gemini.
+2. **Alta de datos de referencia.** Hospitales, asegurados y pólizas solo
+   entran por SQL. Haría falta una API o un panel de administración.
+3. **Autenticación y multi-tenant.** Hoy RLS concede lectura abierta porque
+   todos los datos son sintéticos. Ver IDEA-002.
+4. **Ingesta documental real.** La evidencia es texto plano; faltaría subida
+   de archivos y OCR, que es donde Gemini aportaría bastante más.
+
+**Expected impact.** Ninguno para clasificar. Decisivo para cualquier
+conversación posterior.
+
+**Complexity.** HIGH en conjunto.
+
+**Risks.** Intentar algo de esto antes del 23 pone en riesgo lo que ya
+funciona. **No abordar durante la fase clasificatoria.**

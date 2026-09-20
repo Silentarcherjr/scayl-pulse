@@ -136,6 +136,17 @@ PostgreSQL. El número de secuencia lo asigna la base de datos. El puerto
 **Consecuencias.** La inmutabilidad no depende de la disciplina de los
 agentes. Un bug de aplicación no puede reescribir la historia de un caso.
 
+**Verificado contra Postgres 17 (2026-09-19):** `UPDATE` y `DELETE` sobre
+`case_events` se rechazan con
+`case_events is append-only: … is not allowed`, y `seq` la asigna la base de
+datos.
+
+**Consecuencia derivada, intencional:** `delete from cases` **tampoco
+funciona**. La cascada hacia `case_events` dispara el mismo trigger y aborta
+el borrado completo. Un expediente abierto es un registro de auditoría
+permanente. Para reiniciar datos de demo se usa `TRUNCATE`, que no dispara
+triggers de fila — por eso `supabase/seed.sql` funciona.
+
 ---
 
 ## DEC-009 — Separación frontend/backend por contratos

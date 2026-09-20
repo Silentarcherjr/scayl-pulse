@@ -13,7 +13,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 |---|---|---|---|
 | 1 | **Hacer público el repositorio** antes de entregar | Anthony | ⬜ pendiente · bloquea el entregable #1 |
 | 2 | Desplegar en Vercel | Anthony | ✅ proyecto `scayl-pulse` en el equipo `HACKS`, importado desde GitHub · falta pegar la URL aquí y en el README |
-| 3 | Aplicar el esquema en Supabase (2 migrations + `seed.sql`) | Anthony | 🟡 proyecto creado · esquema en curso |
+| 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ⬜ pendiente |
 | 5 | Obtener `GEMINI_API_KEY` en https://aistudio.google.com/apikey | Anthony | ⬜ pendiente · bloquea las métricas del PDF |
 | 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ⬜ pendiente |
@@ -173,9 +173,19 @@ Ninguno abierto.
 **Fecha:** —
 **Último commit:** —
 
-**Qué funciona:** —
-**Qué falta:** QA end-to-end, tests de integración HTTP, validación contra
-Supabase real. Punto de partida: `docs/DEMO_SCENARIOS.md` y `docs/TEST_PLAN.md`.
+**Qué funciona:** el esquema ya está aplicado y verificado en el proyecto
+`Pulse` (9 tablas, RLS activo en todas, Realtime publicando `cases` y
+`case_events`, semillas cargadas: 3 hospitales, 4 pacientes, 4 pólizas, 4
+antecedentes). La inmutabilidad del timeline está comprobada contra Postgres,
+no solo en memoria.
+
+⚠️ **Al limpiar datos de demo usa `TRUNCATE`, nunca `DELETE`.** Un
+`delete from cases` falla: la cascada hacia `case_events` choca con el trigger
+append-only y aborta el borrado entero. Es intencional (ver DEC-008).
+
+**Qué falta:** QA end-to-end, tests de integración HTTP, validación del
+despliegue con Supabase conectado. Punto de partida: `docs/DEMO_SCENARIOS.md`
+y `docs/TEST_PLAN.md`.
 **Archivos modificados:** —
 **Próximo paso exacto:** ejecutar los 5 escenarios a mano y anotar cualquier
 discrepancia con `DEMO_SCENARIOS.md`.
