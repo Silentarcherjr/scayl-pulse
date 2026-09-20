@@ -1,6 +1,6 @@
 import { aiAnalysisSchema } from '@/core/domain/schemas';
 import type { CaseFacts } from '@/core/orchestrator/case-facts';
-import type { AiProvider, AnalyzerRequest, AnalyzerResponse } from './provider';
+import type { AiProvider, AnalyzerResponse } from './provider';
 
 /**
  * Deterministic fallback analyzer.
@@ -22,7 +22,9 @@ export class DeterministicProvider implements AiProvider {
 
   constructor(private readonly facts: CaseFacts) {}
 
-  async analyze(_request: AnalyzerRequest): Promise<AnalyzerResponse> {
+  // The request is ignored on purpose: this provider derives its output from
+  // the case facts, not from a prompt.
+  async analyze(): Promise<AnalyzerResponse> {
     const startedAt = Date.now();
     const f = this.facts;
 

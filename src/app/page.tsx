@@ -1,69 +1,80 @@
-import Image from "next/image";
+import { ScenarioRunner } from '@/components/ScenarioRunner';
+import { listScenarios } from '@/core/demo/demo-runner';
+import { runtimeCapabilities } from '@/lib/env';
+
+export const dynamic = 'force-dynamic';
+
+const PIPELINE = [
+  'Ingreso (webhook)',
+  'Identificación del asegurado',
+  'Validación de póliza',
+  'Historial y preexistencias',
+  'Análisis de evidencia con IA',
+  'Safety Gate determinístico',
+  'Clasificación del caso',
+  'Hospital + aseguradora, a la vez',
+  'Timeline auditable',
+];
 
 export default function Home() {
+  const scenarios = listScenarios();
+  const capabilities = runtimeCapabilities();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-10 sm:px-6 sm:py-14">
+      <header className="flex flex-col gap-4">
+        <p className="font-mono text-xs tracking-widest text-[var(--muted)]">
+          HACKIATHON PANAMÁ · ALERTA TEMPRANA DE INGRESOS A EMERGENCIAS
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">SCAYL&nbsp;Pulse</h1>
+        <p className="max-w-2xl text-base leading-relaxed text-[var(--muted)]">
+          Cuando un asegurado entra a emergencias, SCAYL Pulse abre un{' '}
+          <strong className="text-[var(--foreground)]">expediente vivo</strong>: valida la póliza,
+          revisa preexistencias, analiza la evidencia con IA, aplica un Safety Gate determinístico y
+          notifica al hospital y a la aseguradora al mismo tiempo. Cuando llega evidencia nueva, el
+          caso se reevalúa solo — y las decisiones anteriores no se borran.
+        </p>
+        <p className="max-w-2xl text-sm leading-relaxed text-[var(--muted)]">
+          El sistema no emite diagnósticos, no toma decisiones médicas y no puede impedir la
+          atención de emergencia. Todos los datos son sintéticos.
+        </p>
+      </header>
+
+      <section className="flex flex-wrap gap-2">
+        {PIPELINE.map((step, index) => (
+          <span
+            key={step}
+            className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 font-mono text-[11px] text-[var(--muted)]"
+          >
+            {index + 1}. {step}
+          </span>
+        ))}
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 className="text-lg font-semibold">Escenarios reproducibles</h2>
+          <p className="font-mono text-[11px] text-[var(--muted)]">
+            persistencia: {capabilities.persistence} · analizador: {capabilities.aiProvider}
+            {capabilities.geminiModel ? ` (${capabilities.geminiModel})` : ''}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <ScenarioRunner scenarios={scenarios} />
+      </section>
+
+      <footer className="border-t border-[var(--border)] pt-6 text-xs text-[var(--muted)]">
+        <p>
+          Esta página es una superficie mínima de demostración mantenida por el backend. El
+          dashboard completo (hospital y aseguradora) lo construye el Workstream B en la rama{' '}
+          <code className="font-mono">workstream/frontend</code>.
+        </p>
+        <p className="mt-2">
+          <a className="text-[var(--accent)] underline-offset-4 hover:underline" href="/api/health">
+            /api/health
+          </a>{' '}
+          reporta qué está realmente conectado.
+        </p>
+      </footer>
+    </main>
   );
 }
