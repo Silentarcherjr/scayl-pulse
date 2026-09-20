@@ -130,7 +130,7 @@ describe('configuración de persistencia', () => {
 
   it('reconoce una clave con forma válida y delata los espacios en blanco', () => {
     baseline();
-    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv\n');
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyFAKE1111111111111111111111111111\n');
 
     const shape = envDiagnostics().geminiKeyShape;
     expect(shape?.looksLikeGoogleApiKey).toBe(true);
@@ -139,18 +139,18 @@ describe('configuración de persistencia', () => {
 
   it('el diagnóstico de la clave nunca incluye la clave', () => {
     baseline();
-    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyFAKE1111111111111111111111111111');
 
     const serialized = JSON.stringify(envDiagnostics());
-    expect(serialized).not.toContain('AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    expect(serialized).not.toContain('AIzaSyFAKE1111111111111111111111111111');
     expect(serialized).not.toContain('AIzaSy');
   });
 
   it('una clave con salto de línea se normaliza antes de usarse', async () => {
     baseline();
-    vi.stubEnv('GEMINI_API_KEY', '  AIzaSyA1234567890abcdefghijklmnopqrstuv\n');
+    vi.stubEnv('GEMINI_API_KEY', '  AIzaSyFAKE1111111111111111111111111111\n');
     const { env } = await import('@/lib/env');
-    expect(env.geminiApiKey).toBe('AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    expect(env.geminiApiKey).toBe('AIzaSyFAKE1111111111111111111111111111');
   });
 
   it('el modelo por defecto ya no es uno que se apaga en octubre de 2026', async () => {
@@ -167,7 +167,7 @@ describe('configuración de persistencia', () => {
     // This actually happened: an API key was pasted into GEMINI_MODEL and the
     // public health endpoint served it verbatim.
     baseline();
-    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyFAKE1111111111111111111111111111');
     vi.stubEnv('GEMINI_MODEL', 'AIzaSyFAKE0000000000000000000000000000');
 
     const caps = runtimeCapabilities();
@@ -178,7 +178,7 @@ describe('configuración de persistencia', () => {
 
   it('un nombre de modelo legítimo sí se muestra', () => {
     baseline();
-    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyFAKE1111111111111111111111111111');
     vi.stubEnv('GEMINI_MODEL', 'gemini-3.8-flash');
 
     const caps = runtimeCapabilities();
@@ -188,7 +188,7 @@ describe('configuración de persistencia', () => {
 
   it('el modelo por defecto pasa el filtro de forma', () => {
     baseline();
-    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyFAKE1111111111111111111111111111');
     vi.stubEnv('GEMINI_MODEL', '');
 
     expect(runtimeCapabilities().geminiModel).toBe('gemini-3.5-flash');
