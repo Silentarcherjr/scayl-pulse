@@ -125,6 +125,10 @@ export class InMemoryCaseRepository implements CaseRepository {
     );
   }
 
+  async countCases() {
+    return this.store.cases.size;
+  }
+
   private mustGet(caseId: string): EmergencyCase {
     const found = this.store.cases.get(caseId);
     if (!found) throw new Error(`Case not found: ${caseId}`);

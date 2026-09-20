@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
+import { assertCapacityAvailable } from '@/core/demo/capacity';
 import { runScenario } from '@/core/demo/demo-runner';
 import { getRepository } from '@/core/repository';
 import { handleRouteError, ok } from '@/lib/http';
@@ -23,7 +24,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const raw = await request.json().catch(() => ({}));
     const { applyFollowUps } = bodySchema.parse(raw ?? {});
 
-    const result = await runScenario(id, { repository: getRepository(), applyFollowUps });
+    const repository = getRepository();
+    await assertCapacityAvailable(repository);
+
+    const result = await runScenario(id, { repository, applyFollowUps });
     return ok(result, 201);
   } catch (error) {
     return handleRouteError(error, 'POST /api/demo/scenarios/:id/run');

@@ -230,6 +230,12 @@ export class SupabaseCaseRepository implements CaseRepository {
     return (data ?? []).map(toCase);
   }
 
+  async countCases() {
+    const { count, error } = await this.db.from('cases').select('*', { count: 'exact', head: true });
+    if (error) throw new Error(`Supabase countCases failed: ${error.message}`);
+    return count ?? 0;
+  }
+
   async updateCaseStatus(caseId: string, status: CaseStatus) {
     const result = await this.db
       .from('cases')

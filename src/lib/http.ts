@@ -7,6 +7,7 @@ export type ApiErrorCode =
   | 'NOT_FOUND'
   | 'CONFLICT'
   | 'UNAUTHORIZED'
+  | 'CAPACITY_REACHED'
   | 'INTERNAL_ERROR';
 
 export class ApiError extends Error {
@@ -31,6 +32,9 @@ export class ApiError extends Error {
   }
   static validation(message: string, details?: unknown) {
     return new ApiError('VALIDATION_ERROR', message, 422, details);
+  }
+  static capacityReached(message: string, details?: unknown) {
+    return new ApiError('CAPACITY_REACHED', message, 429, details);
   }
 }
 

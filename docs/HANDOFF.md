@@ -19,6 +19,22 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 | 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ⬜ pendiente |
 | 7 | Invitar a Carlos y Sebastián | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
 
+### Reiniciar los datos de demo
+
+Los casos son inmutables (DEC-008), así que **`DELETE` no funciona**: la
+cascada hacia `case_events` choca con el trigger append-only. Para dejar la
+base limpia conservando los datos de referencia, en el SQL Editor de Supabase:
+
+```sql
+truncate table ai_interactions, notifications, case_evidence, case_events, cases
+  restart identity cascade;
+```
+
+Hospitales, pacientes, pólizas y antecedentes no se tocan. Si también quieres
+recargarlos, ejecuta después `supabase/seed.sql`.
+
+La ocupación actual y el tope los ves en `GET /api/health`, campo `capacity`.
+
 ### ⚠️ Trampa al configurar las variables en Vercel
 
 Vercel detecta 8 variables desde `.env.example` y las crea vacías. **Deja

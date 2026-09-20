@@ -1,4 +1,4 @@
-import { runtimeCapabilities } from '@/lib/env';
+import { env, runtimeCapabilities } from '@/lib/env';
 import { getRepository } from '@/core/repository';
 import { handleRouteError, ok } from '@/lib/http';
 
@@ -9,11 +9,13 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const repository = getRepository();
+    const storedCases = await repository.countCases();
     return ok({
       service: 'scayl-pulse',
       status: 'up',
       repository: repository.kind,
       ...runtimeCapabilities(),
+      capacity: { storedCases, maxCases: env.maxCases },
       checkedAt: new Date().toISOString(),
     });
   } catch (error) {

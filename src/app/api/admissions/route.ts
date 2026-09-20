@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { admissionInputSchema } from '@/core/domain/schemas';
+import { assertCapacityAvailable } from '@/core/demo/capacity';
 import { CaseOrchestrator } from '@/core/orchestrator/case-orchestrator';
 import { getRepository } from '@/core/repository';
 import { ApiError, handleRouteError, ok } from '@/lib/http';
@@ -31,7 +32,10 @@ export async function POST(request: NextRequest) {
       throw ApiError.validation('El ingreso no cumple el contrato de /api/admissions.', parsed.error.issues);
     }
 
-    const orchestrator = new CaseOrchestrator({ repository: getRepository() });
+    const repository = getRepository();
+    await assertCapacityAvailable(repository);
+
+    const orchestrator = new CaseOrchestrator({ repository });
     const result = await orchestrator.processAdmission(parsed.data);
 
     return ok(

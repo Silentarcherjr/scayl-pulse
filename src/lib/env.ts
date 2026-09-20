@@ -39,6 +39,15 @@ export const env = {
   get forceFixtureAi() {
     return read('SCAYL_FORCE_FIXTURE_AI') === 'true';
   },
+  /**
+   * Upper bound on stored cases. The demo link is public and unauthenticated,
+   * so without a ceiling anyone — or a misbehaving script — can grow the
+   * database without limit.
+   */
+  get maxCases() {
+    const raw = Number(read('SCAYL_MAX_CASES') ?? '200');
+    return Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : 200;
+  },
 } as const;
 
 /**

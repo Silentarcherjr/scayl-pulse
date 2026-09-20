@@ -72,6 +72,7 @@ export interface CaseRepository {
   }): Promise<EmergencyCase>;
   getCase(caseId: string): Promise<EmergencyCase | null>;
   listCases(limit?: number): Promise<EmergencyCase[]>;
+  countCases(): Promise<number>;
   updateCaseStatus(caseId: string, status: CaseStatus): Promise<EmergencyCase>;
   updateCaseDecision(caseId: string, status: CaseStatus, decision: AgentDecision): Promise<EmergencyCase>;
 

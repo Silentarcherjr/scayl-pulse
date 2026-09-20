@@ -32,6 +32,7 @@ Todas las rutas devuelven la misma forma.
 | `NOT_FOUND` | 404 | El caso o el escenario no existe. |
 | `CONFLICT` | 409 | Operación inválida para el estado actual (p. ej. evidencia sobre un caso `RESOLVED`). |
 | `UNAUTHORIZED` | 401 | Falta o no coincide `x-scayl-webhook-secret`. |
+| `CAPACITY_REACHED` | 429 | La instancia alcanzó su tope de casos almacenados. `details` trae `{ current, limit }`. |
 | `INTERNAL_ERROR` | 500 | Error inesperado. Nunca filtra stack traces. |
 
 ---
@@ -88,8 +89,12 @@ lugar de escribir las etiquetas a mano.**
 - Si `gateOverrode === true`, muestra que el Safety Gate corrigió al modelo
   (`modelSuggestedStatus → status`). **Es el momento más demostrativo del
   producto: no lo escondas.**
-- Si `source === 'AI_UNAVAILABLE'`, indica que la decisión se tomó solo con
-  reglas. Nunca la presentes como si viniera del modelo.
+- `source` distingue tres estados y **no son intercambiables**:
+  `AI_ASSISTED` solo cuando un modelo real produjo el análisis;
+  `AI_UNAVAILABLE` cuando se intentó y no pudo usarse (timeout, respuesta
+  inválida, caída); `DETERMINISTIC` cuando no había proveedor configurado.
+  En los dos últimos casos la decisión salió solo de reglas: **nunca la
+  presentes como si viniera del modelo.**
 
 ### `CaseEvent`
 
@@ -164,6 +169,11 @@ Webhook de ingreso hospitalario. Crea el caso y ejecuta el pipeline completo.
 ```json
 { "ok": true, "data": { "caseId": "…", "caseNumber": "PULSE-2026-A1B2C3", "status": "VERIFIED", "decision": { } } }
 ```
+
+**`429`** cuando la instancia alcanzó su tope de casos (`SCAYL_MAX_CASES`,
+200 por defecto). Los casos son inmutables y no se purgan solos: para liberar
+espacio hay que reiniciar los datos de demo. Consulta `capacity` en
+`/api/health` para ver la ocupación actual.
 
 ---
 
@@ -279,14 +289,32 @@ que el flujo completo de reevaluación se demuestra en un clic.
 `matchedExpectation` permite al frontend mostrar en verde que el sistema hizo
 exactamente lo prometido. Es una señal fuerte para el jurado.
 
+También responde **`429`** al alcanzarse el tope de casos. El endpoint es
+público y escribe en la base: el tope es lo que impide que alguien —o un
+script con un bucle mal escrito— infle la base sin límite.
+
 ---
 
 ### `GET /api/health`
 Qué está realmente conectado ahora mismo.
 
 ```json
-{ "ok": true, "data": { "service": "scayl-pulse", "status": "up", "repository": "in-memory", "persistence": "in-memory", "aiProvider": "deterministic-fixture", "geminiModel": null, "checkedAt": "…" } }
+{ "ok": true, "data": {
+  "service": "scayl-pulse", "status": "up",
+  "repository": "supabase", "persistence": "supabase", "persistenceNote": null,
+  "realtimeAvailable": true,
+  "aiProvider": "deterministic-fixture", "geminiModel": null,
+  "env": { "present": { "SUPABASE_SERVICE_ROLE_KEY": true, "GEMINI_API_KEY": false }, "unrecognizedNames": [] },
+  "capacity": { "storedCases": 7, "maxCases": 200 },
+  "checkedAt": "…"
+} }
 ```
+
+`persistenceNote` explica por qué se está usando el repositorio en memoria
+cuando `persistence` no es `supabase`. `env.present` dice qué variables ve la
+aplicación **por nombre, nunca por valor**, y `env.unrecognizedNames` lista
+variables de esta familia que nada lee — así un nombre mal escrito deja de
+fallar en silencio.
 
 Útil para que la UI muestre un banner honesto de «modo demo sin IA».
 
