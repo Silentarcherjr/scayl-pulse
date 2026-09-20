@@ -1,0 +1,75 @@
+name: CI
+
+# main alimenta el despliegue de producción en Vercel: si main se rompe, el
+# enlace del entregable se rompe. Este workflow es la red de seguridad para
+# cuando tres personas empujan en paralelo.
+on:
+  push:
+    branches: [main, 'anthony/**', 'workstream/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: typecheck · lint · tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        # Corren sin credenciales y sin llamar a ninguna API de pago:
+        # vitest.config.mts fuerza el repositorio en memoria y el analizador
+        # determinístico.
+        run: npm test
+
+      - name: Build de producción
+        run: npm run build
+
+  demo-scenarios:
+    name: los tres escenarios obligatorios siguen funcionando
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: verify
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Levantar la app
+        run: npm start &
+
+      - name: Esperar a que responda
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:3000/api/health > /dev/null; then
+              echo "arriba"; exit 0
+            fi
+            sleep 1
+          done
+          echo "la aplicación no arrancó a tiempo"; exit 1
+
+      - name: Verificar el despliegue de extremo a extremo
+        run: npm run verify:deployment -- http://localhost:3000
