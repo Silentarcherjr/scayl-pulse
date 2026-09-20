@@ -33,7 +33,7 @@ hazlo y regístralo en `STATUS.md`.
 ---
 
 ## IDEA-001 — Modo «qué pasaría si» sobre un caso cerrado
-**Status:** PROPOSED
+**Status:** APPROVED IF CORE STABLE — aprobada por Anthony el 2026-09-20, condicionada a que el núcleo esté estable
 **Propuesta por:** Claude Code (Workstream A) · 2026-09-19
 
 **Problem.** El jurado ve el resultado final, pero no percibe cuánta lógica
@@ -56,7 +56,7 @@ escribe en `case_events` y la UI la marca como hipotética.
 ---
 
 ## IDEA-002 — RLS multi-tenant real por aseguradora y hospital
-**Status:** PROPOSED
+**Status:** REJECTED FOR CLASSIFIER — descartada por Anthony el 2026-09-20 para la fase clasificatoria
 **Propuesta por:** Claude Code (Workstream A) · 2026-09-19
 
 **Problem.** Hoy la política RLS es «anon puede leer todo», aceptable solo
@@ -77,7 +77,7 @@ prisa. **No abordarlo antes del 23 de septiembre.**
 ---
 
 ## IDEA-003 — Resumen de caso en un párrafo para el gestor
-**Status:** PROPOSED
+**Status:** APPROVED — aprobada por Anthony el 2026-09-20
 **Propuesta por:** Claude Code (Workstream A) · 2026-09-19
 
 **Problem.** Un gestor que abre un caso `HUMAN_REVIEW` a las 3 a.m. necesita
@@ -98,7 +98,7 @@ valor real y sin riesgo: resume hechos ya decididos por reglas.
 ---
 
 ## IDEA-004 — Ingreso libre: usar el sistema con un caso real, no solo con escenarios
-**Status:** PROPOSED
+**Status:** APPROVED — aprobada por Anthony el 2026-09-20 · ejecuta Workstream B
 **Propuesta por:** Anthony · 2026-09-19
 
 **Problem.** El pipeline ya es real —los escenarios de demo entran por
@@ -126,7 +126,7 @@ un asegurado inexistente termina en revisión humana por diseño.
 ---
 
 ## IDEA-005 — Lo que faltaría para uso real (fuera del alcance de la clasificatoria)
-**Status:** PROPOSED
+**Status:** REJECTED FOR CLASSIFIER — descartada por Anthony el 2026-09-20 para la fase clasificatoria
 **Propuesta por:** Anthony · 2026-09-19
 
 **Problem.** El agente y su pipeline son reales, pero el entorno alrededor es
@@ -153,3 +153,44 @@ conversación posterior.
 
 **Risks.** Intentar algo de esto antes del 23 pone en riesgo lo que ya
 funciona. **No abordar durante la fase clasificatoria.**
+
+---
+
+## IDEA-006 — «¿Por qué tomó esta decisión?»
+**Status:** DONE (backend) — contrato entregado el 2026-09-20; falta el panel en Workstream B — propuesta y aprobada por Anthony el 2026-09-20
+**Implementa:** Workstream A (contrato) + Workstream B (panel)
+
+**Problem.** Hoy la decisión se explica en prosa: `reason` es un texto
+multilínea con viñetas. Eso obliga al frontend a parsear texto y, sobre todo,
+**solo cuenta lo que falló**. Un gestor no puede ver de un vistazo qué se
+comprobó y salió bien, que es la mitad de la confianza.
+
+**Idea.** Exponer la decisión como una lista estructurada de comprobaciones,
+cada una con su estado y su evidencia:
+
+```
+HUMAN_REVIEW
+
+Reglas activadas
+  ✓ Póliza vigente
+  ✓ Hospital dentro de red
+  ⚠ Antecedente potencialmente relacionado
+  ⚠ Evidencia insuficiente
+
+Evidencia utilizada
+  Póliza POL-3003 · Historial MH-003 · Informe de ingreso EV-008
+
+Safety Gate
+  Se impidió una decisión automática por evidencia insuficiente.
+```
+
+**Expected impact.** Convierte el proyecto en **IA auditable**, que es
+exactamente el argumento diferencial frente a un clasificador opaco. Es
+también lo que un jurado puede evaluar sin entender el código.
+
+**Complexity.** BAJA. La capa determinística ya calcula todas estas
+comprobaciones; simplemente descarta las que pasan. El trabajo es emitirlas
+todas en un array estable en `AgentDecision`, no recalcular nada.
+
+**Risks.** Ampliar el contrato de `AgentDecision`. Mitigación: es aditivo,
+`reason` se mantiene para quien ya lo use, y se documenta en el mismo commit.

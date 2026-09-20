@@ -8,6 +8,7 @@ import type {
   MissingDocument,
 } from '@/core/domain/types';
 import { CONFIDENCE_THRESHOLD, DETERMINISTIC_CONFIDENCE, SAFETY_RULES_BY_CODE } from './rules';
+import { buildDecisionChecks } from './decision-checks';
 import type { CaseFacts } from '@/core/orchestrator/case-facts';
 
 export interface SafetyGateInput {
@@ -145,6 +146,15 @@ export function applySafetyGate(input: SafetyGateInput): AgentDecision {
       ? 'AI_UNAVAILABLE'
       : 'DETERMINISTIC';
 
+  const checks = buildDecisionChecks({
+    facts,
+    analysis,
+    modelBacked,
+    finalStatus: status,
+    gateOverrode,
+    modelSuggestedStatus,
+  });
+
   return {
     status,
     confidence: analysis ? confidence : DETERMINISTIC_CONFIDENCE,
@@ -159,6 +169,7 @@ export function applySafetyGate(input: SafetyGateInput): AgentDecision {
     appliedRules: [...new Set(firedRules)],
     gateOverrode,
     modelSuggestedStatus,
+    checks,
   };
 }
 

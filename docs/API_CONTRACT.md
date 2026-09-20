@@ -78,7 +78,61 @@ lugar de escribir las etiquetas a mano.**
   appliedRules: string[];          // p. ej. ["POLICY_EXPIRED"]
   gateOverrode: boolean;           // el Safety Gate corrigió al modelo
   modelSuggestedStatus: 'VERIFIED' | 'DOCUMENTS_REQUIRED' | 'HUMAN_REVIEW' | null;
+  checks: DecisionCheck[];         // ver abajo — el panel «¿por qué?»
 }
+```
+
+### `DecisionCheck` — el panel «¿Por qué tomó esta decisión?»
+
+```ts
+{
+  code: string;        // POLICY_ACTIVE, HOSPITAL_IN_NETWORK, … estable, sirve de clave
+  label: string;       // "Póliza vigente en la fecha del ingreso"
+  status: 'PASSED' | 'WARNING' | 'FAILED' | 'NOT_EVALUATED';
+  detail: string;      // la respuesta concreta para ESTE caso
+  evidence?: EvidenceReference;
+  imposedFloor?: 'VERIFIED' | 'DOCUMENTS_REQUIRED' | 'HUMAN_REVIEW';
+}
+```
+
+**Incluye las comprobaciones que pasaron, no solo las que fallaron.** Eso es lo
+que convierte la decisión en auditable: un gestor ve de un vistazo qué se
+revisó y salió bien, no solo qué falló.
+
+El orden es **estable entre casos**: renderízalo tal cual, sin ordenar. Las
+comprobaciones emitidas, en orden:
+
+`PATIENT_IDENTIFIED` · `POLICY_FOUND` · `POLICY_ACTIVE` · `POLICY_OWNERSHIP` ·
+`EMERGENCY_COVERAGE` · `WAITING_PERIOD` · `HOSPITAL_IN_NETWORK` ·
+`REQUIRED_DOCUMENTS` · `PRE_EXISTING_CONDITIONS` · `EVIDENCE_SUFFICIENCY` ·
+`ANALYSIS_CONFIDENCE` · `SAFETY_GATE`
+
+Sugerencia de render: `PASSED` → ✓ · `WARNING` → ⚠ · `FAILED` → ✕ ·
+`NOT_EVALUATED` → — (y en gris: significa «no aplica a este caso», no «falló»).
+
+`imposedFloor` dice qué estado forzó esa comprobación: es la respuesta literal
+a «¿por qué este caso no está verificado?».
+
+`SAFETY_GATE` es siempre la última y resume el veredicto. Cuando
+`gateOverrode` es `true`, su `detail` nombra lo que el modelo propuso y a qué
+lo restringieron las reglas.
+
+**Ejemplo (escenario RED):**
+
+```json
+[
+  { "code": "POLICY_ACTIVE", "label": "Póliza vigente en la fecha del ingreso",
+    "status": "PASSED", "detail": "Activa, vigencia 2026-06-22 → 2027-06-22." },
+  { "code": "HOSPITAL_IN_NETWORK", "label": "Hospital dentro de red",
+    "status": "PASSED", "detail": "Hospital Nacional Metropolitano pertenece a la red." },
+  { "code": "PRE_EXISTING_CONDITIONS", "label": "Antecedentes potencialmente relacionados",
+    "status": "WARNING", "detail": "1 antecedente anterior a la póliza…" },
+  { "code": "EVIDENCE_SUFFICIENCY", "label": "Evidencia suficiente sobre los antecedentes",
+    "status": "FAILED", "detail": "Ningún documento del expediente aclara…",
+    "imposedFloor": "HUMAN_REVIEW" },
+  { "code": "SAFETY_GATE", "label": "Safety Gate", "status": "WARNING",
+    "detail": "Se impidió una decisión automática: evidencia suficiente sobre los antecedentes." }
+]
 ```
 
 **Notas de UI importantes**

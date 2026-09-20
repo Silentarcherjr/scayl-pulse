@@ -168,4 +168,14 @@ export const agentDecisionSchema = z.object({
   appliedRules: z.array(z.string()),
   gateOverrode: z.boolean(),
   modelSuggestedStatus: decisionStatusSchema.nullable(),
+  checks: z.array(
+    z.object({
+      code: z.string(),
+      label: z.string(),
+      status: z.enum(['PASSED', 'WARNING', 'FAILED', 'NOT_EVALUATED']),
+      detail: z.string(),
+      evidence: evidenceReferenceSchema.optional(),
+      imposedFloor: decisionStatusSchema.optional(),
+    }),
+  ),
 });

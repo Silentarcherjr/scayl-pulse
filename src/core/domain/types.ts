@@ -1,4 +1,5 @@
 import type { CaseStatus, DecisionStatus } from './case-status';
+import type { DecisionCheck } from '@/core/safety/decision-checks';
 
 // ---------------------------------------------------------------------------
 // Reference data (synthetic only — see docs/DECISIONS.md, DEC-002)
@@ -138,6 +139,8 @@ export interface EmergencyCase {
 
 export type DecisionSource = 'DETERMINISTIC' | 'AI_ASSISTED' | 'AI_UNAVAILABLE';
 
+export type { DecisionCheck, CheckStatus } from '@/core/safety/decision-checks';
+
 export interface AgentDecision {
   status: DecisionStatus;
   /** 0..1 — confidence in the supporting analysis, not in the medicine. */
@@ -157,6 +160,11 @@ export interface AgentDecision {
   gateOverrode: boolean;
   /** What the model proposed before the gate, for auditability. */
   modelSuggestedStatus: DecisionStatus | null;
+  /**
+   * Every check the system ran, passing ones included — the data behind the
+   * "why did it decide this?" panel (docs/IDEAS.md IDEA-006).
+   */
+  checks: DecisionCheck[];
 }
 
 // ---------------------------------------------------------------------------
