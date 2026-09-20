@@ -9,14 +9,29 @@ Rellénala antes de detenerte, siempre — incluso si la sesión fue corta.
 
 Cosas que **un agente no puede hacer** y que bloquean entregables.
 
-| # | Acción | Quién | Bloquea |
+| # | Acción | Quién | Estado |
 |---|---|---|---|
-| 1 | **Hacer público el repositorio** antes de entregar | Anthony | Entregable #1 |
-| 2 | **Desplegar en Vercel** y pegar la URL aquí y en el README | Anthony | Entregable #2 |
-| 3 | Crear proyecto Supabase y poner las 3 claves en Vercel + `.env.local` | Anthony | Persistencia real, Realtime |
-| 4 | Obtener `GEMINI_API_KEY` en https://aistudio.google.com/apikey | Anthony | Métricas reales de IA para el PDF |
-| 5 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | Planificación del equipo |
-| 6 | Invitar a Carlos y Sebastián como colaboradores del repositorio | Anthony | Que puedan trabajar |
+| 1 | **Hacer público el repositorio** antes de entregar | Anthony | ⬜ pendiente · bloquea el entregable #1 |
+| 2 | Desplegar en Vercel | Anthony | ✅ proyecto `scayl-pulse` en el equipo `HACKS`, importado desde GitHub · falta pegar la URL aquí y en el README |
+| 3 | Aplicar el esquema en Supabase (2 migrations + `seed.sql`) | Anthony | 🟡 proyecto creado · esquema en curso |
+| 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ⬜ pendiente |
+| 5 | Obtener `GEMINI_API_KEY` en https://aistudio.google.com/apikey | Anthony | ⬜ pendiente · bloquea las métricas del PDF |
+| 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ⬜ pendiente |
+| 7 | Invitar a Carlos y Sebastián | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
+
+### ⚠️ Trampa al configurar las variables en Vercel
+
+Vercel detecta 8 variables desde `.env.example` y las crea vacías. **Deja
+`SCAYL_FORCE_IN_MEMORY` y `SCAYL_FORCE_FIXTURE_AI` vacías**: si les pones
+`true`, el despliegue ignora Supabase y Gemini aunque estén bien configurados.
+Vacías son inofensivas (el código trata vacío como no definida).
+
+Y la persistencia necesita **`SUPABASE_SERVICE_ROLE_KEY`**, no la clave anon:
+RLS solo concede lectura a anon. Sin la service-role, la app se queda en
+memoria a propósito y `/api/health` lo dice en el campo `persistenceNote`.
+
+**Aplica el esquema ANTES de cargar las variables.** Si apuntas a Supabase sin
+las tablas creadas, cada ingreso falla contra tablas inexistentes.
 
 ### Comandos exactos para cada una
 
@@ -25,14 +40,15 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 gh repo edit Silentarcherjr/scayl-pulse --visibility public --accept-visibility-change-consequences
 ```
 
-**2 · Desplegar en Vercel**
+**2 · Verificar el despliegue**
 ```bash
-npx vercel link
-npx vercel --prod
+npm run verify:deployment -- https://<tu-url>.vercel.app
 ```
-La aplicación **funciona desplegada sin ninguna variable de entorno** (usará
-repositorio en memoria y analizador determinístico). Se puede desplegar hoy y
-añadir las claves después.
+Comprueba salud, los cinco escenarios, el timeline, ambas notificaciones y el
+manejo de errores. 12 comprobaciones; sale con código distinto de cero si algo
+falla. La aplicación **funciona desplegada sin ninguna variable de entorno**
+(repositorio en memoria + analizador determinístico), así que el enlace ya es
+entregable aunque Supabase no esté listo.
 
 **3 · Variables de Supabase**
 ```bash
@@ -64,7 +80,12 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 
 **Fecha:** 2026-09-19
 **Último commit:** ver `git log -1 --oneline` en la rama
-**Sesión:** bootstrap completo del proyecto (Claude Code, Opus 5)
+**Sesión:** bootstrap completo del proyecto + preparación del despliegue (Claude Code, Opus 5)
+
+> Nota: la autoría de los 11 commits iniciales se reescribió a
+> `amorell776@gmail.com` y se forzó el push. Era seguro porque ninguna
+> invitación estaba aceptada todavía y nadie había clonado. El contenido no
+> cambió: el hash del árbol es idéntico antes y después.
 
 ### Qué funciona
 Todo el backend, de extremo a extremo, **sin ninguna credencial**:
@@ -93,13 +114,15 @@ Todo el backend, de extremo a extremo, **sin ninguna credencial**:
 Todo el repositorio. Origen del proyecto.
 
 ### Próximo paso exacto
-```bash
-npx vercel link && npx vercel --prod
-```
-Luego pegar la URL en `README.md` y en `docs/STATUS.md`, y commitear.
+Aplicar en el SQL Editor de Supabase, en este orden:
+`supabase/migrations/20260919000001_init_schema.sql`,
+`supabase/migrations/20260919000002_rls_policies.sql`, `supabase/seed.sql`.
+Después cargar las 3 variables en Vercel, redesplegar y correr
+`npm run verify:deployment -- <url>`.
 
 ### Tests
-**42 passing · 0 failing.** `npm run verify` limpio.
+**48 passing · 0 failing.** `npm run verify` limpio.
+`npm run verify:deployment` → 12/12 contra un build de producción local.
 
 ### Bugs conocidos
 Ninguno abierto.
@@ -112,7 +135,12 @@ Ninguno abierto.
    todo, las métricas reales para el PDF. **Priorizar la clave de Gemini.**
 2. **Supabase nunca se ha ejecutado de verdad.** El mapeo snake_case ↔ camelCase
    es la superficie con más probabilidad de tener un error. *Mitigado:* el
-   repositorio in-memory permite demostrar sin Supabase.
+   repositorio in-memory permite demostrar sin Supabase, y `verify:deployment`
+   detecta el fallo en segundos si lo hay.
+5. **El repositorio en memoria no sirve para producción real en Vercel:** cada
+   instancia serverless tiene su propia memoria y se recicla. Para la demo
+   funciona; un caso creado puede no aparecer en una petición posterior si
+   Vercel levanta otra instancia. **Razón de peso para terminar Supabase.**
 3. **Fecha de entrega ambigua** (23 vs. 27 de septiembre). Trabajamos contra el
    23. *Mitigación: confirmar con la organización cuanto antes.*
 4. **El repositorio está privado.** Si se entrega así, el jurado no puede abrir

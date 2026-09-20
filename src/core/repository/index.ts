@@ -1,4 +1,4 @@
-import { env, isSupabaseConfigured } from '@/lib/env';
+import { env, isSupabaseWriteConfigured } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import { InMemoryCaseRepository } from './in-memory-repository';
 import { SupabaseCaseRepository } from './supabase-repository';
@@ -17,13 +17,17 @@ const globalStore = globalThis as unknown as { __scaylRepository?: CaseRepositor
 export function getRepository(): CaseRepository {
   if (globalStore.__scaylRepository) return globalStore.__scaylRepository;
 
-  const useSupabase = !env.forceInMemory && isSupabaseConfigured();
+  const useSupabase = !env.forceInMemory && isSupabaseWriteConfigured();
   let repository: CaseRepository;
   if (useSupabase) {
     repository = new SupabaseCaseRepository();
   } else {
-    logger.warn('Supabase not configured — using in-memory repository', {
-      reason: env.forceInMemory ? 'SCAYL_FORCE_IN_MEMORY=true' : 'missing NEXT_PUBLIC_SUPABASE_URL / key',
+    logger.warn('Supabase not usable for writes — using in-memory repository', {
+      reason: env.forceInMemory
+        ? 'SCAYL_FORCE_IN_MEMORY=true'
+        : !env.supabaseUrl
+          ? 'missing NEXT_PUBLIC_SUPABASE_URL'
+          : 'missing SUPABASE_SERVICE_ROLE_KEY (the anon key cannot write: RLS grants it read only)',
     });
     repository = new InMemoryCaseRepository();
   }

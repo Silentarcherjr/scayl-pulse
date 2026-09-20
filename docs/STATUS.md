@@ -7,13 +7,13 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-19 23:05
+**Última actualización:** 2026-09-19 23:35
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
-| 1 · Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado · **falta hacerlo público** |
-| 2 · Enlace del agente en ejecución | 🔴 Falta desplegar en Vercel |
+| 1 · Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado · **sigue privado, hay que publicarlo antes de entregar** |
+| 2 · Enlace del agente en ejecución | 🟡 Proyecto Vercel creado en el equipo `HACKS`, conectado al repo · falta confirmar URL |
 | 3 · PDF de herramientas de IA | 🟡 Fuente viva en `AI_USAGE_LOG.md` · falta exportar |
 
 | Escenario obligatorio | Resultado | Verificado |
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-19 23:05
+**Última actualización:** 2026-09-19 23:35
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -41,25 +41,36 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - API: `/api/admissions`, `/api/cases`, `/api/cases/:id`, `/api/cases/:id/events`, `/api/cases/:id/evidence`, `/api/demo/scenarios`, `/api/demo/scenarios/:id/run`, `/api/health`.
 - Supabase: esquema completo, enums espejo de TypeScript, RLS, **timeline append-only forzado por triggers**, `cases` y `case_events` publicados para Realtime, seeds sintéticos con fechas relativas.
 - Página de demostración mínima funcional (la reemplaza Workstream B).
+- **Corrección de configuración:** la persistencia en Supabase ahora exige
+  `SUPABASE_SERVICE_ROLE_KEY`. Con solo la clave anon el despliegue habría
+  cambiado a Supabase y habría fallado en *cada* escritura, porque RLS solo
+  concede lectura a anon. Ahora se mantiene en memoria y `/api/health` dice
+  exactamente qué falta. Cubierto por tests.
+- **`npm run verify:deployment <url>`** — verifica un despliegue real: salud,
+  los cinco escenarios, timeline, ambas notificaciones y manejo de errores.
+- Autoría de los 11 commits corregida a `amorell776@gmail.com`.
 - Documentación completa: `README`, `AGENTS.md`, `CLAUDE.md` y 13 documentos en `docs/`.
 
 ### In Progress
 - Nada abierto. Sesión cerrada en estado estable.
 
 ### Next
-1. **Desplegar en Vercel** — entregable #2 del reto. Bloquea la entrega.
-2. **Hacer el repositorio público** antes de entregar (entregable #1).
-3. Conectar Supabase real y verificar migrations + seeds contra la nube.
-4. Conectar `GEMINI_API_KEY` y registrar métricas reales en `AI_USAGE_LOG.md`: latencia media, tasa de respuestas válidas y **cuántas veces el Safety Gate corrigió al modelo**.
-5. Exportar `AI_USAGE_LOG.md` a PDF.
+1. **Aplicar el esquema en el proyecto Supabase** (SQL Editor: las 2 migrations + `seed.sql`).
+2. **Cargar las variables en Vercel** — `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. Dejar `SCAYL_FORCE_*` vacías.
+3. **Ejecutar `npm run verify:deployment <url>`** y pegar el resultado aquí.
+4. **Hacer el repositorio público** antes de entregar (entregable #1).
+5. Conectar `GEMINI_API_KEY` y registrar métricas reales en `AI_USAGE_LOG.md`: latencia media, tasa de respuestas válidas y **cuántas veces el Safety Gate corrigió al modelo**.
+6. Exportar `AI_USAGE_LOG.md` a PDF.
 
 ### Blocked
-- **Vercel + Supabase + Gemini: faltan credenciales.** Requiere acción humana
-  (ver `HANDOFF.md` § Acciones humanas pendientes). Nada más del backend
-  depende de ellas: todo lo demás funciona sin credenciales.
+- **El proyecto Supabase vive en la cuenta personal de Anthony**, no en la
+  cuenta a la que está autenticada la CLI de esta máquina. Aplicar el esquema
+  requiere el SQL Editor o conectar el conector MCP de Supabase.
+- **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests
-**42 passing / 0 failing** · typecheck limpio · lint limpio · build de producción correcto.
+**48 passing / 0 failing** · typecheck limpio · lint limpio · build de producción correcto ·
+`verify:deployment` 12/12 en local.
 
 ---
 

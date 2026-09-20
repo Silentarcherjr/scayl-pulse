@@ -222,9 +222,19 @@ npm run db:reset      # migrations + seeds sintéticos
 ## Tests
 
 ```bash
-npm test          # 42 tests
+npm test          # 48 tests
 npm run verify    # typecheck + lint + tests
 ```
+
+Y para comprobar un despliegue real de extremo a extremo:
+
+```bash
+npm run verify:deployment -- https://tu-despliegue.vercel.app
+```
+
+Ejecuta los cinco escenarios contra la URL, comprueba el timeline, las dos
+notificaciones y el manejo de errores, y avisa si el despliegue está en modo
+memoria o sin Gemini. Devuelve código distinto de cero si algo falla.
 
 Los tests nunca llaman a una API de pago y son reproducibles sin credenciales.
 Cubren, entre otras garantías:

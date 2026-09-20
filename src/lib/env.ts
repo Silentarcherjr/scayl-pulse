@@ -41,18 +41,45 @@ export const env = {
   },
 } as const;
 
-export function isSupabaseConfigured(): boolean {
-  return Boolean(env.supabaseUrl && (env.supabaseServiceRoleKey ?? env.supabaseAnonKey));
+/**
+ * Server-side persistence needs the SERVICE-ROLE key, not the anon key.
+ *
+ * RLS grants anon SELECT only (see the RLS migration), so a deployment
+ * configured with URL + anon key alone would switch to Supabase and then fail
+ * every single write. Falling back to in-memory in that case keeps the demo
+ * alive and GET /api/health says exactly what is missing.
+ */
+export function isSupabaseWriteConfigured(): boolean {
+  return Boolean(env.supabaseUrl && env.supabaseServiceRoleKey);
+}
+
+/** The browser client only reads and subscribes, so the anon key is enough. */
+export function isSupabaseRealtimeConfigured(): boolean {
+  return Boolean(env.supabaseUrl && env.supabaseAnonKey);
 }
 
 export function isGeminiConfigured(): boolean {
   return Boolean(env.geminiApiKey);
 }
 
+/** Explains a fallback instead of leaving the team guessing. */
+function persistenceNote(): string | null {
+  if (env.forceInMemory) return 'SCAYL_FORCE_IN_MEMORY=true está forzando el repositorio en memoria.';
+  if (isSupabaseWriteConfigured()) return null;
+  if (!env.supabaseUrl) return 'Falta NEXT_PUBLIC_SUPABASE_URL.';
+  if (!env.supabaseServiceRoleKey) {
+    return 'Falta SUPABASE_SERVICE_ROLE_KEY. La clave anon no puede escribir: RLS solo le concede lectura.';
+  }
+  return null;
+}
+
 /** Reported by GET /api/health so the team can see what is live at a glance. */
 export function runtimeCapabilities() {
+  const usingSupabase = !env.forceInMemory && isSupabaseWriteConfigured();
   return {
-    persistence: !env.forceInMemory && isSupabaseConfigured() ? 'supabase' : 'in-memory',
+    persistence: usingSupabase ? 'supabase' : 'in-memory',
+    persistenceNote: persistenceNote(),
+    realtimeAvailable: isSupabaseRealtimeConfigured(),
     aiProvider: !env.forceFixtureAi && isGeminiConfigured() ? 'gemini' : 'deterministic-fixture',
     geminiModel: isGeminiConfigured() ? env.geminiModel : null,
   } as const;

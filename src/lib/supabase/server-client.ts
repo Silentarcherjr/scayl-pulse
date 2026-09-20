@@ -13,9 +13,14 @@ let cached: SupabaseClient | null = null;
 export function getSupabaseServerClient(): SupabaseClient {
   if (cached) return cached;
   const url = env.supabaseUrl;
-  const key = env.supabaseServiceRoleKey ?? env.supabaseAnonKey;
+  const key = env.supabaseServiceRoleKey;
   if (!url || !key) {
-    throw new Error('Supabase is not configured: set NEXT_PUBLIC_SUPABASE_URL and a key.');
+    // Deliberately NOT falling back to the anon key: RLS grants anon read
+    // access only, so an anon-backed server client would fail every write
+    // with a confusing policy error instead of a clear configuration one.
+    throw new Error(
+      'Supabase server client needs NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.',
+    );
   }
   cached = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },

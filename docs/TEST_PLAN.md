@@ -5,7 +5,15 @@ npm test              # suite completa
 npm run test:watch    # durante el desarrollo
 npm run test:coverage # cobertura de src/core
 npm run verify        # typecheck + lint + tests  ← antes de cada push
+
+npm run verify:deployment -- https://tu-despliegue.vercel.app
 ```
+
+`verify:deployment` (`scripts/verify-deployment.mjs`) comprueba una URL ya
+desplegada: salud del servicio, los cinco escenarios a través del pipeline
+real, secuencia del timeline, notificación a ambos canales, rastro del Safety
+Gate, y que una entrada inválida devuelva 422 en lugar de 500. Sale con código
+distinto de cero si algo falla, así que sirve de puerta antes de una demo.
 
 Los tests corren con `SCAYL_FORCE_IN_MEMORY=true` y
 `SCAYL_FORCE_FIXTURE_AI=true` (ver `vitest.config.mts`): **nunca llaman a una
@@ -42,6 +50,12 @@ aclara una preexistencia; máquina de estados.
 
 **Escenarios** (`scenarios.test.ts`) — los tres obligatorios más los dos
 extra, sus reevaluaciones y sus resultados esperados.
+
+**Configuración** (`configuration.test.ts`) — la clave anon por sí sola no
+habilita Supabase para escritura (el error más fácil de cometer al desplegar,
+porque RLS solo concede lectura a anon); una variable vacía equivale a no
+definida, que es como Vercel crea las detectadas en `.env.example`; los
+interruptores `SCAYL_FORCE_*` ganan y lo explican en `/api/health`.
 
 **Producto** — ninguna decisión afirma haber tomado una decisión médica; toda
 notificación lleva la advertencia de que la atención no se interrumpe; las

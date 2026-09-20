@@ -13,7 +13,8 @@
     "test:coverage": "vitest run --coverage",
     "verify": "npm run typecheck && npm run lint && npm run test",
     "db:reset": "supabase db reset",
-    "db:push": "supabase db push"
+    "db:push": "supabase db push",
+    "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.23.0",
