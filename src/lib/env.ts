@@ -74,6 +74,18 @@ export function isSupabaseRealtimeConfigured(): boolean {
   return Boolean(env.supabaseUrl && env.supabaseAnonKey);
 }
 
+/**
+ * A Gemini model name is lowercase and hyphenated, like `gemini-3.5-flash`.
+ * An API key is not. /api/health is public, so it must never echo the raw
+ * value of a variable that could hold a credential pasted into the wrong box
+ * — which is exactly what happened once, exposing a live key.
+ */
+const MODEL_NAME_SHAPE = /^[a-z][a-z0-9]*(?:[-.][a-z0-9]+)+$/;
+
+export function looksLikeModelName(value: string): boolean {
+  return MODEL_NAME_SHAPE.test(value);
+}
+
 export function isGeminiConfigured(): boolean {
   return Boolean(env.geminiApiKey);
 }
@@ -136,7 +148,13 @@ export function envDiagnostics() {
     .filter((name) => RELATED_NAME.test(name) && !expected.includes(name))
     .sort();
 
-  return { present, geminiKeyShape, unrecognizedNames };
+  // Catches the credential-in-the-wrong-variable mistake immediately.
+  const rawModel = process.env.GEMINI_MODEL?.trim();
+  const geminiModelLooksLikeCredential = Boolean(
+    rawModel && (/^AIza/.test(rawModel) || !looksLikeModelName(rawModel)),
+  );
+
+  return { present, geminiKeyShape, geminiModelLooksLikeCredential, unrecognizedNames };
 }
 
 /** Reported by GET /api/health so the team can see what is live at a glance. */
@@ -147,7 +165,12 @@ export function runtimeCapabilities() {
     persistenceNote: persistenceNote(),
     realtimeAvailable: isSupabaseRealtimeConfigured(),
     aiProvider: !env.forceFixtureAi && isGeminiConfigured() ? 'gemini' : 'deterministic-fixture',
-    geminiModel: isGeminiConfigured() ? env.geminiModel : null,
+    // Never echoed verbatim: see MODEL_NAME_SHAPE.
+    geminiModel: isGeminiConfigured()
+      ? looksLikeModelName(env.geminiModel)
+        ? env.geminiModel
+        : '(GEMINI_MODEL no tiene forma de nombre de modelo — valor oculto)'
+      : null,
     env: envDiagnostics(),
   } as const;
 }

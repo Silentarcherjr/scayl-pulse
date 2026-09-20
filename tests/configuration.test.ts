@@ -162,4 +162,35 @@ describe('configuración de persistencia', () => {
     vi.stubEnv('GEMINI_MODEL', 'gemini-3.8-flash');
     expect(env.geminiModel).toBe('gemini-3.8-flash');
   });
+
+  it('/api/health NUNCA devuelve el valor crudo de GEMINI_MODEL si parece una credencial', () => {
+    // This actually happened: an API key was pasted into GEMINI_MODEL and the
+    // public health endpoint served it verbatim.
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_MODEL', 'AIzaSyFAKE0000000000000000000000000000');
+
+    const caps = runtimeCapabilities();
+    expect(caps.geminiModel).not.toContain('AIza');
+    expect(JSON.stringify(caps)).not.toContain('AIzaSyFAKE0000000000000000000000000000');
+    expect(caps.env.geminiModelLooksLikeCredential).toBe(true);
+  });
+
+  it('un nombre de modelo legítimo sí se muestra', () => {
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_MODEL', 'gemini-3.8-flash');
+
+    const caps = runtimeCapabilities();
+    expect(caps.geminiModel).toBe('gemini-3.8-flash');
+    expect(caps.env.geminiModelLooksLikeCredential).toBe(false);
+  });
+
+  it('el modelo por defecto pasa el filtro de forma', () => {
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    vi.stubEnv('GEMINI_MODEL', '');
+
+    expect(runtimeCapabilities().geminiModel).toBe('gemini-3.5-flash');
+  });
 });
