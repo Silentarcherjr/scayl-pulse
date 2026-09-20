@@ -7,8 +7,17 @@ Para cada herramienta la organización exige: **propósito**, **aplicación** y
 **resultados obtenidos**. Añadimos **validación humana** porque es lo que
 distingue un proyecto serio de una demo generada.
 
-> Cómo exportar a PDF: `pandoc docs/AI_USAGE_LOG.md -o SCAYL_Pulse_AI_Tools.pdf`
-> (o imprimir a PDF la vista renderizada de GitHub).
+> **PDF ya generado:**
+> [`docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf`](deliverables/SCAYL_Pulse_Herramientas_IA.pdf)
+> (4 páginas). Su fuente es
+> [`deliverables/ai-tools-report.html`](deliverables/ai-tools-report.html).
+>
+> Para regenerarlo tras actualizar las cifras:
+> ```bash
+> npm run build:pdf
+> ```
+> Este archivo sigue siendo la fuente viva: se actualiza durante el desarrollo
+> y el PDF se regenera antes de entregar.
 
 ---
 

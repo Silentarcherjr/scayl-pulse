@@ -74,11 +74,32 @@ está en su allowlist.
 npm run verify:deployment -- https://<tu-url>.vercel.app
 ```
 
-**Desde el móvil, sin computadora:** las sesiones en la nube tienen el tráfico
-limitado por allowlist y **no alcanzan Vercel ni Supabase** (sí GitHub, npm y
-Gemini). Para verificar producción desde donde estés, lanza el workflow
-**«Verificar producción»** desde la pestaña Actions de GitHub: corre las mismas
-12 comprobaciones desde un runner con salida libre.
+**Desde el móvil, sin computadora.** Verificado el 2026-09-20 en una sesión
+de Claude en la nube. Conviene distinguir dos cosas que se confunden:
+
+| Vía | Alcance |
+|---|---|
+| **Red del sandbox** (curl, tests, código) | Allowlist: ✅ `api.github.com`, `generativelanguage.googleapis.com`, `registry.npmjs.org` · ❌ Vercel, Supabase, resto de internet |
+| **Conectores MCP** | No pasan por esa allowlist, van por el proxy de Anthropic: ✅ Supabase, GitHub, Cloudflare |
+
+O sea: **sí se puede operar Supabase desde el móvil** —ejecutar SQL, aplicar
+migrations, leer advisors, reiniciar datos de demo— aunque `curl` a
+`*.supabase.co` falle. Lo que no se puede es que el *código* que corre ahí
+alcance Supabase o Vercel: nada de tests de integración ni de
+`verify:deployment` desde el sandbox.
+
+⚠️ **El conector de Supabase escribe en producción directamente, sin rama de
+staging.** Un agente no debe ejecutar nada que toque esquema o datos sin
+petición humana explícita.
+
+Para verificar producción desde donde estés, lanza el workflow **«Verificar
+producción»** desde la pestaña Actions de GitHub: corre las mismas 12
+comprobaciones desde un runner con salida libre.
+
+**Lo que sigue necesitando tus manos en un navegador:**
+- **Hacer público el repositorio.** Ninguna herramienta MCP expone el cambio de
+  visibilidad, así que no hay agente que pueda hacerlo. Bloquea el entregable #1.
+- **Variables de entorno en Vercel.**
 
 Es manual a propósito: cada ejecución crea 5 casos reales en producción y el
 tope es 200. El smoke de `/api/health` sí corre solo tras cada push a `main`,

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>SCAYL Pulse — Herramientas de IA utilizadas</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #14171f; line-height: 1.55; font-size: 10.5pt; margin: 0;
+  }
+  h1 { font-size: 21pt; margin: 0 0 4px; letter-spacing: -0.4px; }
+  h2 {
+    font-size: 13pt; margin: 26px 0 10px; padding-bottom: 5px;
+    border-bottom: 2px solid #0f62d6; page-break-after: avoid;
+  }
+  h3 { font-size: 11pt; margin: 16px 0 6px; color: #0f3d8a; page-break-after: avoid; }
+  p { margin: 0 0 9px; }
+  .sub { color: #5d6474; font-size: 11pt; margin-bottom: 2px; }
+  .meta { color: #5d6474; font-size: 9pt; }
+  header { border-bottom: 3px solid #14171f; padding-bottom: 12px; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 9.5pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #d8dce4; padding: 6px 9px; text-align: left; vertical-align: top; }
+  th { background: #eef2f8; font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .field { margin: 10px 0; }
+  .field > b { color: #0f3d8a; }
+  .field > b::after { content: " · "; color: #a8b0bf; font-weight: 400; }
+  /* Sin separador cuando la etiqueta encabeza una lista y no un párrafo. */
+  .field > b:only-child::after { content: ""; }
+  blockquote {
+    margin: 10px 0; padding: 9px 13px; background: #f5f7fb;
+    border-left: 3px solid #0f62d6; font-style: italic; page-break-inside: avoid;
+  }
+  ul { margin: 6px 0 10px; padding-left: 19px; }
+  li { margin-bottom: 3px; }
+  code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 9pt; background: #eef2f8; padding: 1px 4px; border-radius: 3px; }
+  .note { background: #fff8e6; border: 1px solid #e8d48a; padding: 9px 12px; margin: 12px 0; page-break-inside: avoid; }
+  .tool { page-break-inside: avoid; }
+  footer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d8dce4; color: #5d6474; font-size: 8.5pt; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SCAYL&nbsp;Pulse — Herramientas de IA utilizadas</h1>
+  <p class="sub">Sistema de Alerta Temprana de Ingresos a Emergencias</p>
+  <p class="meta">
+    hackIAthon Panamá · reto clasificatorio · 20 de septiembre de 2026<br>
+    Repositorio: github.com/Silentarcherjr/scayl-pulse · Demostración: scayl-pulse.vercel.app
+  </p>
+</header>
+
+<p>Este informe documenta, para cada herramienta de IA empleada, su
+<b>propósito</b>, su <b>aplicación</b> concreta, los <b>resultados obtenidos</b> y
+la <b>validación humana</b> que recibió. Las cifras del apartado de Gemini
+están medidas sobre el despliegue en producción y proceden de la tabla
+<code>ai_interactions</code>, donde el sistema registra cada llamada: son
+auditables, no estimadas.</p>
+
+<table>
+  <tr><th>Herramienta</th><th>Rol</th><th>Workstream</th></tr>
+  <tr><td>Claude Code (Opus 5)</td><td>Technical Lead y Backend Lead</td><td>A — Backend</td></tr>
+  <tr><td>Codex</td><td>Frontend e integraciones</td><td>B y C</td></tr>
+  <tr><td>Google Gemini</td><td>Componente del producto: analizador documental</td><td>Integrado en A</td></tr>
+</table>
+
+<h2>1 · Claude Code — Anthropic, modelo Opus 5</h2>
+<div class="tool">
+<div class="field"><b>Propósito</b> Actuar como Technical Lead y Backend Lead: diseñar la arquitectura,
+implementar el backend, definir los contratos que permiten a los otros dos workstreams trabajar en
+paralelo, y dejar el repositorio operativo para el resto del equipo.</div>
+
+<div class="field"><b>Aplicación</b></div>
+<ul>
+  <li>Modelo de dominio: máquina de siete estados con fuente única de verdad y transiciones validadas.</li>
+  <li>Capa determinística: validación de póliza, requisitos documentales y evaluación de preexistencias sobre una tabla clínica declarada.</li>
+  <li><b>Safety Gate</b>: suelo determinístico sobre el que el modelo solo puede endurecer, nunca ampliar.</li>
+  <li>Integración de Gemini detrás de un puerto, con salida estructurada, validación de esquema, cadena de modelos y presupuesto de tiempo.</li>
+  <li>Esquema de Supabase con inmutabilidad del timeline forzada por <i>triggers</i> de PostgreSQL.</li>
+  <li>94 tests, incluidos los adversarios contra el Safety Gate; CI en GitHub Actions.</li>
+  <li>Toda la documentación técnica y de coordinación del equipo.</li>
+</ul>
+
+<div class="field"><b>Resultados</b> Backend funcional de extremo a extremo, desplegado y verificado en
+producción con Supabase y Gemini reales: 12/12 comprobaciones automáticas. Los tres escenarios
+obligatorios son reproducibles y siguen dando el resultado correcto incluso con el proveedor de IA
+caído. 94/94 tests en verde.</div>
+
+<div class="field"><b>Validación humana</b> Revisión de arquitectura y decisiones antes de cada
+integración. Las decisiones no triviales están registradas en <code>docs/DECISIONS.md</code> con su
+justificación, de modo que son auditables en lugar de tener que confiarse.
+<b>Ninguna idea de producto se implementó sin aprobación humana explícita</b>: las propuestas
+quedaron registradas como <code>PROPOSED</code> hasta que una persona las aprobó una por una.</div>
+</div>
+
+<h2 style="page-break-before: auto">2 · Codex — OpenAI</h2>
+<div class="tool">
+<div class="field"><b>Propósito</b> Implementar el frontend (Workstream B) y las integraciones, demo y
+QA (Workstream C) en paralelo al backend, guiados por un documento de instrucciones que detecta la
+rama activa y asigna el rol correspondiente.</div>
+<div class="field"><b>Aplicación</b> Pendiente de completar por los responsables de cada workstream.</div>
+<div class="field"><b>Resultados</b> Pendiente.</div>
+<div class="field"><b>Validación humana</b> Pendiente.</div>
+</div>
+
+<h2>3 · Google Gemini — componente del producto</h2>
+<div class="tool">
+<div class="field"><b>Propósito</b> Es la pieza de IA <i>dentro</i> del agente, no una herramienta de
+desarrollo. Analiza la evidencia documental del expediente y produce un análisis estructurado:
+resumen, motivo, evidencia citada, documentos faltantes y condiciones potencialmente relacionadas.
+Redacta además el resumen que lee un gestor de casos al abrir un expediente.</div>
+
+<div class="field"><b>Aplicación</b></div>
+<ul>
+  <li>Salida estructurada con esquema JSON; toda respuesta se valida antes de que ningún consumidor la vea.</li>
+  <li>Recibe <b>hechos estructurados</b>, no prosa: la validez administrativa ya la resolvieron las reglas, de modo que el modelo analiza y explica, no extrae verdad.</li>
+  <li>El modelo produce una <b>propuesta</b>; un Safety Gate determinístico decide.</li>
+  <li>Sus citas de evidencia se verifican contra los registros reales del caso; las que apuntan a registros inexistentes se descartan antes de llegar a la interfaz.</li>
+</ul>
+
+<div class="field"><b>Resultados obtenidos</b> (medidos en producción)</div>
+<table>
+  <tr><th>Métrica</th><th style="width:26%">Valor</th></tr>
+  <tr><td>Llamadas a Gemini</td><td class="num">16</td></tr>
+  <tr><td>Respuestas válidas contra el esquema</td><td class="num">8 · 50 %</td></tr>
+  <tr><td>Respuestas que fallaron la validación de esquema</td><td class="num">0</td></tr>
+  <tr><td>Latencia media de una respuesta válida</td><td class="num">12,6 s</td></tr>
+  <tr><td>Modelo primario con <code>503 high demand</code></td><td class="num">3</td></tr>
+  <tr><td>Resueltas por la cadena de modelos de respaldo</td><td class="num">7 de 8</td></tr>
+  <tr><td><b>Veces que el Safety Gate corrigió al modelo</b></td><td class="num"><b>0</b></td></tr>
+</table>
+
+<p><b>Lectura honesta de estas cifras.</b> La tasa de validez del 50 % <i>no</i> mide la calidad del
+modelo: mide la carga de la infraestructura de Google durante la prueba. Los fallos fueron
+<code>503</code> y tiempos de espera agotados. <b>Ninguna respuesta de Gemini falló la validación de
+esquema</b>: cuando contesta, contesta bien formada.</p>
+
+<p>Que el Safety Gate no haya tenido que corregir al modelo ninguna vez <b>es un buen resultado, no
+una prueba fallida</b>: con hechos estructurados como entrada, el modelo llegó a la misma conclusión
+que las reglas en los cinco escenarios. Su capacidad de corregirlo está demostrada aparte, en tests
+que lo enfrentan a un modelo adversario que propone verificar una póliza vencida y cita pólizas
+inexistentes; ahí el Gate lo restringe y descarta las citas inventadas.</p>
+
+<div class="field"><b>Ejemplo real de salida</b> (escenario RED, confianza declarada 0,7)</div>
+<blockquote>La póliza está activa y el hospital está en red, y toda la documentación requerida ha
+sido presentada. Sin embargo, existen condiciones preexistentes (Hipertensión arterial esencial y
+Dislipidemia mixta) que podrían estar relacionadas con el motivo de ingreso actual (dolor torácico)
+y no han sido aclaradas por la evidencia actual.</blockquote>
+<p>El modelo propuso <i>revisión humana</i> por su cuenta, coincidiendo con la regla determinística,
+y citó únicamente registros existentes en la base de datos.</p>
+
+<div class="field"><b>Validación humana</b></div>
+<ul>
+  <li>El modelo nunca decide solo: el Safety Gate puede endurecer su propuesta y nunca ampliarla.</li>
+  <li>Cada llamada se registra con proveedor, modelo, validez, latencia y error.</li>
+  <li>Cuando el modelo no está disponible se usa un analizador determinístico que <b>se identifica como tal</b> en la base de datos, en el timeline y en la interfaz. <b>Nunca se falsifica una llamada a Gemini.</b></li>
+</ul>
+</div>
+
+<h2>4 · Incidencias reales durante la integración</h2>
+<p>Se documentan porque evidencian verificación real y no una integración de escaparate.</p>
+<table>
+  <tr><th style="width:27%">Incidencia</th><th>Diagnóstico y resolución</th></tr>
+  <tr><td>Formato de clave</td><td>Google migró las claves de Gemini de <code>AIza</code> a <code>AQ.</code> durante 2026. La validación reconocía solo el formato antiguo y rechazaba una clave válida. Corregido: reconoce ambos e informa del formato detectado.</td></tr>
+  <tr><td>Modelo en retirada</td><td><code>gemini-2.5-flash</code> se apaga el 16 de octubre de 2026. El predeterminado pasó a <code>gemini-3.5-flash</code>, con el anterior como respaldo mientras siga vivo.</td></tr>
+  <tr><td>Saturación del proveedor</td><td><code>503 high demand</code> frecuente. Reintentar el mismo modelo devuelve 503 de nuevo, así que el sistema recorre una cadena de modelos: 7 de 8 respuestas válidas llegaron por esa vía.</td></tr>
+  <tr><td>Presupuesto de tiempo</td><td>Un tiempo de espera fijo demasiado corto convirtió un servicio lento en uno que fallaba siempre. Sustituido por un presupuesto total repartido entre los pasos de un escenario.</td></tr>
+</table>
+
+<h2>5 · Principios aplicados al uso de IA</h2>
+<ul>
+  <li><b>Las reglas determinísticas prevalecen sobre el modelo, siempre.</b> Es una propiedad estructural verificada por tests, no una promesa.</li>
+  <li><b>El sistema no emite diagnósticos</b> ni decisiones clínicas, y no puede impedir la atención de emergencia. Cada notificación que sale lo declara por escrito.</li>
+  <li><b>No se inventa evidencia.</b> Las citas del modelo se verifican contra los registros reales del caso.</li>
+  <li><b>Honestidad sobre el origen.</b> Una decisión solo se etiqueta como asistida por IA cuando un modelo real la produjo; si no, se marca como determinística o como IA no disponible.</li>
+  <li><b>Datos exclusivamente sintéticos.</b> El repositorio no contiene información médica real.</li>
+  <li><b>El cierre del caso es humano.</b> Exige nombre y motivo, y registra si la persona contradijo la recomendación del sistema.</li>
+</ul>
+
+<footer>
+  SCAYL Pulse · hackIAthon Panamá 2026 · Equipo: Anthony Morell, Carlos, Sebastián<br>
+  Fuente viva de este informe: <code>docs/AI_USAGE_LOG.md</code> en el repositorio.
+</footer>
+
+</body>
+</html>

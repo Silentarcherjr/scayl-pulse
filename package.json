@@ -14,7 +14,8 @@
     "verify": "npm run typecheck && npm run lint && npm run test",
     "db:reset": "supabase db reset",
     "db:push": "supabase db push",
-    "verify:deployment": "node scripts/verify-deployment.mjs"
+    "verify:deployment": "node scripts/verify-deployment.mjs",
+    "build:pdf": "\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless --disable-gpu --no-pdf-header-footer --print-to-pdf=docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf docs/deliverables/ai-tools-report.html"
   },
   "dependencies": {
     "@google/genai": "^2.23.0",
