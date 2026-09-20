@@ -22,7 +22,32 @@ export class GeminiProvider implements AiProvider {
     this.client = new GoogleGenAI({ apiKey: key });
   }
 
+  /** 429 and 5xx are explicitly temporary; auth and schema errors are not. */
+  private static isTransient(message: string): boolean {
+    return /\b(429|500|502|503|504)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(message);
+  }
+
   async analyze(request: AnalyzerRequest): Promise<AnalyzerResponse> {
+    const startedAt = Date.now();
+    // One retry only. Gemini returned a genuine 503 "high demand" during
+    // testing; retrying once turns a transient spike into a successful call
+    // instead of a silent drop to the deterministic fallback. Retrying an
+    // auth or schema failure would only burn the request budget.
+    const first = await this.attempt(request);
+    if (first.raw || !GeminiProvider.isTransient(first.error ?? '')) {
+      return { ...first, latencyMs: Date.now() - startedAt };
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    const second = await this.attempt(request);
+    return {
+      ...second,
+      error: second.raw ? null : `${first.error} (reintento: ${second.error})`,
+      latencyMs: Date.now() - startedAt,
+    };
+  }
+
+  private async attempt(request: AnalyzerRequest): Promise<AnalyzerResponse> {
     const startedAt = Date.now();
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), request.timeoutMs);

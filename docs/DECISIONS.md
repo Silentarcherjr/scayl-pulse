@@ -54,6 +54,13 @@ archivo. El resto del sistema no importa nunca el SDK de Google.
 `src/core/ai/prompts.ts` y `src/core/domain/schemas.ts`, no dentro del
 proveedor.
 
+**Modelo (revisado 2026-09-20):** por defecto `gemini-3.5-flash`.
+`gemini-2.5-flash` **se apaga el 16 de octubre de 2026**, así que no se entrega
+nada apuntando a él. Cambiar de modelo —por ejemplo a `gemini-3.8-flash`, el
+más capaz de la familia flash— es poner `GEMINI_MODEL` en el entorno, sin
+tocar código. Ese es exactamente el beneficio de tener el proveedor detrás de
+un puerto.
+
 ---
 
 ## DEC-004 — La relación clínica la decide una tabla declarada, no el modelo

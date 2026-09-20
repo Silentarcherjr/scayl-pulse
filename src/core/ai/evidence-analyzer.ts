@@ -9,7 +9,13 @@ import { GeminiProvider } from './gemini-provider';
 import { SYSTEM_INSTRUCTION, buildUserPrompt } from './prompts';
 import type { AiProvider } from './provider';
 
-export const ANALYZER_TIMEOUT_MS = 20_000;
+/**
+ * Kept tight on purpose: a scenario with follow-ups runs the pipeline up to
+ * three times in a single HTTP request, so the per-call budget has to fit
+ * inside the platform's function limit. Exceeding it degrades to the
+ * deterministic analyzer, which is safe and honestly labelled.
+ */
+export const ANALYZER_TIMEOUT_MS = 10_000;
 
 export interface AnalyzeResult {
   analysis: AiAnalysis | null;

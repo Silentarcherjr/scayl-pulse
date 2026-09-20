@@ -84,7 +84,7 @@ describe('configuración de persistencia', () => {
 
     vi.stubEnv('GEMINI_API_KEY', 'test-key');
     expect(runtimeCapabilities().aiProvider).toBe('gemini');
-    expect(runtimeCapabilities().geminiModel).toBe('gemini-2.5-flash');
+    expect(runtimeCapabilities().geminiModel).toBe('gemini-3.5-flash');
   });
 
   it('un nombre mal escrito se delata en el diagnóstico', () => {
@@ -116,5 +116,50 @@ describe('configuración de persistencia', () => {
     vi.stubEnv('AWS_SECRET_ACCESS_KEY', 'no-es-asunto-nuestro');
 
     expect(envDiagnostics().unrecognizedNames).not.toContain('AWS_SECRET_ACCESS_KEY');
+  });
+
+  it('detecta una clave de Gemini que no tiene forma de API key', () => {
+    // The real failure this catches: Google rejects a non-API-key credential
+    // with an opaque 401 ACCESS_TOKEN_TYPE_UNSUPPORTED that names no cause.
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'ya29.un-token-oauth-no-es-una-api-key');
+
+    const shape = envDiagnostics().geminiKeyShape;
+    expect(shape?.looksLikeGoogleApiKey).toBe(false);
+  });
+
+  it('reconoce una clave con forma válida y delata los espacios en blanco', () => {
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv\n');
+
+    const shape = envDiagnostics().geminiKeyShape;
+    expect(shape?.looksLikeGoogleApiKey).toBe(true);
+    expect(shape?.hadWhitespace).toBe(true);
+  });
+
+  it('el diagnóstico de la clave nunca incluye la clave', () => {
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', 'AIzaSyA1234567890abcdefghijklmnopqrstuv');
+
+    const serialized = JSON.stringify(envDiagnostics());
+    expect(serialized).not.toContain('AIzaSyA1234567890abcdefghijklmnopqrstuv');
+    expect(serialized).not.toContain('AIzaSy');
+  });
+
+  it('una clave con salto de línea se normaliza antes de usarse', async () => {
+    baseline();
+    vi.stubEnv('GEMINI_API_KEY', '  AIzaSyA1234567890abcdefghijklmnopqrstuv\n');
+    const { env } = await import('@/lib/env');
+    expect(env.geminiApiKey).toBe('AIzaSyA1234567890abcdefghijklmnopqrstuv');
+  });
+
+  it('el modelo por defecto ya no es uno que se apaga en octubre de 2026', async () => {
+    baseline();
+    vi.stubEnv('GEMINI_MODEL', '');
+    const { env } = await import('@/lib/env');
+    expect(env.geminiModel).toBe('gemini-3.5-flash');
+
+    vi.stubEnv('GEMINI_MODEL', 'gemini-3.8-flash');
+    expect(env.geminiModel).toBe('gemini-3.8-flash');
   });
 });

@@ -7,6 +7,9 @@ import { handleRouteError, ok } from '@/lib/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// A scenario with follow-ups runs the pipeline up to three times, each with a
+// model call, so the default function limit is not enough.
+export const maxDuration = 60;
 
 const bodySchema = z
   .object({ applyFollowUps: z.boolean().default(false) })
