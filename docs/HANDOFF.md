@@ -56,6 +56,19 @@ las tablas creadas, cada ingreso falla contra tablas inexistentes.
 gh repo edit Silentarcherjr/scayl-pulse --visibility public --accept-visibility-change-consequences
 ```
 
+**Y justo después, protege `main`:**
+```bash
+bash scripts/protect-main.sh
+```
+GitHub no permite proteger ramas en repos privados con cuenta gratuita (pide
+Pro), así que este paso **solo funciona una vez el repo es público**. Hazlo en
+la misma sesión para no olvidarlo: deja `main` accesible solo por Pull Request
+con CI en verde, sin aprobaciones requeridas para no bloquearos, y sin force
+push ni borrado. Los admins pueden saltárselo en una emergencia.
+
+Una sesión de Claude en la nube también puede ejecutarlo: `api.github.com`
+está en su allowlist.
+
 **2 · Verificar el despliegue**
 ```bash
 npm run verify:deployment -- https://<tu-url>.vercel.app
