@@ -15,7 +15,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 | 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
-| 5 | Obtener `GEMINI_API_KEY` en https://aistudio.google.com/apikey | Anthony | ⬜ pendiente · bloquea las métricas del PDF |
+| 5 | `GEMINI_API_KEY` | Anthony | ✅ configurada y verificada en producción |
 | 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ⬜ pendiente |
 | 7 | Invitar a Carlos y Sebastián | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
 
@@ -174,8 +174,17 @@ Ninguno abierto.
 **Fecha:** —
 **Último commit:** —
 
-**Qué funciona:** —
+**Qué funciona:** el backend entero, desplegado y con contrato cerrado.
 **Qué falta:** todo el dashboard. Punto de partida: `docs/API_CONTRACT.md`.
+
+**Dos ideas aprobadas que te tocan a ti:**
+- **IDEA-006** — el panel «¿Por qué tomó esta decisión?». El backend ya te da
+  `decision.checks` con las doce comprobaciones, su estado, su evidencia y el
+  suelo que imponen. Solo hay que pintarlo: ✓ ⚠ ✕ —. Está en el contrato con
+  ejemplo. **Es lo que convierte esto en IA auditable; priorízalo.**
+- **IDEA-004** — formulario de ingreso libre contra `POST /api/admissions`,
+  para que un evaluador escriba su propio caso.
+
 **Archivos modificados:** —
 **Próximo paso exacto:** lista de casos contra `GET /api/cases`.
 **Tests passing:** — · **Tests failing:** —

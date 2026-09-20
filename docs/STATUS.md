@@ -7,7 +7,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-20 00:20
+**Última actualización:** 2026-09-20 07:20
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-20 00:20
+**Última actualización:** 2026-09-20 07:20
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -57,6 +57,12 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   `AI_UNAVAILABLE` (se intentó y falló) y `DETERMINISTIC` (sin proveedor).
 - **Tope de casos almacenados** con respuesta `429`: los endpoints de escritura
   son públicos a propósito y sin tope cualquiera puede inflar la base.
+- **Gemini funcionando de extremo a extremo en producción**, con cadena de
+  modelos ante saturación y presupuesto de tiempo repartido entre los pasos de
+  un escenario. Métricas reales en `AI_USAGE_LOG.md`.
+- **IDEA-006 entregada (backend)**: `AgentDecision.checks` expone las doce
+  comprobaciones con su estado, evidencia y el suelo que imponen — incluidas
+  las que pasan. Falta el panel, que es del Workstream B.
 - **CI en GitHub Actions**: typecheck, lint, tests, build y las 12
   comprobaciones de extremo a extremo en cada push. Detectó en su primer
   intento que `npm run verify` fallaba en un clon limpio (dependíamos de un
@@ -84,8 +90,8 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests
-**59 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
-`verify:deployment` **12/12 contra producción con Supabase real**.
+**79 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
+`verify:deployment` **12/12 contra producción con Supabase y Gemini reales**.
 
 ---
 
