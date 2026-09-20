@@ -51,6 +51,15 @@ export const evidenceInputSchema = z.object({
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
+export const resolveInputSchema = z.object({
+  outcome: z.enum(['COVERAGE_CONFIRMED', 'COVERAGE_DENIED', 'CANCELLED']),
+  // Required, and deliberately not defaulted: closing a case is a human act
+  // and the record has to name the person who performed it.
+  resolvedBy: z.string().min(2).max(120),
+  reason: z.string().min(10).max(2_000),
+  notes: z.string().max(2_000).optional(),
+});
+
 // ---------------------------------------------------------------------------
 // AI output contract — validated before ANYTHING downstream touches it
 // ---------------------------------------------------------------------------

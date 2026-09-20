@@ -1,6 +1,6 @@
 import { canTransition, type CaseStatus } from '@/core/domain/case-status';
 import { analyzeEvidence } from '@/core/ai/evidence-analyzer';
-import { notifyBothChannels } from '@/core/notifications/notifier';
+import { notifyBothChannels, notifyResolution } from '@/core/notifications/notifier';
 import { applySafetyGate } from '@/core/safety/safety-gate';
 import { getRepository, type CaseRepository } from '@/core/repository';
 import { logger } from '@/lib/logger';
@@ -10,6 +10,7 @@ import type {
   AdmissionInput,
   AgentDecision,
   CaseEvidence,
+  CaseResolution,
   EmergencyCase,
 } from '@/core/domain/types';
 import { buildCaseFacts, type CaseFacts } from './case-facts';
@@ -155,6 +156,84 @@ export class CaseOrchestrator {
     });
 
     return this.runPipeline(reassessing, { isUpdate: true });
+  }
+
+  // -------------------------------------------------------------------------
+  // Human closure — the only decision a person makes directly
+  // -------------------------------------------------------------------------
+  async resolveCase(
+    caseId: string,
+    input: { outcome: CaseResolution['outcome']; resolvedBy: string; reason: string; notes?: string },
+  ): Promise<{ case: EmergencyCase; resolution: CaseResolution }> {
+    const caseRecord = await this.repository.getCase(caseId);
+    if (!caseRecord) throw ApiError.notFound(`Case ${caseId} not found`);
+
+    if (caseRecord.status === 'RESOLVED') {
+      throw ApiError.conflict('El caso ya está cerrado. Los casos cerrados no se reabren.', {
+        caseId,
+        resolvedBy: caseRecord.resolution?.resolvedBy ?? null,
+        resolvedAt: caseRecord.resolution?.resolvedAt ?? null,
+      });
+    }
+    if (!canTransition(caseRecord.status, 'RESOLVED')) {
+      throw ApiError.conflict(
+        `No se puede cerrar un caso en estado ${caseRecord.status}: hay una evaluación en curso.`,
+        { caseId, status: caseRecord.status },
+      );
+    }
+
+    const resolution: CaseResolution = {
+      outcome: input.outcome,
+      resolvedBy: input.resolvedBy,
+      reason: input.reason,
+      notes: input.notes,
+      statusAtResolution: caseRecord.status,
+      // Legitimate and expected — but it is the thing an auditor looks for.
+      overrodeSystemRecommendation:
+        input.outcome === 'COVERAGE_CONFIRMED' && caseRecord.status !== 'VERIFIED',
+      resolvedAt: new Date().toISOString(),
+    };
+
+    const updated = await this.repository.resolveCase(caseId, resolution);
+
+    await this.repository.appendEvent({
+      caseId,
+      // INSURER: a person acting for the insurer, never the system or an agent.
+      actor: 'INSURER',
+      type: 'CASE_RESOLVED',
+      statusBefore: caseRecord.status,
+      statusAfter: 'RESOLVED',
+      message: `Caso cerrado por ${resolution.resolvedBy}: ${resolution.outcome}. ${resolution.reason}`,
+      payload: { resolution },
+    });
+
+    const facts = await buildCaseFacts(this.repository, updated);
+    const outcome = await notifyResolution({
+      repository: this.repository,
+      caseRecord: updated,
+      facts,
+      resolution,
+    });
+
+    for (const notification of outcome.notifications) {
+      await this.repository.appendEvent({
+        caseId,
+        type: notification.channel === 'HOSPITAL_ADMISSIONS' ? 'HOSPITAL_NOTIFIED' : 'INSURER_NOTIFIED',
+        actor: 'SYSTEM',
+        statusBefore: 'RESOLVED',
+        statusAfter: 'RESOLVED',
+        message: `Cierre notificado a ${notification.recipient}.`,
+        payload: { notificationId: notification.id },
+      });
+    }
+
+    logger.info('Case resolved by a human', {
+      caseId,
+      outcome: resolution.outcome,
+      overrodeSystemRecommendation: resolution.overrodeSystemRecommendation,
+    });
+
+    return { case: updated, resolution };
   }
 
   // -------------------------------------------------------------------------

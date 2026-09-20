@@ -183,3 +183,35 @@ forma deliberada antes de entregar, porque el reto exige un repositorio
 consultable por el jurado.
 
 **Comando:** `gh repo edit Silentarcherjr/scayl-pulse --visibility public --accept-visibility-change-consequences`
+
+---
+
+## DEC-011 — El cierre del caso es humano y terminal
+**Estado:** ACCEPTED · 2026-09-20
+
+**Contexto.** `RESOLVED` existía en la máquina de estados pero ningún endpoint
+lo producía. Faltaba cerrar el bucle: quién da por terminado un expediente.
+
+**Decisión.** `POST /api/cases/:id/resolve` lo cierra, y es **la única decisión
+del sistema que toma una persona directamente**. Por eso:
+
+- `resolvedBy` y `reason` son **obligatorios y sin valor por defecto**. Un
+  cierre anónimo o sin motivo no es un cierre, es una pérdida de trazabilidad.
+- El evento se atribuye al actor `INSURER`, nunca a `SYSTEM` ni a `AI_AGENT`.
+- Se guarda `statusAtResolution` y, sobre todo,
+  **`overrodeSystemRecommendation`**: true cuando una persona confirma la
+  cobertura de un caso que el sistema **no** había verificado. Es legítimo —es
+  exactamente para lo que existe el human-in-the-loop— pero es lo primero que
+  mirará un auditor, así que se almacena explícito en lugar de deducirse. La
+  notificación de cierre lo dice en texto claro.
+- Ningún agente puede cerrar un caso: no hay ruta interna que lo permita.
+
+**El cierre es terminal.** Un caso `RESOLVED` no se reabre y rechaza evidencia
+nueva con `409`. Un expediente cerrado es un registro de auditoría; si aparece
+información nueva, lo correcto es un caso nuevo que lo referencie, no
+reescribir la historia de uno cerrado. Esto resuelve la pregunta abierta que
+quedaba en `HANDOFF.md`.
+
+**Consecuencias.** `cases.resolution` es una columna `jsonb` con índice sobre
+el `outcome`, para que un dashboard pueda filtrar por resultado sin recorrer
+el timeline.

@@ -8,6 +8,7 @@ import type {
   AiInteraction,
   CaseEvent,
   CaseEvidence,
+  CaseResolution,
   EmergencyCase,
   Hospital,
   MedicalHistoryEntry,
@@ -79,6 +80,7 @@ const toCase = (r: any): EmergencyCase => ({
   policyId: r.policy_id,
   admission: r.admission as AdmissionInput,
   currentDecision: (r.current_decision ?? null) as AgentDecision | null,
+  resolution: (r.resolution ?? null) as CaseResolution | null,
   scenarioId: r.scenario_id,
   createdAt: r.created_at,
   updatedAt: r.updated_at,
@@ -254,6 +256,16 @@ export class SupabaseCaseRepository implements CaseRepository {
       .select('*')
       .single();
     return toCase(unwrap(result, 'updateCaseDecision'));
+  }
+
+  async resolveCase(caseId: string, resolution: CaseResolution) {
+    const result = await this.db
+      .from('cases')
+      .update({ status: 'RESOLVED', resolution, updated_at: new Date().toISOString() })
+      .eq('id', caseId)
+      .select('*')
+      .single();
+    return toCase(unwrap(result, 'resolveCase'));
   }
 
   // Timeline ----------------------------------------------------------------

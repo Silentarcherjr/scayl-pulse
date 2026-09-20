@@ -15,6 +15,7 @@ import type {
   Patient,
   Policy,
 } from '@/core/domain/types';
+import type { CaseResolution } from '@/core/domain/types';
 import type { CaseStatus } from '@/core/domain/case-status';
 
 export interface AppendEventInput {
@@ -75,6 +76,7 @@ export interface CaseRepository {
   countCases(): Promise<number>;
   updateCaseStatus(caseId: string, status: CaseStatus): Promise<EmergencyCase>;
   updateCaseDecision(caseId: string, status: CaseStatus, decision: AgentDecision): Promise<EmergencyCase>;
+  resolveCase(caseId: string, resolution: CaseResolution): Promise<EmergencyCase>;
 
   // Append-only timeline ----------------------------------------------------
   appendEvent(input: AppendEventInput): Promise<CaseEvent>;

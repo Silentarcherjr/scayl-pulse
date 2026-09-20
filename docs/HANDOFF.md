@@ -133,9 +133,8 @@ Todo el backend, de extremo a extremo, **sin ninguna credencial**:
   instancia real. **Riesgo: medio-bajo.**
 - Gemini real: la integración está escrita y validada por esquema, pero no ha
   hecho una sola llamada real. **Riesgo: medio.**
-- `RESOLVED` está en la máquina de estados pero ningún endpoint lo produce
-  todavía. Falta `POST /api/cases/:id/resolve` para el cierre manual por parte
-  de un gestor.
+- ~~`RESOLVED` sin endpoint~~ ✅ entregado: `POST /api/cases/:id/resolve`
+  (DEC-011). El backend ya no tiene huecos funcionales.
 
 ### Archivos modificados
 Todo el repositorio. Origen del proyecto.
@@ -174,9 +173,9 @@ Ninguno abierto.
    el entregable #1. Marcado como acción humana #1.
 
 ### Preguntas abiertas
-- ¿Un caso `RESOLVED` debe poder reabrirse? Ahora mismo es terminal y rechaza
-  evidencia nueva con `409`. Parece correcto, pero conviene confirmarlo con el
-  planteamiento del reto.
+- ~~¿Un caso `RESOLVED` debe poder reabrirse?~~ Resuelto en DEC-011: es
+  terminal. Un expediente cerrado es un registro de auditoría; si aparece
+  información nueva, lo correcto es abrir un caso nuevo que lo referencie.
 
 ---
 

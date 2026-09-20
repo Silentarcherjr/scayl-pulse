@@ -34,6 +34,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       patient: patient ? { id: patient.id, fullName: patient.fullName, birthDate: patient.birthDate } : null,
       policy,
       decision: caseRecord.currentDecision,
+      resolution: caseRecord.resolution,
       evidence,
       notifications,
       eventCount: events.length,

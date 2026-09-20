@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
         triageLevel: c.admission.triageLevel,
         requiresHuman: c.currentDecision?.requiresHuman ?? false,
         decisionStatus: c.currentDecision?.status ?? null,
+        resolutionOutcome: c.resolution?.outcome ?? null,
         createdAt: c.createdAt,
         updatedAt: c.updatedAt,
       })),

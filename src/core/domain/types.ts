@@ -128,6 +128,7 @@ export interface EmergencyCase {
   policyId: string | null;
   admission: AdmissionInput;
   currentDecision: AgentDecision | null;
+  resolution: CaseResolution | null;
   scenarioId: string | null;
   createdAt: string;
   updatedAt: string;
@@ -207,6 +208,32 @@ export interface CaseSummary {
   generatedAt: string;
   /** Which decision this summary describes; used to invalidate the cache. */
   decisionGeneratedAt: string | null;
+}
+
+/**
+ * How a human closed the case. This is the only decision in the system that a
+ * person makes directly, so it records who, why, and whether they went against
+ * what the system recommended.
+ */
+export const RESOLUTION_OUTCOMES = ['COVERAGE_CONFIRMED', 'COVERAGE_DENIED', 'CANCELLED'] as const;
+
+export type ResolutionOutcome = (typeof RESOLUTION_OUTCOMES)[number];
+
+export interface CaseResolution {
+  outcome: ResolutionOutcome;
+  /** The person who closed it. Never an agent. */
+  resolvedBy: string;
+  reason: string;
+  notes?: string;
+  /** Status the system had reached when the human closed the case. */
+  statusAtResolution: CaseStatus;
+  /**
+   * True when a person confirmed coverage on a case the system had NOT
+   * verified. Entirely legitimate — that is what human-in-the-loop is for —
+   * but it is the single most important thing an auditor will look for.
+   */
+  overrodeSystemRecommendation: boolean;
+  resolvedAt: string;
 }
 
 // ---------------------------------------------------------------------------

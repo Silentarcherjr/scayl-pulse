@@ -6,6 +6,7 @@ import type {
   AiInteraction,
   CaseEvent,
   CaseEvidence,
+  CaseResolution,
   EmergencyCase,
   Hospital,
   MedicalHistoryEntry,
@@ -101,6 +102,7 @@ export class InMemoryCaseRepository implements CaseRepository {
       policyId: input.policyId,
       admission: clone(input.admission),
       currentDecision: null,
+      resolution: null,
       scenarioId: input.scenarioId,
       createdAt: at,
       updatedAt: at,
@@ -148,6 +150,18 @@ export class InMemoryCaseRepository implements CaseRepository {
       ...record,
       status,
       currentDecision: clone(decision),
+      updatedAt: nowIso(),
+    };
+    this.store.cases.set(caseId, updated);
+    return clone(updated);
+  }
+
+  async resolveCase(caseId: string, resolution: CaseResolution) {
+    const record = this.mustGet(caseId);
+    const updated: EmergencyCase = {
+      ...record,
+      status: 'RESOLVED',
+      resolution: clone(resolution),
       updatedAt: nowIso(),
     };
     this.store.cases.set(caseId, updated);

@@ -245,6 +245,7 @@ Detalle completo del caso, para la vista de hospital y la de aseguradora.
     "patient": { "id": "…", "fullName": "…", "birthDate": "…" },
     "policy": { "policyNumber": "POL-3003", "status": "ACTIVE", "effectiveFrom": "…", "effectiveTo": "…", "…": "…" },
     "decision": { },
+    "resolution": null,
     "evidence": [ ],
     "notifications": [ ],
     "eventCount": 12,
@@ -294,6 +295,50 @@ un documento aclara un antecedente concreto. También se detecta por el texto
 
 **`201`** — misma forma que `/api/admissions`.
 **`409`** si el caso está `RESOLVED` o hay una evaluación en curso.
+
+---
+
+### `POST /api/cases/:id/resolve`
+Cierra el caso. **Es la única decisión del sistema que toma una persona.**
+
+```json
+{
+  "outcome": "COVERAGE_CONFIRMED",
+  "resolvedBy": "Gestora de casos: L. Ramírez",
+  "reason": "Cobertura verificada y confirmada tras revisar el expediente.",
+  "notes": "Opcional."
+}
+```
+
+| Campo | Req. | Notas |
+|---|---|---|
+| `outcome` | ✅ | `COVERAGE_CONFIRMED` \| `COVERAGE_DENIED` \| `CANCELLED` |
+| `resolvedBy` | ✅ | Quién cierra. **Sin valor por defecto**: un cierre anónimo no es un cierre. |
+| `reason` | ✅ | Mínimo 10 caracteres. |
+| `notes` | ⬜ | |
+
+**`200`**
+```json
+{ "ok": true, "data": { "caseId": "…", "status": "RESOLVED", "resolution": {
+  "outcome": "COVERAGE_CONFIRMED",
+  "resolvedBy": "…", "reason": "…",
+  "statusAtResolution": "HUMAN_REVIEW",
+  "overrodeSystemRecommendation": true,
+  "resolvedAt": "…"
+} } }
+```
+
+`overrodeSystemRecommendation` es `true` cuando una persona confirma la
+cobertura de un caso que el sistema **no** había verificado. Es legítimo, pero
+**muéstralo de forma destacada**: es lo primero que un auditor busca.
+
+**`409`** si el caso ya está cerrado o si hay una evaluación en curso
+(`CHECKING`, `REASSESSING`). **El cierre es terminal:** un caso `RESOLVED` no
+se reabre y rechaza evidencia nueva (DEC-011).
+
+Notas de UI: pide `resolvedBy` y `reason` en el formulario, no los rellenes
+por defecto. Ambos van al timeline y a la notificación que reciben hospital y
+aseguradora.
 
 ---
 
