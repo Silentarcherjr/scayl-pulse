@@ -1,7 +1,11 @@
 import { DEMO_SCENARIOS, findScenario, type DemoScenario } from '@/data/synthetic/scenarios';
+import { ANALYZER_TIMEOUT_MS } from '@/core/ai/evidence-analyzer';
 import { CaseOrchestrator, type OrchestratorOptions } from '@/core/orchestrator/case-orchestrator';
 import { ApiError } from '@/lib/http';
 import type { AgentDecision, EmergencyCase } from '@/core/domain/types';
+
+/** Leaves headroom under the route's 60 s function limit. */
+const SCENARIO_BUDGET_MS = 45_000;
 
 export interface ScenarioStep {
   label: string;
@@ -64,7 +68,16 @@ export async function runScenario(
   const scenario = findScenario(scenarioId);
   if (!scenario) throw ApiError.notFound(`Scenario ${scenarioId} not found`);
 
-  const orchestrator = new CaseOrchestrator(options);
+  // A scenario with follow-ups runs the pipeline once per step, each with its
+  // own model call, inside a single HTTP request. Share the budget so the
+  // last step is not starved by the first.
+  const stepCount = options.applyFollowUps ? 1 + scenario.followUps.length : 1;
+  const orchestrator = new CaseOrchestrator({
+    ...options,
+    analyzerTimeoutMs:
+      options.analyzerTimeoutMs ??
+      Math.min(ANALYZER_TIMEOUT_MS, Math.floor(SCENARIO_BUDGET_MS / stepCount)),
+  });
   const initial = await orchestrator.processAdmission(scenario.admission);
 
   const steps: ScenarioStep[] = [

@@ -24,15 +24,22 @@ export interface OrchestratorOptions {
   repository?: CaseRepository;
   /** Injected in tests to simulate provider failures / malformed output. */
   aiProvider?: AiProvider;
+  /**
+   * Total time budget for each AI analysis. The caller sets it because only
+   * the caller knows how many analyses have to fit in one HTTP request.
+   */
+  analyzerTimeoutMs?: number;
 }
 
 export class CaseOrchestrator {
   private readonly repository: CaseRepository;
   private readonly aiProvider?: AiProvider;
+  private readonly analyzerTimeoutMs?: number;
 
   constructor(options: OrchestratorOptions = {}) {
     this.repository = options.repository ?? getRepository();
     this.aiProvider = options.aiProvider;
+    this.analyzerTimeoutMs = options.analyzerTimeoutMs;
   }
 
   // -------------------------------------------------------------------------
@@ -213,6 +220,7 @@ export class CaseOrchestrator {
       facts,
       repository: this.repository,
       provider: this.aiProvider,
+      timeoutMs: this.analyzerTimeoutMs,
     });
 
     await this.repository.appendEvent({

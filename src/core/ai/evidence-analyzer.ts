@@ -15,7 +15,12 @@ import type { AiProvider } from './provider';
  * inside the platform's function limit. Exceeding it degrades to the
  * deterministic analyzer, which is safe and honestly labelled.
  */
-export const ANALYZER_TIMEOUT_MS = 8_000;
+/**
+ * TOTAL budget for one analysis, covering every model attempt. Gemini has
+ * been observed taking 7-12 s for this prompt, so a tight ceiling produces
+ * timeouts rather than answers.
+ */
+export const ANALYZER_TIMEOUT_MS = 20_000;
 
 export interface AnalyzeResult {
   analysis: AiAnalysis | null;
@@ -81,6 +86,8 @@ export async function analyzeEvidence(params: {
   facts: CaseFacts;
   repository: CaseRepository;
   provider?: AiProvider;
+  /** Override when several analyses must share one HTTP request's budget. */
+  timeoutMs?: number;
 }): Promise<AnalyzeResult> {
   const { facts, repository } = params;
   const primary = params.provider ?? selectProvider(facts);
@@ -88,7 +95,7 @@ export async function analyzeEvidence(params: {
     systemInstruction: SYSTEM_INSTRUCTION,
     userPrompt: buildUserPrompt(facts),
     responseSchema: AI_ANALYSIS_RESPONSE_SCHEMA,
-    timeoutMs: ANALYZER_TIMEOUT_MS,
+    timeoutMs: params.timeoutMs ?? ANALYZER_TIMEOUT_MS,
   };
 
   const attempt = await runProvider(primary, request, facts, repository);

@@ -38,7 +38,10 @@ export const env = {
    * the same one, which in practice just returns 503 again.
    */
   get geminiFallbackModels(): string[] {
-    const raw = read('GEMINI_FALLBACK_MODELS') ?? 'gemini-3.5-flash-lite';
+    // gemini-2.5-flash is older and people are migrating off it, so it tends
+    // to have spare capacity when the current flash is saturated. It lives
+    // until 2026-10-16, well past this hackathon.
+    const raw = read('GEMINI_FALLBACK_MODELS') ?? 'gemini-2.5-flash';
     return raw
       .split(',')
       .map((m) => m.trim())

@@ -33,23 +33,37 @@ export class GeminiProvider implements AiProvider {
   }
 
   /**
-   * Walks the model chain. A transient failure moves to the next model rather
-   * than retrying the same one: "high demand" on a given model returns 503
-   * again on an immediate retry, whereas a sibling model usually has capacity.
-   * A non-transient failure (bad key, bad schema) stops immediately — trying
-   * another model would only burn the request budget.
+   * Walks the model chain inside a TOTAL time budget.
+   *
+   * `request.timeoutMs` is the budget for the whole analysis, not per attempt,
+   * because the caller is the one that knows how many analyses fit in its HTTP
+   * request. Each attempt gets whatever is left, capped, and the chain stops
+   * as soon as there is not enough time for another meaningful try.
+   *
+   * A 503 "high demand" moves to the next model: retrying the same one just
+   * returns 503 again, whereas a sibling usually has capacity. A timeout does
+   * NOT move on — it means the service is slow, so spending the rest of the
+   * budget on a second model would only guarantee that neither finishes. A
+   * non-transient failure (bad key, bad schema) stops immediately.
    */
   async analyze(request: AnalyzerRequest): Promise<AnalyzerResponse> {
     const startedAt = Date.now();
+    const deadline = startedAt + request.timeoutMs;
     const errors: string[] = [];
 
     for (const model of this.models) {
-      const result = await this.attempt(request, model);
+      const remaining = deadline - Date.now();
+      if (remaining < GeminiProvider.MIN_USEFUL_MS) break;
+
+      const result = await this.attempt(request, model, remaining);
       if (result.raw) {
         return { ...result, modelUsed: model, latencyMs: Date.now() - startedAt };
       }
       errors.push(`${model}: ${result.error}`);
-      if (!GeminiProvider.isTransient(result.error ?? '')) break;
+
+      const message = result.error ?? '';
+      const isTimeout = /timed out/i.test(message);
+      if (isTimeout || !GeminiProvider.isTransient(message)) break;
     }
 
     return {
@@ -60,10 +74,17 @@ export class GeminiProvider implements AiProvider {
     };
   }
 
-  private async attempt(request: AnalyzerRequest, model: string): Promise<AnalyzerResponse> {
+  /** Below this there is no point starting another model call. */
+  private static readonly MIN_USEFUL_MS = 6_000;
+
+  private async attempt(
+    request: AnalyzerRequest,
+    model: string,
+    timeoutMs: number,
+  ): Promise<AnalyzerResponse> {
     const startedAt = Date.now();
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), request.timeoutMs);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const response = await this.client.models.generateContent({
@@ -86,7 +107,7 @@ export class GeminiProvider implements AiProvider {
       const isTimeout = controller.signal.aborted;
       return {
         raw: null,
-        error: isTimeout ? `Gemini request timed out after ${request.timeoutMs}ms` : message,
+        error: isTimeout ? `Gemini request timed out after ${timeoutMs}ms` : message,
         latencyMs: Date.now() - startedAt,
       };
     } finally {
