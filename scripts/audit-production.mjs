@@ -12,7 +12,14 @@
  *
  * Uso: node scripts/audit-production.mjs https://scayl-pulse.vercel.app
  */
-import { chromium } from 'playwright';
+import { pathToFileURL } from 'node:url';
+
+// Playwright se instala FUERA del proyecto (ver el workflow): meterlo en el
+// árbol que dejó `npm ci` rompe la instalación. Con la variable apuntando a su
+// `index.mjs` se carga desde donde esté; sin ella, se resuelve como siempre.
+const { chromium } = process.env.AUDIT_PLAYWRIGHT_MODULE
+  ? await import(pathToFileURL(process.env.AUDIT_PLAYWRIGHT_MODULE).href)
+  : await import('playwright');
 
 const BASE = (process.argv[2] ?? process.env.AUDIT_URL ?? '').replace(/\/$/, '');
 if (!BASE) {

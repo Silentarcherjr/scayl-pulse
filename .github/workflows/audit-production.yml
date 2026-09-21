@@ -28,11 +28,19 @@ jobs:
       - run: npm ci
 
       # Playwright no es dependencia del proyecto: la demo no la necesita y no
-      # queremos cargar la instalación de nadie con un navegador.
+      # queremos cargar la instalación de nadie con un navegador. Se instala en
+      # un directorio aparte — dentro del árbol que deja `npm ci`, npm falla con
+      # "Cannot read properties of null (reading 'edgesOut')".
       - name: Instalar navegador solo para esta ejecución
         run: |
-          npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
+          set -euo pipefail
+          PW_DIR="$RUNNER_TEMP/pw"
+          mkdir -p "$PW_DIR"
+          npm install --prefix "$PW_DIR" --no-save playwright@1.56.1
+          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/pw-browsers"
+          "$PW_DIR/node_modules/.bin/playwright" install --with-deps chromium
+          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
+          echo "AUDIT_PLAYWRIGHT_MODULE=$PW_DIR/node_modules/playwright/index.mjs" >> "$GITHUB_ENV"
 
       - name: Auditar el despliegue
         # Crea varios casos sintéticos en la base de producción, por eso es
