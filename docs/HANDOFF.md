@@ -382,5 +382,5 @@ Commit con prefijo `cross:`.
 
 | Fecha | Quién | Archivo | De quién | Por qué |
 |---|---|---|---|---|
-| 2026-09-21 | Claude Code (A) | `docs/STATUS.md` (sección C) | Workstream C | Se retiró la ruta local `C:/Users/Cbast/...` que el secret scan encontró antes de publicar: es el nombre de usuario y el disco de la máquina de un compañero, en un documento que el jurado puede leer. Solo esa línea. |
+| 2026-09-21 | Claude Code (A) | `docs/STATUS.md` (sección C) | Workstream C | Se retiró una ruta local de la máquina de un compañero (usuario de Windows y disco incluidos) que el secret scan encontró antes de publicar, en un documento que el jurado puede leer. Solo esa línea. |
 | 2026-09-21 | Claude Code (A) | `src/data/synthetic/scenarios.ts` | Workstream C | Solo los cinco `title`. Empezaban por «GREEN — », «YELLOW — »… y un jurado no conoce esa convención; además la insignia de color ya muestra el código, así que el prefijo era ruido duplicado. Ningún `id`, `expectedStatus`, dato ni fixture cambió: los tests de C siguen pasando sin tocarlos. |
