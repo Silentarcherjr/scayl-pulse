@@ -86,13 +86,34 @@ que se prueba el Safety Gate.
 
 ## Qué falta (Workstream C)
 
-- [ ] Tests de integración HTTP sobre las rutas (`supertest` o `fetch` contra `next dev`).
+- [x] Tests de integración HTTP con `fetch` contra un servidor `next dev`
+      propio: `tests/e2e/http.test.ts`. Incluidos en `npm run verify`.
 - [ ] Recorrido end-to-end de los tres escenarios desde la interfaz.
-- [ ] Prueba con Supabase real: migrations, seeds y que el trigger
-      append-only rechace de verdad un `UPDATE` sobre `case_events`.
-- [ ] Prueba con Gemini real: una llamada verificada por cada escenario, con
-      su resultado registrado en `AI_USAGE_LOG.md`.
-- [ ] Carga ligera: 20 ingresos concurrentes sin colisión de `seq`.
+- [x] Supabase real: ya aplicado y verificado por Workstream A, según
+      `HANDOFF.md`. No se repite desde Integrations ni se requieren sus claves.
+- [x] Gemini real: integrado y medido por Workstream A, según
+      `HANDOFF.md` y `AI_USAGE_LOG.md`. No se repite desde Integrations.
+- [x] Carga ligera local: 20 ingresos HTTP concurrentes; IDs únicos, evidencia
+      aislada, secuencias `1..n` por caso y notificaciones duales.
+
+### Ejecutar la suite HTTP local
+
+```bash
+npm test -- tests/e2e/http.test.ts
+```
+
+Usa únicamente las dependencias existentes. El servidor escucha en
+`127.0.0.1`, en un puerto libre, con `SCAYL_FORCE_IN_MEMORY=true` y
+`SCAYL_FORCE_FIXTURE_AI=true`. Se detiene al terminar, también ante fallos.
+El primer arranque compila las rutas y puede tardar hasta dos minutos.
+Ejecutar una suite HTTP a la vez por checkout: Next comparte `.next/dev`.
+
+Los 14 tests cubren catálogo/salud, los cinco escenarios tanto por webhook
+como por runner, reevaluaciones, historial inmutable, notificaciones con
+aviso administrativo, errores 422/404/409, cierre terminal y concurrencia.
+Los helpers de `tests/qa/assert-case.ts` verifican secuencias y notificaciones.
+La comprobación de carga es funcional; no mide capacidad de producción,
+latencia de Gemini ni concurrencia contra Postgres.
 
 ## Qué falta (Workstream B)
 
