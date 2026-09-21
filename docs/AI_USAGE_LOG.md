@@ -181,6 +181,7 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 |---|---|---|---|---|
 | 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
 | 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
+| 2026-09-20 | Codex | C — Sebastián | Clon en rama Integrations; 14 tests HTTP contra Next local para cinco escenarios, reevaluación, notificaciones, errores, cierre y 20 ingresos concurrentes; guion y documentación QA. Resultado automatizado: `npm run verify`, 108 passing / 0 failing, typecheck y lint correctos. Sin llamadas a Gemini/Supabase ni cambios al frontend. | Sebastián autorizó alcance y clonación; revisión humana de código, resultados y demo pendiente |
 
 ### Incidencias reales durante la integración (útiles para el informe)
 

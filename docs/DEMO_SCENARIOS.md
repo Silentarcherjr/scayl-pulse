@@ -147,8 +147,9 @@ afectar en nada la atención del paciente.
    motivo, incertidumbre y la línea de que la atención no se interrumpe.
    Adjuntar el informe de cardiología y ver el cambio a `VERIFIED` **con la
    decisión anterior todavía visible**.
-4. **EXTRA / póliza vencida** (30 s) — «y esto es lo que pasa si el modelo se
-   equivoca»: `gateOverrode: true`, `POLICY_EXPIRED`.
+4. **EXTRA / póliza vencida** (30 s) — mostrar `POLICY_EXPIRED` y
+   `HUMAN_REVIEW`. Solo explicar una corrección al modelo si la respuesta
+   contiene `gateOverrode: true`: el modo determinístico no garantiza ese valor.
 5. **Cierre** (15 s) — `GET /api/health`: la demo es honesta sobre qué está
    corriendo.
 
@@ -164,3 +165,22 @@ afectar en nada la atención del paciente.
 - El fallback se identifica siempre como `deterministic-fallback` y la
   decisión queda marcada `source: "AI_UNAVAILABLE"`. **Nunca se falsifica una
   llamada a Gemini.**
+
+## QA local de Integrations
+
+```bash
+npm test -- tests/e2e/http.test.ts
+```
+
+La suite inicia y detiene su propio servidor Next en un puerto local libre.
+Fuerza persistencia en memoria y analizador de fixtures: no requiere claves,
+no escribe en producción y las decisiones llevan `source: "DETERMINISTIC"`.
+`AI_UNAVAILABLE` corresponde a un proveedor que se intentó usar y falló.
+
+Verifica los cinco escenarios por dos vías: webhook de ingreso con evidencia
+en peticiones separadas, y runner de demo con `applyFollowUps: true`.
+Comprueba estados intermedios, decisiones anteriores intactas, orden por
+`seq`, evidencia del propio caso y notificaciones a ambas partes con el aviso
+de continuidad de atención. También cubre errores HTTP, cierre terminal y
+20 ingresos concurrentes. Esto valida la API; el recorrido visual con Carlos
+y la revisión humana del guion siguen pendientes.

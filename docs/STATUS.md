@@ -131,22 +131,35 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream C — Integrations / Demo / QA · `workstream/integrations`
 
-**Última actualización:** — (sin sesiones todavía)
+**Última actualización:** 2026-09-20 22:30
 
 ### Completed
 - Punto de partida entregado por Workstream A: 5 escenarios definidos y
   verificados, dataset sintético, seeds SQL alineados con el dataset de
   TypeScript, notificador dual funcionando.
+- Clon local en `C:/Users/Cbast/Downloads/scayl-pulse-integrations`, rama
+  `workstream/integrations` sincronizada con `origin/main`.
+- 14 tests HTTP nuevos contra Next local: cinco escenarios por webhook y
+  runner, evidencia incremental, decisiones anteriores intactas, notificaciones
+  duales con aviso de atención, errores y cierre terminal.
+- Carga funcional de 20 ingresos concurrentes: IDs únicos, secuencias por
+  caso sin colisiones y evidencia aislada.
+- Guion de demo aclarado: no prometer `gateOverrode: true` sin verificarlo
+  en la respuesta. Documentado el modo local `DETERMINISTIC`.
+
+### In Progress
+- Ninguna implementación abierta en esta entrega de QA HTTP.
 
 ### Next
-1. Verificar los 5 escenarios a mano contra `DEMO_SCENARIOS.md`.
-2. Tests de integración HTTP sobre las rutas (`tests/e2e/`).
-3. Supabase real: aplicar migrations y seeds, y **verificar que el trigger append-only rechaza de verdad un `UPDATE` sobre `case_events`**.
-4. Enriquecer el dataset sintético, manteniendo sincronizados `reference-data.ts` y `seed.sql`.
-5. Prueba de carga ligera: 20 ingresos concurrentes sin colisión de `seq`.
+1. Sebastián: revisar el guion y ejecutar el recorrido visual con el frontend
+   de Carlos. La validación HTTP automatizada no sustituye esta revisión.
+2. Evaluar si la demo necesita más escenarios; mantener cada nuevo escenario
+   con su test y los datos TypeScript/SQL sincronizados.
 
 ### Blocked
-- Supabase real requiere credenciales (no bloquea el resto de su trabajo).
+- Ninguno para QA local. Supabase y Gemini ya fueron verificados por A,
+  según `HANDOFF.md`; no se accedió a esas cuentas en esta sesión.
 
 ### Tests
-—
+**108 passing / 0 failing** · `npm run verify` correcto (typecheck, lint y
+tests). Base antes de los cambios: **94 passing / 0 failing**.
