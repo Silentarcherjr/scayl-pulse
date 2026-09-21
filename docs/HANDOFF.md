@@ -215,28 +215,47 @@ Ninguno abierto.
 
 ## Workstream B — Frontend · `workstream/frontend`
 
-**Fecha:** —
-**Último commit:** —
+**Fecha:** 2026-09-21
+**Último commit de implementación:** `4a1c2ba` — `feat: complete frontend workstream`.
+**Sincronización:** `8ab0f9e` incorpora `origin/main` sin conflictos.
 
-**Qué funciona:** el backend entero, desplegado y con contrato cerrado.
-**Qué falta:** todo el dashboard. Punto de partida: `docs/API_CONTRACT.md`.
+**Qué funciona:** dashboard, búsqueda/filtros, detalle, vistas hospital y
+aseguradora, simulador, ingreso libre con documentos, evidencia y reevaluación,
+timeline por `seq`, decisiones históricas, panel auditable, resumen bajo demanda
+y cierre humano. Se distinguen la corrección del Safety Gate, documentos
+obligatorios/recomendados y fuentes de IA. Realtime tiene alternativa por polling.
 
-**Dos ideas aprobadas que te tocan a ti:**
-- **IDEA-006** — el panel «¿Por qué tomó esta decisión?». El backend ya te da
-  `decision.checks` con las doce comprobaciones, su estado, su evidencia y el
-  suelo que imponen. Solo hay que pintarlo: ✓ ⚠ ✕ —. Está en el contrato con
-  ejemplo. **Es lo que convierte esto en IA auditable; priorízalo.**
-- **IDEA-004** — formulario de ingreso libre contra `POST /api/admissions`,
-  para que un evaluador escriba su propio caso.
-- **IDEA-003 ya está en el backend**: `GET /api/cases/:id/summary`. Llámalo
-  desde un botón explícito, no al cargar la página: la primera generación
-  tarda ~10 s y las siguientes vienen de caché en menos de 1 s.
+**Qué falta:** revisión humana de la entrega y comprobación con Supabase
+Realtime real. La suite de frontend aún no está incluida en el CI compartido;
+su comando y recorrido de navegador están en
+`src/components/frontend-tests/README.md`.
 
-**Archivos modificados:** —
-**Próximo paso exacto:** lista de casos contra `GET /api/cases`.
-**Tests passing:** — · **Tests failing:** —
-**Bugs conocidos:** —
-**Riesgos:** —
+**Archivos modificados:** `src/app/page.tsx`, `src/app/globals.css`,
+`src/components/ScenarioRunner.tsx`; nuevos `AdmissionForm.tsx`, `CaseDetail.tsx`,
+`DecisionPanel.tsx`, `PulseDashboard.tsx`, `case-api.ts`,
+`src/hooks/useCaseFeed.ts` y seis archivos en `src/components/frontend-tests/`.
+Documentación: solo la sección B de `STATUS.md` y `HANDOFF.md` y el registro
+propio en `AI_USAGE_LOG.md`. Sin cambios propios en backend, contratos,
+`AGENTS.md` ni archivos del Workstream C.
+
+**Próximo paso exacto:** Carlos/equipo debe revisar el diff de
+`workstream/frontend` contra `main` y aprobar la interfaz antes de fusionar.
+
+**Tests passing:** 108 del repositorio tras incorporar `main` + 13 de frontend.
+**Tests failing:** 0. Typecheck y lint correctos. Build y recorrido de navegador
+local aprobados el 2026-09-21, sin llamadas a Supabase/Gemini reales.
+El recorrido cubre GREEN, YELLOW con dos aportaciones, RED con historial,
+resumen bajo demanda, cierre terminal, ingreso libre, recarga, teclado y responsive.
+**Bugs conocidos:** ninguno bloqueante detectado en los recorridos ejecutados;
+la comprobación adicional de búsqueda/filtros y errores en navegador fue
+interrumpida por petición de Carlos. Hay revisión de código y tests unitarios
+de errores HTTP, presentación y actualización del expediente.
+**Riesgos:** Realtime está probado con cliente simulado, no con Supabase real;
+el build descarga Geist de Google Fonts y requiere conectividad. Las vistas
+hospital/aseguradora son de demostración, sin autenticación, según el alcance MVP.
+
+**Validación humana:** Carlos autorizó el alcance y la publicación de su parte;
+no se registra como realizada una revisión humana de código o UX aún pendiente.
 
 ---
 

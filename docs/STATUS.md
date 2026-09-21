@@ -105,27 +105,44 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream B — Frontend · `workstream/frontend`
 
-**Última actualización:** — (sin sesiones todavía)
+**Última actualización:** 2026-09-21 07:23
 
 ### Completed
-- Punto de partida entregado por Workstream A: contrato de API cerrado y
-  documentado, backend en funcionamiento sin credenciales, página de
-  demostración mínima que sirve de referencia y está pensada para ser
-  reemplazada.
+- Dashboard con lista, búsqueda y filtros de casos, detalle y vistas de
+  hospital y aseguradora, usando los endpoints y tipos existentes.
+- Timeline ordenado por `seq`, con decisiones anteriores conservadas;
+  panel de comprobaciones «¿Por qué tomó esta decisión?» (IDEA-006).
+- Safety Gate visible cuando corrige al modelo; distinción entre documentos
+  `BLOCKING` y `ADVISORY` y entre los tres orígenes de la decisión.
+- Simulador con ingreso inicial o seguimientos, formulario de ingreso libre
+  con documentos sintéticos (IDEA-004), aportación de evidencia y reevaluación.
+- Resumen para el gestor solicitado mediante botón (IDEA-003) y cierre humano
+  con responsable, motivo y aviso cuando contradice la recomendación.
+- Realtime con alternativa por polling y recuperación tras desconexión;
+  errores visibles, navegación por teclado y diseño responsive.
+- 13 tests propios de frontend y recorrido automatizado de navegador local:
+  GREEN, YELLOW con dos documentos, historial RED, resumen, cierre terminal,
+  ingreso libre, recarga y tamaños de 390, 768 y 1440 px.
+- Código guardado en `4a1c2ba`; `origin/main` incorporado sin conflictos.
+
+### In Progress
+- Entrega del frontend para revisión del equipo; sin cambios funcionales abiertos.
 
 ### Next
-1. Lista de casos (`GET /api/cases`).
-2. Detalle de caso con decisión, evidencia y documentos faltantes.
-3. **Timeline del expediente vivo** — ordenar por `seq`, nunca por `createdAt`.
-4. Simulador de ingreso con los escenarios.
-5. Vistas diferenciadas de hospital y aseguradora.
-6. Realtime sobre `case_events`, con polling como alternativa.
+1. Revisión visual y funcional de Carlos/equipo antes de integrar a `main`.
+2. Validar Realtime con Supabase real en el entorno acordado con Anthony.
+3. Acordar incorporar la suite de frontend al CI: hoy se ejecuta por separado.
 
 ### Blocked
-- Nada. El backend no bloquea al frontend.
+- Ningún bloqueo local. La validación de Realtime real requiere el entorno
+  configurado; el polling local y la suscripción simulada están comprobados.
 
 ### Tests
-—
+**108 passing / 0 failing** en `npm run verify` tras incorporar `main`;
+typecheck y lint correctos. **13 passing / 0 failing** adicionales con
+`npx vitest run --config src/components/frontend-tests/vitest.config.mts`.
+Build de producción y recorrido de navegador aprobados en la revisión local
+del 2026-09-21. El build limpio necesitó acceso a Google Fonts para Geist.
 
 ---
 

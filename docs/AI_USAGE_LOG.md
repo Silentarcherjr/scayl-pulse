@@ -76,7 +76,14 @@ humana: las propuestas quedaron en `IDEAS.md` con estado `PROPOSED`.
 (Workstream C) en paralelo al backend, guiado por `AGENTS.md`.
 
 **Aplicación.** _(a completar por Carlos y Sebastián conforme trabajen)_
-- Rama `workstream/frontend`: …
+- Rama `workstream/frontend` (Carlos, 2026-09-21): dashboard hospital/aseguradora,
+  lista y detalle de casos, timeline por `seq` y decisiones históricas, panel
+  auditable del Safety Gate, simulador, ingreso libre, evidencia/reevaluación,
+  resumen bajo demanda, cierre humano y Realtime con alternativa por polling.
+  Resultado: 13 tests específicos de frontend; typecheck y lint correctos;
+  108 tests del repositorio correctos tras incorporar `main`; build y recorrido
+  automatizado de navegador local aprobados. Validación humana: Carlos autorizó
+  alcance y publicación; revisión humana final de código/UX pendiente.
 - Rama `workstream/integrations`: …
 
 **Resultados obtenidos.** _(a completar)_
@@ -179,6 +186,7 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 
 | Fecha | Herramienta | Workstream | Qué se hizo | Validado por |
 |---|---|---|---|---|
+| 2026-09-21 | Codex | B — Carlos | Frontend del expediente vivo sobre la API existente: dashboard, timeline, Safety Gate, ingreso libre, evidencia, reevaluación, resumen y cierre. 13 tests de frontend, recorrido de navegador y build aprobados; `npm run verify` con 108 tests tras incorporar main. Documentación de entrega actualizada sin modificar la sección C. | Carlos autorizó alcance y publicación; revisión humana final de código/UX pendiente |
 | 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
 | 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
 | 2026-09-20 | Codex | C — Sebastián | Clon en rama Integrations; 14 tests HTTP contra Next local para cinco escenarios, reevaluación, notificaciones, errores, cierre y 20 ingresos concurrentes; guion y documentación QA. Resultado automatizado: `npm run verify`, 108 passing / 0 failing, typecheck y lint correctos. Sin llamadas a Gemini/Supabase ni cambios al frontend. | Sebastián autorizó alcance y clonación; revisión humana de código, resultados y demo pendiente |
