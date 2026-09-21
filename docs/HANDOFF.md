@@ -242,8 +242,9 @@ Ninguno abierto.
 
 ## Workstream C — Integrations / Demo / QA · `workstream/integrations`
 
-**Fecha:** —
-**Último commit:** —
+**Fecha:** 2026-09-20
+**Último commit:** consultar `git log -1 --oneline` en `workstream/integrations`;
+esta entrega: `test: cover integrations HTTP flows and concurrent admissions`.
 
 **Qué funciona:** el esquema ya está aplicado y verificado en el proyecto
 `Pulse` (9 tablas, RLS activo en todas, Realtime publicando `cases` y
@@ -255,21 +256,39 @@ no solo en memoria.
 `delete from cases` falla: la cascada hacia `case_events` choca con el trigger
 append-only y aborta el borrado entero. Es intencional (ver DEC-008).
 
-**Qué falta:** QA end-to-end, tests de integración HTTP sobre las rutas,
-escenarios adicionales y dataset más rico. Punto de partida:
-`docs/DEMO_SCENARIOS.md` y `docs/TEST_PLAN.md`.
+**Qué funciona en local:** 14 tests HTTP nuevos con servidor Next propio,
+sin credenciales. Los cinco escenarios pasan tanto por `/api/admissions`
+con evidencia posterior como por el runner de demo. Se verifican historial
+intacto, secuencias por caso, notificaciones duales, errores 422/404/409,
+cierre terminal y 20 ingresos concurrentes con evidencia aislada.
+
+**Qué falta:** recorrido visual y revisión humana del guion con Sebastián y
+Carlos; valorar más escenarios solo si aportan a la demo. No se modificó el
+frontend, el backend ni el contrato de API.
 
 ⚠️ **No intentes las tareas que necesitan Supabase o Gemini**: esas cuentas son
 personales de Anthony y no tendrás acceso. Ya están hechas y verificadas por
 el Workstream A — esquema aplicado, trigger append-only comprobado contra
 Postgres, Gemini integrado y medido. Todo tu trabajo restante se puede hacer
 en local sin una sola credencial.
-**Archivos modificados:** —
-**Próximo paso exacto:** ejecutar los 5 escenarios a mano y anotar cualquier
-discrepancia con `DEMO_SCENARIOS.md`.
-**Tests passing:** — · **Tests failing:** —
-**Bugs conocidos:** —
-**Riesgos:** —
+**Archivos modificados:** `tests/e2e/http.test.ts`,
+`tests/e2e/local-server.ts`, `tests/qa/assert-case.ts`,
+`docs/DEMO_SCENARIOS.md`, `docs/TEST_PLAN.md`, sección C de `docs/STATUS.md`
+y `docs/HANDOFF.md`, entrada de sesión en `docs/AI_USAGE_LOG.md`.
+**Próximo paso exacto:** Sebastián y Carlos deben ejecutar YELLOW desde la
+interfaz y comprobar que las tres decisiones permanecen visibles.
+**Tests passing:** 108 · **Tests failing:** 0. `npm run verify` correcto.
+Base inicial: 94 tests, typecheck y lint correctos.
+**Bugs conocidos:** no se detectaron fallos de API en los flujos probados.
+El guion prometía `gateOverrode: true` sin condicionarlo a la respuesta;
+corregido para no atribuir una corrección al modelo en modo determinístico.
+**Riesgos:** la carga valida funcionalidad en memoria, no capacidad de
+producción ni concurrencia en Postgres. Ejecutar una suite HTTP por checkout
+porque Next usa `.next/dev`. Next también añade automáticamente un bloque
+administrado a `AGENTS.md` al arrancar; se retiró únicamente ese cambio
+generado antes del commit, conservando las instrucciones originales.
+**Validación humana:** pendiente; Sebastián autorizó alcance y clonación,
+pero no ha revisado los resultados ni hecho el recorrido visual.
 
 ---
 
