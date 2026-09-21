@@ -88,11 +88,18 @@ export function canTransition(from: CaseStatus, to: CaseStatus): boolean {
   return ALLOWED_TRANSITIONS[from].includes(to);
 }
 
-/** Human-facing labels (ES) — shared so hospital and insurer views agree. */
+/**
+ * Human-facing labels (ES) — shared so hospital and insurer views agree.
+ *
+ * VERIFIED dice «Verificación completada», no «Cobertura verificada»: lo
+ * segundo se lee como una autorización definitiva de la aseguradora, que es
+ * exactamente lo que este sistema NO emite. Lo que termina es la comprobación
+ * administrativa; autorizar sigue siendo de una persona.
+ */
 export const CASE_STATUS_LABELS: Record<CaseStatus, string> = {
   ADMITTED: 'Ingreso registrado',
   CHECKING: 'Verificando',
-  VERIFIED: 'Cobertura verificada',
+  VERIFIED: 'Verificación completada',
   DOCUMENTS_REQUIRED: 'Documentación requerida',
   HUMAN_REVIEW: 'Revisión humana',
   REASSESSING: 'Reevaluando',

@@ -447,9 +447,16 @@ Qué está realmente conectado ahora mismo.
   "aiProvider": "deterministic-fixture", "geminiModel": null,
   "env": { "present": { "SUPABASE_SERVICE_ROLE_KEY": true, "GEMINI_API_KEY": false }, "unrecognizedNames": [] },
   "capacity": { "storedCases": 7, "maxCases": 200 },
+  "persistenceError": null,
   "checkedAt": "…"
 } }
 ```
+
+**Este endpoint no devuelve 500 por una persistencia caída.** Su trabajo es
+informar de la degradación, así que si la base no responde al contar casos
+responde igualmente `200` con `status: "degraded"`,
+`capacity.storedCases: null` y `persistenceError` con una frase para mostrar
+al usuario. Un cliente debe tratar `storedCases` como `number | null`.
 
 `persistenceNote` explica por qué se está usando el repositorio en memoria
 cuando `persistence` no es `supabase`. `env.present` dice qué variables ve la

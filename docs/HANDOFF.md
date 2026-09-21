@@ -139,6 +139,41 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
+### Auditoría final pre-entrega — 2026-09-21
+
+Feature freeze activo. Sin funcionalidad nueva de producto; solo correcciones
+de los P0/P1 encontrados.
+
+**P0 encontrados: 2 (ambos corregidos).**
+
+1. **Ninguna petición del navegador tenía tope de tiempo.** El servidor sí
+   tiene presupuesto para Gemini, pero la interfaz no tenía nada: una
+   respuesta que nunca llega dejaba «Cargando expedientes…», «Comprobando
+   entorno…» o «Guardando evidencia y reevaluando…» girando para siempre.
+   Reproducido interceptando peticiones que no resuelven. Corregido en
+   `case-api.ts` con tope general de 120 s y 15 s para las lecturas de fondo.
+   **Por qué 120 s y no menos:** un escenario con seguimientos contra Gemini
+   real tarda más de 40 s en producción. Un tope corto habría roto la demo.
+2. **`/api/health` devolvía 500 con la persistencia caída.** Verificado
+   apuntando la app a un Supabase inalcanzable. Ahora responde `200` con
+   `status: "degraded"` y `capacity.storedCases: null`.
+
+**Falso positivo descartado:** la primera pasada marcó «el timeline no creció
+tras la evidencia». Era una carrera en el propio script de auditoría, que leía
+la pestaña antes del refresco. Comprobado aparte: 11 → 22 eventos, reflejado
+en la interfaz en 515 ms.
+
+**Verificado y correcto sin cambios:** escenarios sin configuración previa
+(P0-2), GREEN/YELLOW/RED de extremo a extremo (P0-4), evidencia y reevaluación
+con historial conservado (P0-5), degradación de Gemini (P0-6, cubierta por
+`model-chain.test.ts` y los proveedores adversarios de `helpers.ts`), envelope
+limpio sin stack ante Supabase caído (P0-7 y P0-8), y notificaciones separadas
+de hospital y aseguradora (P0-9).
+
+**Riesgos que quedan abiertos:** ver la sección de riesgos más abajo.
+
+---
+
 **Fecha:** 2026-09-19
 **Último commit:** ver `git log -1 --oneline` en la rama
 **Sesión:** bootstrap completo del proyecto + preparación del despliegue (Claude Code, Opus 5)
@@ -319,4 +354,4 @@ Commit con prefijo `cross:`.
 
 | Fecha | Quién | Archivo | De quién | Por qué |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| 2026-09-21 | Claude Code (A) | `src/data/synthetic/scenarios.ts` | Workstream C | Solo los cinco `title`. Empezaban por «GREEN — », «YELLOW — »… y un jurado no conoce esa convención; además la insignia de color ya muestra el código, así que el prefijo era ruido duplicado. Ningún `id`, `expectedStatus`, dato ni fixture cambió: los tests de C siguen pasando sin tocarlos. |

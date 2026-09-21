@@ -189,6 +189,7 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 | 2026-09-21 | Codex | B — Carlos | Frontend del expediente vivo sobre la API existente: dashboard, timeline, Safety Gate, ingreso libre, evidencia, reevaluación, resumen y cierre. 13 tests de frontend, recorrido de navegador y build aprobados; `npm run verify` con 108 tests tras incorporar main. Documentación de entrega actualizada sin modificar la sección C. | Carlos autorizó alcance y publicación; revisión humana final de código/UX pendiente |
 | 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
 | 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
+| 2026-09-21 | Claude Code (Opus 5) | A | Auditoría final pre-entrega bajo feature freeze: 27 comprobaciones de navegador (incógnito, cold start, escritorio, móvil, refresh directo), GREEN/YELLOW/RED de extremo a extremo, evidencia y reevaluación, Supabase caído y `/api/health` caído. Dos P0 corregidos (peticiones sin tope de tiempo; `/api/health` devolvía 500 con la persistencia caída) más P1 de copy. 128 tests, build de producción correcto. | Anthony (pendiente de revisión) |
 | 2026-09-20 | Codex | C — Sebastián | Clon en rama Integrations; 14 tests HTTP contra Next local para cinco escenarios, reevaluación, notificaciones, errores, cierre y 20 ingresos concurrentes; guion y documentación QA. Resultado automatizado: `npm run verify`, 108 passing / 0 failing, typecheck y lint correctos. Sin llamadas a Gemini/Supabase ni cambios al frontend. | Sebastián autorizó alcance y clonación; revisión humana de código, resultados y demo pendiente |
 
 ### Incidencias reales durante la integración (útiles para el informe)
@@ -210,3 +211,11 @@ integración de escaparate:
 4. **Presupuesto de tiempo.** Un timeout fijo demasiado corto convirtió un
    servicio lento en uno que fallaba siempre. Se sustituyó por un presupuesto
    total repartido entre los pasos de un escenario.
+5. **Una espera sin final.** El servidor tenía presupuesto de tiempo, pero el
+   navegador no: ninguna petición de la interfaz tenía tope. Con Supabase o
+   Gemini colgados, «Cargando expedientes…» giraba indefinidamente y nada
+   indicaba que el sistema ya no iba a contestar. Detectado en la auditoría
+   final interceptando peticiones que nunca responden, no leyendo el código.
+6. **El termómetro con fiebre.** `/api/health`, cuyo trabajo es informar de la
+   degradación, devolvía `500` cuando Supabase no respondía: justo cuando hacía
+   falta, dejaba de informar. Ahora responde `200` con `status: "degraded"`.

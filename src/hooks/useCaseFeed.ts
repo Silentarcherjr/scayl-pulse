@@ -5,6 +5,7 @@ import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
 import {
   apiRequest,
   errorMessage,
+  POLL_TIMEOUT_MS,
   type CaseDetailData,
   type EventsData,
 } from '@/components/case-api';
@@ -46,13 +47,14 @@ export function startCaseFeed(
     }
     running = true;
     try {
+      const reads = { signal: controller.signal, timeoutMs: POLL_TIMEOUT_MS };
       const events = await dependencies.request<EventsData>(
         `/api/cases/${encodeURIComponent(caseId)}/events`,
-        { signal: controller.signal },
+        reads,
       );
       const detail = await dependencies.request<CaseDetailData>(
         `/api/cases/${encodeURIComponent(caseId)}`,
-        { signal: controller.signal },
+        reads,
       );
       state = {
         ...state,

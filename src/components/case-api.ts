@@ -54,7 +54,10 @@ export interface HealthData {
   realtimeAvailable: boolean;
   aiProvider: string;
   geminiModel: string | null;
-  capacity: { storedCases: number; maxCases: number };
+  /** `storedCases` es null cuando la persistencia no respondió al contar. */
+  capacity: { storedCases: number | null; maxCases: number };
+  persistenceError?: string | null;
+  status?: string;
 }
 const ERROR_MESSAGES: Record<string, string> = {
   NOT_FOUND: 'El caso o escenario ya no está disponible. Actualiza la lista.',
@@ -66,15 +69,46 @@ const ERROR_MESSAGES: Record<string, string> = {
   INTERNAL_ERROR:
     'El servidor no pudo completar la operación. Revisa el expediente antes de volver a enviarla.',
 };
-export async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+/**
+ * Tope de seguridad. Sin él, una petición que nunca responde —Supabase o
+ * Gemini colgados— deja un «Cargando…» girando para siempre y el evaluador no
+ * tiene forma de saber que el sistema ya no va a contestar. Es generoso a
+ * propósito: un escenario con seguimientos y modelo real supera los 40 s.
+ */
+const DEFAULT_TIMEOUT_MS = 120_000;
+/** Las lecturas de fondo se repiten solas, así que cortan mucho antes. */
+export const POLL_TIMEOUT_MS = 15_000;
+
+export interface ApiOptions extends RequestInit {
+  timeoutMs?: number;
+}
+export async function apiRequest<T>(path: string, init: ApiOptions = {}): Promise<T> {
+  const { timeoutMs = DEFAULT_TIMEOUT_MS, signal, ...rest } = init;
+  const controller = new AbortController();
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+  const forwardAbort = () => controller.abort();
+  if (signal?.aborted) controller.abort();
+  else signal?.addEventListener('abort', forwardAbort, { once: true });
   let response: Response;
   try {
-    response = await fetch(path, { cache: 'no-store', ...init });
+    response = await fetch(path, { cache: 'no-store', ...rest, signal: controller.signal });
   } catch (error) {
-    if (init.signal?.aborted) throw error;
+    // Un desmontaje no es un fallo: el llamador ya dejó de esperar.
+    if (signal?.aborted) throw error;
+    if (timedOut)
+      throw new Error(
+        'El servidor tardó demasiado en responder. Actualiza el expediente; si estabas enviando datos, compruébalo antes de repetir la operación.',
+      );
     throw new Error(
       'No se pudo conectar. Si estabas enviando datos, actualiza la lista antes de repetir la operación.',
     );
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', forwardAbort);
   }
   let payload;
   try {

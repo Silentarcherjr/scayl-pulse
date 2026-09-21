@@ -9,13 +9,23 @@ export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const repository = getRepository();
-    const storedCases = await repository.countCases();
+    // Este es el único endpoint que no puede caerse: su trabajo es informar de
+    // la degradación. Si contar casos falla porque la persistencia no responde,
+    // eso ES la respuesta — no un 500 que deja al cliente sin saber nada.
+    let storedCases: number | null = null;
+    let persistenceError: string | null = null;
+    try {
+      storedCases = await repository.countCases();
+    } catch {
+      persistenceError = 'La persistencia configurada no responde.';
+    }
     return ok({
       service: 'scayl-pulse',
-      status: 'up',
+      status: persistenceError ? 'degraded' : 'up',
       repository: repository.kind,
       ...runtimeCapabilities(),
       capacity: { storedCases, maxCases: env.maxCases },
+      persistenceError,
       checkedAt: new Date().toISOString(),
     });
   } catch (error) {
