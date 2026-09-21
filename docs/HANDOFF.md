@@ -11,7 +11,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 
 | # | Acción | Quién | Estado |
 |---|---|---|---|
-| 1 | **Hacer público el repositorio** antes de entregar | Anthony | ⬜ pendiente · bloquea el entregable #1 |
+| 1 | **Hacer público el repositorio** antes de entregar | Anthony | ⬜ pendiente · bloquea el entregable #1 · **secret scan limpio: se puede publicar** |
 | 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
@@ -138,6 +138,34 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 ---
 
 ## Workstream A — Backend Core · `anthony/backend-core`
+
+### Cierre pre-entrega — 2026-09-21
+
+Todo mergeado a `main`. Producción sirve **`a17f70b`** y fue auditada con
+navegador real: **30/30**, con `persistence: supabase` y `gemini-3.5-flash`
+respondiendo de verdad, no el fallback.
+
+**Secret scan previo a publicar — limpio.** 566 blobs, todas las ramas, todo el
+historial, 14 familias de credencial. Los únicos valores con forma de clave
+viven en `tests/configuration.test.ts` y son placeholders declarados. Ningún
+`.env` rastreado y `.env.example` no tiene un solo valor asignado.
+
+> ⚠️ **Matiz sobre el commit `d15833b`.** Su mensaje afirma que el commit
+> anterior había metido «una clave real de API» en un test. El valor que
+> sustituyó era `AIzaSyA1234567890abcdefghijklmnopqrstuv` — una secuencia
+> sintética, no una clave. El mensaje exagera lo ocurrido. Lo que sí pasó de
+> verdad, y está documentado en el propio test, es que una clave real se pegó
+> en `GEMINI_MODEL` en Vercel y `/api/health` la devolvió literalmente
+> (corregido en `0a0ef16`). Esa exposición fue **por el endpoint, nunca por
+> git**. Aun así, **rotar esa clave de Gemini sigue siendo lo prudente**: el
+> repositorio no la contiene, pero estuvo servida en abierto.
+
+**Herramienta nueva:** `npm run` no la necesita, pero existe el workflow manual
+**Auditoría de producción** (`audit-production.yml`). `verify:deployment`
+comprueba el contrato HTTP; esto comprueba lo que ve una persona. Las sesiones
+en la nube no alcanzan el despliegue por red, así que corre en Actions.
+
+---
 
 ### Auditoría final pre-entrega — 2026-09-21
 
@@ -354,4 +382,5 @@ Commit con prefijo `cross:`.
 
 | Fecha | Quién | Archivo | De quién | Por qué |
 |---|---|---|---|---|
+| 2026-09-21 | Claude Code (A) | `docs/STATUS.md` (sección C) | Workstream C | Se retiró la ruta local `C:/Users/Cbast/...` que el secret scan encontró antes de publicar: es el nombre de usuario y el disco de la máquina de un compañero, en un documento que el jurado puede leer. Solo esa línea. |
 | 2026-09-21 | Claude Code (A) | `src/data/synthetic/scenarios.ts` | Workstream C | Solo los cinco `title`. Empezaban por «GREEN — », «YELLOW — »… y un jurado no conoce esa convención; además la insignia de color ya muestra el código, así que el prefijo era ruido duplicado. Ningún `id`, `expectedStatus`, dato ni fixture cambió: los tests de C siguen pasando sin tocarlos. |

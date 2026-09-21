@@ -189,6 +189,7 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 | 2026-09-21 | Codex | B — Carlos | Frontend del expediente vivo sobre la API existente: dashboard, timeline, Safety Gate, ingreso libre, evidencia, reevaluación, resumen y cierre. 13 tests de frontend, recorrido de navegador y build aprobados; `npm run verify` con 108 tests tras incorporar main. Documentación de entrega actualizada sin modificar la sección C. | Carlos autorizó alcance y publicación; revisión humana final de código/UX pendiente |
 | 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
 | 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
+| 2026-09-21 | Claude Code (Opus 5) | A | Cierre pre-entrega: merge a `main`, espera del despliegue y **auditoría de 30 comprobaciones con navegador real contra producción** (30/30, Supabase y Gemini reales). Secret scan de 566 blobs sobre todo el historial y el árbol: limpio. Documentación de entrega alineada con producción. | Anthony (pendiente de revisión) |
 | 2026-09-21 | Claude Code (Opus 5) | A | Auditoría final pre-entrega bajo feature freeze: 27 comprobaciones de navegador (incógnito, cold start, escritorio, móvil, refresh directo), GREEN/YELLOW/RED de extremo a extremo, evidencia y reevaluación, Supabase caído y `/api/health` caído. Dos P0 corregidos (peticiones sin tope de tiempo; `/api/health` devolvía 500 con la persistencia caída) más P1 de copy. 128 tests, build de producción correcto. | Anthony (pendiente de revisión) |
 | 2026-09-20 | Codex | C — Sebastián | Clon en rama Integrations; 14 tests HTTP contra Next local para cinco escenarios, reevaluación, notificaciones, errores, cierre y 20 ingresos concurrentes; guion y documentación QA. Resultado automatizado: `npm run verify`, 108 passing / 0 failing, typecheck y lint correctos. Sin llamadas a Gemini/Supabase ni cambios al frontend. | Sebastián autorizó alcance y clonación; revisión humana de código, resultados y demo pendiente |
 
@@ -219,3 +220,15 @@ integración de escaparate:
 6. **El termómetro con fiebre.** `/api/health`, cuyo trabajo es informar de la
    degradación, devolvía `500` cuando Supabase no respondía: justo cuando hacía
    falta, dejaba de informar. Ahora responde `200` con `status: "degraded"`.
+7. **Un mensaje de commit más alarmante que los hechos.** `d15833b` decía haber
+   retirado «una clave real de API» del repositorio. El escaneo del historial
+   completo mostró que el valor sustituido era una secuencia sintética. Lo que
+   sí ocurrió fue una clave real pegada en la variable equivocada de Vercel y
+   servida por `/api/health`: una exposición por el endpoint, nunca por git.
+   Merece estar en el informe porque muestra la diferencia entre auditar y
+   creerse la propia documentación.
+8. **El detector que se delata solo.** La primera versión del escáner de
+   secretos marcaba `/api/health` como fuga: buscaba `service_role` y estaba
+   encontrando el *nombre* `SUPABASE_SERVICE_ROLE_KEY`, que el contrato expone
+   a propósito. Un detector que confunde nombres con valores entrena a ignorar
+   sus propias alarmas.

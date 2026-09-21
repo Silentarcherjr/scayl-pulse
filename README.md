@@ -231,7 +231,7 @@ npm run db:reset      # migrations + seeds sintéticos
 ## Tests
 
 ```bash
-npm test          # 59 tests
+npm test          # 128 tests
 npm run verify    # typecheck + lint + tests
 ```
 
@@ -245,6 +245,11 @@ Ejecuta los cinco escenarios contra la URL, comprueba el timeline, las dos
 notificaciones y el manejo de errores, y avisa si el despliegue está en modo
 memoria o sin Gemini. Devuelve código distinto de cero si algo falla.
 
+Eso comprueba el contrato HTTP. Para comprobar lo que ve una persona —carga
+anónima, móvil, loaders que no terminan, stacks en pantalla— está el workflow
+manual **Auditoría de producción** en GitHub Actions, que abre un navegador
+real contra el despliegue.
+
 Los tests nunca llaman a una API de pago y son reproducibles sin credenciales.
 Cubren, entre otras garantías:
 
@@ -254,7 +259,9 @@ Cubren, entre otras garantías:
 - los tres escenarios obligatorios siguen siendo reproducibles **con la IA caída**;
 - la nueva evidencia dispara reevaluación y **el timeline conserva las decisiones anteriores**;
 - **los casos no filtran datos entre sí**;
-- los case events son **inmutables**.
+- los case events son **inmutables**;
+- ninguna petición de la interfaz espera sin límite, y `/api/health` informa de
+  la degradación en vez de caerse con ella.
 
 Detalle: [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md)
 

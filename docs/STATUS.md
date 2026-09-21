@@ -7,13 +7,13 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-21 06:40
+**Última actualización:** 2026-09-21 07:15
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
-| 1 · Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado · **sigue privado, hay que publicarlo antes de entregar** |
-| 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · producto completo (backend + frontend), 12/12 comprobaciones |
+| 1 · Repositorio GitHub con documentación clara | 🟡 Documentado y **auditado: sin secretos en el árbol ni en el historial**. Sigue privado: falta el cambio de visibilidad, que es manual |
+| 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · producto completo, **auditoría de navegador 30/30 contra producción** con Supabase y Gemini reales |
 | 3 · PDF de herramientas de IA | 🟡 plantilla y generador listos (`npm run build:pdf`) · **generar al cerrar**, con las cifras finales |
 
 | Escenario obligatorio | Resultado | Verificado |
@@ -111,6 +111,15 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   que un evaluador entienda el sistema sin ejecutar nada.
 - **P1 — escenarios legibles para un jurado**, sin el prefijo GREEN/YELLOW/RED
   en el título (la insignia de color se mantiene).
+- **Cierre pre-entrega verificado contra PRODUCCIÓN**, no solo en local:
+  `audit-production.yml` abre un navegador real contra el despliegue y
+  comprueba las 30 garantías críticas. **30/30** sobre `a17f70b`, con
+  `persistence: supabase` y `gemini-3.5-flash` respondiendo de verdad.
+- **Secret scan completo antes de publicar**: 566 blobs, todas las ramas y todo
+  el historial. Los únicos valores con forma de credencial están en
+  `tests/configuration.test.ts` y son placeholders declarados (`…FAKE1111…`,
+  `sb_secret_super_confidencial`). Ningún `.env` rastreado; `.env.example` sin
+  un solo valor. **El repositorio puede hacerse público.**
 
 ### In Progress
 - Nada abierto. Feature freeze activo para la fase clasificatoria.
@@ -128,8 +137,8 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ### Tests
 **128 passing / 0 failing** · typecheck limpio · lint limpio · build de
-producción correcto · auditoría de navegador **27/27** · `verify:deployment`
-**12/12 contra producción**.
+producción correcto · auditoría de navegador **30/30 contra producción** ·
+`verify:deployment` **12/12**.
 
 ---
 
@@ -184,8 +193,7 @@ del 2026-09-21. El build limpio necesitó acceso a Google Fonts para Geist.
 - Punto de partida entregado por Workstream A: 5 escenarios definidos y
   verificados, dataset sintético, seeds SQL alineados con el dataset de
   TypeScript, notificador dual funcionando.
-- Clon local en `C:/Users/Cbast/Downloads/scayl-pulse-integrations`, rama
-  `workstream/integrations` sincronizada con `origin/main`.
+- Rama `workstream/integrations` sincronizada con `origin/main` antes de trabajar.
 - 14 tests HTTP nuevos contra Next local: cinco escenarios por webhook y
   runner, evidencia incremental, decisiones anteriores intactas, notificaciones
   duales con aviso de atención, errores y cierre terminal.
