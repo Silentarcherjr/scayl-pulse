@@ -178,7 +178,9 @@ function buildDeterministicSummary(status: DecisionStatus, facts: CaseFacts): st
   const hospital = facts.hospital?.name ?? facts.admission.hospitalCode;
   switch (status) {
     case 'VERIFIED':
-      return `Cobertura verificada para ${patient} en ${hospital}. Póliza vigente, hospital en red y documentación obligatoria completa.`;
+      // «Verificación administrativa completada», no «cobertura verificada»:
+      // el sistema comprueba requisitos, no autoriza una cobertura.
+      return `Verificación administrativa completada para ${patient} en ${hospital}. Póliza vigente, hospital en red y documentación obligatoria completa.`;
     case 'DOCUMENTS_REQUIRED':
       return `Cobertura potencialmente válida para ${patient} en ${hospital}, pendiente de ${facts.documents.missing.filter((m) => m.severity === 'BLOCKING').length} documento(s) obligatorio(s).`;
     case 'HUMAN_REVIEW':

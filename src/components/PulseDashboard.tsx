@@ -11,6 +11,7 @@ import {
   apiRequest,
   dateLabel,
   errorMessage,
+  POLL_TIMEOUT_MS,
   type CaseListItem,
   type HealthData,
   type ScenarioSummary,
@@ -41,7 +42,7 @@ export function PulseDashboard() {
     let disposed = false;
     let running = false;
     const controller = new AbortController();
-    const options = { signal: controller.signal };
+    const options = { signal: controller.signal, timeoutMs: POLL_TIMEOUT_MS };
     async function refresh() {
       if (running) return;
       running = true;
@@ -140,11 +141,25 @@ export function PulseDashboard() {
               sintético
             </p>
             <h1>Cada ingreso, una historia completa.</h1>
+            <p className="lede">
+              Detecta un ingreso, valida la póliza y antecedentes, y sincroniza al hospital y la
+              aseguradora en segundos.
+            </p>
             <p className="muted">
               {view === 'hospital'
                 ? 'Registra ingresos, aporta evidencia y sigue la verificación administrativa.'
                 : 'Revisa conflictos, entiende cada decisión y documenta el cierre humano.'}
             </p>
+            <ol className="flow-strip" aria-label="Recorrido de un expediente">
+              <li>Ingreso</li>
+              <li>Póliza</li>
+              <li>Antecedentes</li>
+              <li>Análisis</li>
+              <li>Decisión administrativa</li>
+              <li>Hospital + aseguradora</li>
+              <li>Nueva evidencia</li>
+              <li>Reevaluación</li>
+            </ol>
           </div>
           <div className="button-row">
             <button
@@ -177,7 +192,7 @@ export function PulseDashboard() {
             <strong>{loading ? '—' : cases.length}</strong>
           </div>
           <div>
-            <span>Cobertura verificada</span>
+            <span>Verificación completada</span>
             <strong>
               {loading ? '—' : cases.filter((item) => item.status === 'VERIFIED').length}
             </strong>
@@ -207,13 +222,20 @@ export function PulseDashboard() {
                   : `Proveedor configurado: ${health.aiProvider}${health.geminiModel ? ` · ${health.geminiModel}` : ''}`}
               </span>
               <span>
-                Capacidad: {health.capacity.storedCases}/{health.capacity.maxCases}
+                {health.capacity.storedCases === null
+                  ? 'Capacidad: no disponible'
+                  : `Capacidad: ${health.capacity.storedCases}/${health.capacity.maxCases}`}
               </span>
+              {health.persistenceError && <span>{health.persistenceError}</span>}
             </>
+          ) : healthError ? (
+            // Sin este caso, un /api/health caído dejaba «Comprobando entorno…»
+            // en pantalla para siempre: parecía que seguía arrancando.
+            <span>Estado del entorno no disponible · se reintenta cada 10 s</span>
           ) : (
             <span>Comprobando entorno…</span>
           )}
-          {healthError && <span>No se pudo actualizar el estado del entorno.</span>}
+          {health && healthError && <span>No se pudo actualizar el estado del entorno.</span>}
         </div>
         {health?.persistenceNote && (
           <p className="notice warning">

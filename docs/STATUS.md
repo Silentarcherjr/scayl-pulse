@@ -7,13 +7,13 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-20 08:30
+**Última actualización:** 2026-09-21 06:40
 **Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
 | 1 · Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado · **sigue privado, hay que publicarlo antes de entregar** |
-| 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · desplegado, con Supabase conectado, 12/12 comprobaciones |
+| 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · producto completo (backend + frontend), 12/12 comprobaciones |
 | 3 · PDF de herramientas de IA | 🟡 plantilla y generador listos (`npm run build:pdf`) · **generar al cerrar**, con las cifras finales |
 
 | Escenario obligatorio | Resultado | Verificado |
@@ -82,9 +82,38 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   datos. Migración adicional que fija `search_path` en las tres funciones de
   trigger (aviso del linter de Supabase resuelto).
 - Documentación completa: `README`, `AGENTS.md`, `CLAUDE.md` y 13 documentos en `docs/`.
+- **Auditoría final pre-entrega (feature freeze)** con 27 comprobaciones de
+  navegador contra el build de producción: usuario anónimo en incógnito, sin
+  cookies ni localStorage, cold start, escritorio y móvil (390 px), refresh
+  directo sobre un expediente, GREEN/YELLOW/RED de extremo a extremo,
+  evidencia con reevaluación, notificaciones separadas de hospital y
+  aseguradora, y ausencia de stack traces. **27/27.**
+- **P0 corregido — peticiones del navegador sin tope de tiempo.** Ninguna
+  llamada de la interfaz tenía límite: con Supabase o Gemini colgados, los
+  estados «Cargando expedientes…», «Comprobando entorno…» o «Guardando
+  evidencia…» se quedaban girando sin final. Ahora hay tope general de 120 s
+  (generoso: un escenario con seguimientos y modelo real supera los 40 s) y
+  15 s en las lecturas de fondo, que se repiten solas.
+- **P0 corregido — `/api/health` devolvía 500 con la persistencia caída.** El
+  endpoint que existe para informar de la degradación era el que se caía.
+  Ahora responde `200` con `status: "degraded"`, `capacity.storedCases: null`
+  y una frase mostrable. Contrato actualizado en `API_CONTRACT.md`.
+- **P0 corregido — «Comprobando entorno…» perpetuo.** Si `/api/health`
+  fallaba, la interfaz no salía nunca de ese estado. Ahora degrada a un
+  mensaje terminal que dice que se reintenta.
+- **P1 — terminología.** `VERIFIED` pasa de «Cobertura verificada» a
+  **«Verificación completada»**: lo primero se lee como una autorización
+  definitiva de la aseguradora, que es exactamente lo que este sistema no
+  emite.
+- **P1 — el recorrido a la vista.** Frase de apertura y tira
+  «Ingreso → Póliza → Antecedentes → Análisis → Decisión administrativa →
+  Hospital + aseguradora → Nueva evidencia → Reevaluación» en el hero, para
+  que un evaluador entienda el sistema sin ejecutar nada.
+- **P1 — escenarios legibles para un jurado**, sin el prefijo GREEN/YELLOW/RED
+  en el título (la insignia de color se mantiene).
 
 ### In Progress
-- Nada abierto. El backend está completo.
+- Nada abierto. Feature freeze activo para la fase clasificatoria.
 
 ### Next
 1. ~~Aplicar el esquema en Supabase~~ ✅
@@ -98,8 +127,9 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
 
 ### Tests
-**94 passing / 0 failing** · typecheck limpio · lint limpio · CI verde ·
-`verify:deployment` **12/12 contra producción con Supabase y Gemini reales**.
+**128 passing / 0 failing** · typecheck limpio · lint limpio · build de
+producción correcto · auditoría de navegador **27/27** · `verify:deployment`
+**12/12 contra producción**.
 
 ---
 

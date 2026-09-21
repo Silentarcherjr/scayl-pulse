@@ -32,7 +32,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: 'green-verified',
     code: 'GREEN',
-    title: 'GREEN — Cobertura verificada automáticamente',
+    title: 'Todo en regla: verificación automática en segundos',
     narrative:
       'Póliza vigente, hospital en red, documentación completa y sin antecedentes relacionados. El agente verifica la cobertura y notifica a admisiones y al gestor de casos en segundos.',
     expectedStatus: 'VERIFIED',
@@ -72,7 +72,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: 'yellow-documents-required',
     code: 'YELLOW',
-    title: 'YELLOW — Falta documentación identificada con precisión',
+    title: 'Falta documentación: el sistema dice exactamente cuál',
     narrative:
       'Póliza vigente y cobertura potencialmente válida, pero el costo estimado y el nivel de triaje exigen documentos que el hospital no envió. El agente dice exactamente qué falta y por qué. Al recibirlos, el caso se reevalúa solo.',
     expectedStatus: 'DOCUMENTS_REQUIRED',
@@ -134,7 +134,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: 'red-human-review',
     code: 'RED',
-    title: 'RED — Posible preexistencia sin evidencia suficiente',
+    title: 'Posible preexistencia: la decisión la toma una persona',
     narrative:
       'Póliza vigente y documentación completa, pero existe un antecedente registrado ANTES del inicio de la póliza que la tabla clínica marca como potencialmente relacionado con el motivo de ingreso. El sistema no decide: escala a revisión humana mostrando evidencia, motivo, incertidumbre y acción recomendada. La atención de emergencia nunca se detiene.',
     expectedStatus: 'HUMAN_REVIEW',
@@ -201,7 +201,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: 'extra-expired-policy',
     code: 'EXTRA',
-    title: 'EXTRA — Póliza vencida: nunca puede llegar a VERIFIED',
+    title: 'Póliza vencida: el Safety Gate lo impide siempre',
     narrative:
       'Caso de control de seguridad. Aunque el resto del expediente esté perfecto, una póliza vencida nunca produce VERIFIED: el Safety Gate determinístico lo impide antes de que el modelo pueda opinar.',
     expectedStatus: 'HUMAN_REVIEW',
@@ -240,7 +240,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: 'extra-out-of-network',
     code: 'EXTRA',
-    title: 'EXTRA — Hospital fuera de red',
+    title: 'Hospital fuera de red: escala a revisión humana',
     narrative:
       'La póliza está vigente pero el hospital no pertenece a la red. El caso escala a revisión humana para decidir el tratamiento administrativo, sin afectar la atención del paciente.',
     expectedStatus: 'HUMAN_REVIEW',
