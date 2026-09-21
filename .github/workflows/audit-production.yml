@@ -1,0 +1,40 @@
+name: Auditoría de producción
+
+# `verify-production.yml` comprueba el contrato HTTP. Esto comprueba lo que ve
+# una persona: carga anónima, móvil, los tres escenarios, evidencia y
+# reevaluación, degradación y ausencia de «Cargando…» eternos o de stacks en
+# pantalla. Necesita un navegador, así que vive aquí y no en una sesión en la
+# nube, que no alcanza el despliegue por red.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL del despliegue a auditar
+        required: false
+        default: https://scayl-pulse.vercel.app
+
+jobs:
+  audit:
+    name: Auditoría crítica con navegador
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Playwright no es dependencia del proyecto: la demo no la necesita y no
+      # queremos cargar la instalación de nadie con un navegador.
+      - name: Instalar navegador solo para esta ejecución
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Auditar el despliegue
+        # Crea varios casos sintéticos en la base de producción, por eso es
+        # manual. La ocupación se consulta en GET /api/health, campo capacity.
+        run: node scripts/audit-production.mjs "${{ inputs.url || 'https://scayl-pulse.vercel.app' }}"
