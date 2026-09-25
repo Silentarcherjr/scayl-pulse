@@ -7,9 +7,10 @@ Para cada herramienta la organización exige: **propósito**, **aplicación** y
 **resultados obtenidos**. Añadimos **validación humana** porque es lo que
 distingue un proyecto serio de una demo generada.
 
-> **El PDF se genera al final, no ahora.** Este archivo es la fuente viva: se
-> actualiza durante el desarrollo, y las cifras de Gemini cambiarán cuando el
-> frontend genere tráfico real.
+> **El PDF se genera al final, no ahora.** Este archivo y la plantilla ya
+> contienen el trabajo completado hasta el 24 de septiembre. Antes de exportar
+> solo hay que incorporar cualquier trabajo posterior y actualizar las
+> métricas de Gemini si se realiza una nueva medición controlada.
 >
 > Cuando el proyecto esté cerrado, desde cualquier máquina con Chrome:
 > ```bash
@@ -51,16 +52,20 @@ repositorio en estado operativo para el resto del equipo.
 - Integración de Gemini detrás de un puerto, con salida estructurada, timeout,
   validación y fallback determinístico.
 - Esquema de Supabase con inmutabilidad del timeline forzada por triggers.
-- 42 tests, incluidos los adversarios contra el Safety Gate.
+- Suite final de 128 tests, incluidos los adversarios contra el Safety Gate,
+  pruebas HTTP reales y estados degradados.
 - Toda la documentación de `docs/`, `AGENTS.md` y `CLAUDE.md`.
 
 **Resultados obtenidos.**
-- Backend funcional de extremo a extremo con los tres escenarios obligatorios
-  reproducibles.
-- 42/42 tests en verde; typecheck y lint limpios.
-- Nueve commits temáticos y tres ramas de trabajo listas para el equipo.
-- Documentación suficiente para que dos personas con Codex empiecen sin
-  reunión previa.
+- Producto funcional de extremo a extremo con los tres escenarios obligatorios
+  reproducibles, Supabase y Gemini reales en producción.
+- 128/128 tests en verde; typecheck y lint limpios; build de producción
+  comprobado en CI.
+- Auditoría de navegador contra producción con 30/30 garantías críticas:
+  escritorio, móvil, casos GREEN/YELLOW/RED, reevaluación, notificaciones y
+  degradación controlada.
+- Documentación y contratos suficientes para que los tres workstreams
+  trabajaran en paralelo sin redefinir el dominio.
 
 **Validación humana.** Anthony revisa arquitectura y decisiones antes de
 fusionar a `main`. Las decisiones no triviales están registradas en
@@ -75,26 +80,36 @@ humana: las propuestas quedaron en `IDEAS.md` con estado `PROPOSED`.
 **Propósito.** Implementar frontend (Workstream B) e integraciones, demo y QA
 (Workstream C) en paralelo al backend, guiado por `AGENTS.md`.
 
-**Aplicación.** _(a completar por Carlos y Sebastián conforme trabajen)_
-- Rama `workstream/frontend` (Carlos, 2026-09-21): dashboard hospital/aseguradora,
-  lista y detalle de casos, timeline por `seq` y decisiones históricas, panel
-  auditable del Safety Gate, simulador, ingreso libre, evidencia/reevaluación,
-  resumen bajo demanda, cierre humano y Realtime con alternativa por polling.
-  Resultado: 13 tests específicos de frontend; typecheck y lint correctos;
-  108 tests del repositorio correctos tras incorporar `main`; build y recorrido
-  automatizado de navegador local aprobados. Validación humana: Carlos autorizó
-  alcance y publicación; revisión humana final de código/UX pendiente.
-- Rama `workstream/integrations`: …
+**Aplicación.**
+- En `workstream/frontend`, implementación del dashboard hospital/aseguradora,
+  lista, búsqueda y filtros de expedientes, detalle del caso, timeline por
+  `seq`, decisiones históricas y panel de doce comprobaciones del Safety Gate.
+- Simulador de escenarios, ingreso libre, aportación de evidencia con
+  reevaluación, resumen bajo demanda, cierre humano y Realtime con alternativa
+  por polling.
+- En `workstream/integrations`, construcción de pruebas HTTP contra Next local
+  para los cinco escenarios, evidencia incremental, notificación dual,
+  errores, cierre terminal y veinte ingresos concurrentes.
+- Revisión automatizada de presentación: estados, documentos `BLOCKING` frente
+  a `ADVISORY`, origen real de cada decisión y corrección del modelo visible.
 
-**Resultados obtenidos.** _(a completar)_
+**Resultados obtenidos.**
+- Interfaz completa y responsive para dos audiencias, integrada en `main` y
+  desplegada en producción.
+- 13 pruebas específicas de frontend y 14 pruebas HTTP de integración; la
+  suite consolidada terminó en **128/128 pruebas correctas**.
+- Timeline auditable, decisiones anteriores, evidencia, notificaciones y
+  cierre humano demostrables desde el navegador sin credenciales.
+- Prueba de veinte ingresos concurrentes sin colisiones de identificadores ni
+  secuencias, con aislamiento de evidencia entre casos.
 
-**Validación humana.** _(a completar — quién revisó qué, y qué se corrigió)_
-
-> **Instrucción para el equipo:** al cerrar cada sesión de Codex, añade dos o
-> tres líneas concretas aquí. «Codex generó el dashboard» no sirve para el
-> PDF. «Codex implementó la vista de timeline con suscripción Realtime;
-> corregimos a mano el orden de los eventos, que ordenaba por `createdAt` en
-> lugar de por `seq`» sí sirve.
+**Validación humana.** Carlos autorizó el alcance y la publicación del
+frontend; Sebastián autorizó el alcance de Integrations y la ejecución de su
+suite. Anthony validó la configuración del despliegue y rotó la credencial de
+Gemini antes de la entrega. La auditoría posterior encontró dos
+fallos críticos de resiliencia —peticiones de navegador sin límite y un
+`/api/health` que fallaba al degradarse Supabase—; ambos se corrigieron y se
+volvieron a verificar antes del feature freeze.
 
 ---
 
@@ -106,8 +121,9 @@ análisis estructurado: resumen, motivo, evidencia citada, documentos
 faltantes, condiciones potencialmente relacionadas y preguntas abiertas.
 
 **Aplicación.**
-- Modelo `gemini-2.5-flash` con salida estructurada (`responseMimeType:
-  application/json` + `responseSchema`).
+- Cadena de modelos con `gemini-3.5-flash` como primario y
+  `gemini-2.5-flash` como respaldo, ambos con salida estructurada
+  (`responseMimeType: application/json` + `responseSchema`).
 - Integrado detrás del puerto `AiProvider` (`src/core/ai/gemini-provider.ts`).
 - Recibe **hechos estructurados**, no prosa: la validez administrativa ya la
   resolvieron las reglas, de modo que el modelo hace análisis, no extracción
@@ -186,6 +202,8 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 
 | Fecha | Herramienta | Workstream | Qué se hizo | Validado por |
 |---|---|---|---|---|
+| 2026-09-24 | Codex | A — Anthony | Preparó la entrada de evaluación sin añadir funcionalidad: conservó el historial sintético, generó tres casos canónicos en producción, capturó el dashboard real y añadió al README un recorrido de tres minutos para el jurado. | Anthony aprobó proceder y prefirió conservar los casos existentes para que el jurado pudiera ver uso real; estados de los tres casos validados contra la API |
+| 2026-09-24 | Codex | A — Anthony | Actualización de la fuente y plantilla del PDF: incorporó resultados finales de frontend e Integrations, 128 tests, auditoría 30/30 y fecha confirmada; generó un preview temporal y corrigió la paginación de cinco a cuatro páginas. | Anthony solicitó la actualización; revisión final de contenido pendiente al cierre del desarrollo |
 | 2026-09-21 | Codex | B — Carlos | Frontend del expediente vivo sobre la API existente: dashboard, timeline, Safety Gate, ingreso libre, evidencia, reevaluación, resumen y cierre. 13 tests de frontend, recorrido de navegador y build aprobados; `npm run verify` con 108 tests tras incorporar main. Documentación de entrega actualizada sin modificar la sección C. | Carlos autorizó alcance y publicación; revisión humana final de código/UX pendiente |
 | 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
 | 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |

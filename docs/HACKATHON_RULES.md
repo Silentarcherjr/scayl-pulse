@@ -29,7 +29,7 @@ Y debe notificar **simultáneamente**:
 | # | Entregable | Estado |
 |---|---|---|
 | 1 | Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado; **falta hacerlo público** (ver DEC-010) |
-| 2 | Enlace del agente desarrollado y en ejecución | 🔴 Pendiente de despliegue en Vercel |
+| 2 | Enlace del agente desarrollado y en ejecución | ✅ [`scayl-pulse.vercel.app`](https://scayl-pulse.vercel.app), con Supabase y Gemini |
 | 3 | PDF detallando las herramientas de IA utilizadas | 🟡 Fuente viva en [`AI_USAGE_LOG.md`](AI_USAGE_LOG.md); falta exportar a PDF |
 
 **No hay video obligatorio en esta fase.**
@@ -48,23 +48,20 @@ día.**
 
 ---
 
-## ⚠️ Inconsistencia documental detectada en las bases
+## Fecha de entrega confirmada
 
 Las bases recibidas se contradicen sobre la fecha de entrega del reto inicial:
 
 - una sección indica **27 de septiembre, 23:59**;
 - el cronograma indica **23 de septiembre**.
 
-**Decisión operativa del equipo:** trabajamos contra el **23 de septiembre**
-como deadline real hasta que la organización confirme lo contrario. Si la
-fecha buena resulta ser el 27, ganamos cuatro días. Si es el 23 y hubiéramos
-asumido el 27, quedamos fuera.
+**Confirmación de la organización (2026-09-24):** Anthony consultó la
+inconsistencia y la organización confirmó que el último día para entregar es
+el **27 de septiembre de 2026**.
 
-**Acción pendiente (humana):** pedir confirmación escrita a la organización y
-actualizar esta sección con la respuesta y su fecha.
-
-> Fechas relativas convertidas a absolutas: el deadline operativo es el
-> **miércoles 23 de septiembre de 2026, 23:59 (hora de Panamá)**.
+> Deadline operativo confirmado: **domingo 27 de septiembre de 2026, 23:59
+> (hora de Panamá)**. Conservamos la inconsistencia original en este registro
+> para que quede trazabilidad de por qué antes se trabajó contra el día 23.
 
 ---
 

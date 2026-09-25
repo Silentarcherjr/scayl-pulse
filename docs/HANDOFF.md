@@ -15,8 +15,8 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 | 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
-| 5 | `GEMINI_API_KEY` | Anthony | ✅ configurada y verificada en producción |
-| 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ⬜ pendiente |
+| 5 | `GEMINI_API_KEY` | Anthony | ✅ configurada, verificada en producción y rotada el 2026-09-24 |
+| 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ✅ confirmado por la organización: último día 27 de septiembre |
 | 7 | Invitar a Carlos y Sebastián | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
 
 ### Reiniciar los datos de demo
@@ -139,6 +139,54 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
+### Preparación del recorrido del jurado — 2026-09-24
+
+**Qué funciona:** se preservó todo el historial sintético de producción y se
+generaron tres expedientes canónicos nuevos: `PULSE-2026-FFAD10` (`VERIFIED`),
+`PULSE-2026-D236B0` (`DOCUMENTS_REQUIRED`) y `PULSE-2026-6E9BC6`
+(`HUMAN_REVIEW`). El README incluye una captura real del dashboard y un
+recorrido de tres minutos para encontrarlos y demostrar el expediente vivo.
+
+**Qué falta:** ninguna funcionalidad. En el cierre de entrega todavía hay que
+generar el PDF final y hacer público el repositorio.
+
+**Archivos modificados:** `README.md`, `public/scayl-pulse-dashboard.png`,
+`docs/STATUS.md`, `docs/HANDOFF.md`, `docs/AI_USAGE_LOG.md`.
+
+**Próximo paso exacto:** integrar este commit en `main` y conservar el feature
+freeze.
+
+**Tests:** `npm run verify` correcto: 128 passing / 0 failing, typecheck y lint
+limpios.
+
+**Riesgos:** los endpoints de demo siguen siendo públicos a propósito; el tope
+de 200 casos evita crecimiento ilimitado. Todos los expedientes visibles son
+sintéticos.
+
+### Actualización del entregable de IA — 2026-09-24
+
+**Qué funciona:** la fuente viva y la plantilla del PDF ya incluyen el trabajo
+real de Claude Code, Codex frontend, Codex Integrations y Gemini. El preview
+temporal resultante ocupa cuatro páginas A4, sin cortes, solapamientos ni
+secciones pendientes.
+
+**Qué falta:** incorporar únicamente trabajo posterior al 24 de septiembre y,
+si se hace una nueva medición controlada, sustituir el cuadro de métricas de
+Gemini. Generar el PDF final al cerrar; no se dejó un PDF intermedio en Git.
+
+**Archivos modificados:** `docs/AI_USAGE_LOG.md`,
+`docs/deliverables/ai-tools-report.html`, `docs/HACKATHON_RULES.md`,
+`docs/STATUS.md`, `docs/HANDOFF.md`.
+
+**Próximo paso exacto:** al declarar feature freeze final, revisar el corte de
+métricas y ejecutar `npm run build:pdf`.
+
+**Tests:** `npm run verify` correcto: 128 passing / 0 failing, typecheck y lint
+limpios.
+
+**Riesgos:** el repositorio sigue privado por decisión del equipo; hacerlo
+público inmediatamente antes de enviar los entregables.
+
 ### Cierre pre-entrega — 2026-09-21
 
 Todo mergeado a `main`. Producción sirve **`a17f70b`** y fue auditada con
@@ -250,7 +298,7 @@ Después cargar las 3 variables en Vercel, redesplegar y correr
 ### Bugs conocidos
 Ninguno abierto.
 
-### Riesgos
+### Riesgos registrados en la sesión inicial (estado histórico)
 1. **Gemini nunca se ha llamado de verdad.** El esquema de salida estructurada
    puede necesitar ajustes menores contra la API real. *Mitigado:* si falla,
    el fallback determinístico mantiene los tres escenarios correctos, así que
@@ -264,8 +312,8 @@ Ninguno abierto.
    instancia serverless tiene su propia memoria y se recicla. Para la demo
    funciona; un caso creado puede no aparecer en una petición posterior si
    Vercel levanta otra instancia. **Razón de peso para terminar Supabase.**
-3. **Fecha de entrega ambigua** (23 vs. 27 de septiembre). Trabajamos contra el
-   23. *Mitigación: confirmar con la organización cuanto antes.*
+3. ~~**Fecha de entrega ambigua** (23 vs. 27 de septiembre).~~ Resuelta el
+   2026-09-24: la organización confirmó el 27 de septiembre como último día.
 4. **El repositorio está privado.** Si se entrega así, el jurado no puede abrir
    el entregable #1. Marcado como acción humana #1.
 

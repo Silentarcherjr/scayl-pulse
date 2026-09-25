@@ -7,8 +7,8 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-21 07:15
-**Deadline operativo:** 2026-09-23 23:59 (ver `HACKATHON_RULES.md`)
+**Última actualización:** 2026-09-24
+**Deadline confirmado:** 2026-09-27 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-20 08:30
+**Última actualización:** 2026-09-24 22:11
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -62,7 +62,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   un escenario. Métricas reales en `AI_USAGE_LOG.md`.
 - **IDEA-006 entregada (backend)**: `AgentDecision.checks` expone las doce
   comprobaciones con su estado, evidencia y el suelo que imponen — incluidas
-  las que pasan. Falta el panel, que es del Workstream B.
+  las que pasan. El panel correspondiente ya fue integrado por Workstream B.
 - **IDEA-003 entregada**: `GET /api/cases/:id/summary`, resumen para el gestor
   generado bajo demanda y cacheado como evento del timeline. Verificado en
   producción: 9,7 s la primera vez, 0,7 s desde caché.
@@ -120,6 +120,14 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   `tests/configuration.test.ts` y son placeholders declarados (`…FAKE1111…`,
   `sb_secret_super_confidencial`). Ningún `.env` rastreado; `.env.example` sin
   un solo valor. **El repositorio puede hacerse público.**
+- **Fuente del PDF de herramientas de IA actualizada al 2026-09-24**: Codex e
+  Integrations ya tienen propósito, aplicación, resultados y validación
+  humana; cifras alineadas con 128 tests y auditoría 30/30. Preview temporal
+  revisado visualmente en cuatro páginas; el PDF final se genera al cierre.
+- **Entrada de demo preparada para el jurado sin borrar historial:** tres casos
+  canónicos recién generados en producción (`VERIFIED`, `DOCUMENTS_REQUIRED`
+  y `HUMAN_REVIEW`), captura real del dashboard y recorrido recomendado de
+  tres minutos en el README. Producción conserva todo su historial sintético.
 
 ### In Progress
 - Nada abierto. Feature freeze activo para la fase clasificatoria.
@@ -128,12 +136,12 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 1. ~~Aplicar el esquema en Supabase~~ ✅
 2. ~~Cargar las variables en Vercel~~ ✅
 3. ~~Verificar el despliegue~~ ✅ **12/12 contra https://scayl-pulse.vercel.app con Supabase conectado**
-4. **Hacer el repositorio público** antes de entregar (entregable #1). ← lo único que bloquea una entrega hoy
-5. Conectar `GEMINI_API_KEY` y registrar métricas reales en `AI_USAGE_LOG.md`: latencia media, tasa de respuestas válidas y **cuántas veces el Safety Gate corrigió al modelo**.
-6. Exportar `AI_USAGE_LOG.md` a PDF.
+4. **Hacer el repositorio público justo antes de entregar** (entregable #1).
+5. ~~Conectar y rotar `GEMINI_API_KEY`~~ ✅ configurada, verificada y rotada.
+6. Exportar `AI_USAGE_LOG.md` a PDF al cerrar el desarrollo.
 
 ### Blocked
-- **Falta `GEMINI_API_KEY`.** Nada más depende de ella: todo lo demás funciona.
+- Ninguno. Quedan únicamente las acciones de cierre del paquete de entrega.
 
 ### Tests
 **128 passing / 0 failing** · typecheck limpio · lint limpio · build de
