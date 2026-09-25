@@ -127,7 +127,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 - **Entrada de demo preparada para el jurado sin borrar historial:** tres casos
   canónicos recién generados en producción (`VERIFIED`, `DOCUMENTS_REQUIRED`
   y `HUMAN_REVIEW`), captura real del dashboard y recorrido recomendado de
-  tres minutos en el README. Producción conserva sus 55 expedientes sintéticos.
+  tres minutos en el README. Producción conserva todo su historial sintético.
 
 ### In Progress
 - Nada abierto. Feature freeze activo para la fase clasificatoria.

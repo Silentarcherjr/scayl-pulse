@@ -112,9 +112,10 @@ tabla que la base de datos **impide** modificar o borrar.
 4. Alterna **Hospital / Aseguradora** para comprobar que cada parte recibe la
    misma alerta con el contexto que necesita.
 
-Los 55 expedientes visibles son datos sintéticos de demostración. Los tres
+Todos los expedientes visibles son datos sintéticos de demostración. Los tres
 anteriores se generaron al preparar la entrega para que el recorrido principal
-sea fácil de localizar sin borrar el historial de uso.
+sea fácil de localizar sin borrar el historial de uso. El total puede aumentar
+porque las auditorías automáticas también ejecutan los escenarios.
 
 **En local:**
 
