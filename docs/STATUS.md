@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-20 08:30
+**Última actualización:** 2026-09-24 22:11
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -124,6 +124,10 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   Integrations ya tienen propósito, aplicación, resultados y validación
   humana; cifras alineadas con 128 tests y auditoría 30/30. Preview temporal
   revisado visualmente en cuatro páginas; el PDF final se genera al cierre.
+- **Entrada de demo preparada para el jurado sin borrar historial:** tres casos
+  canónicos recién generados en producción (`VERIFIED`, `DOCUMENTS_REQUIRED`
+  y `HUMAN_REVIEW`), captura real del dashboard y recorrido recomendado de
+  tres minutos en el README. Producción conserva sus 55 expedientes sintéticos.
 
 ### In Progress
 - Nada abierto. Feature freeze activo para la fase clasificatoria.

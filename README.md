@@ -9,6 +9,8 @@
 Abre el enlace y pulsa cualquier escenario. No hace falta registro ni
 explicación previa.
 
+![Dashboard de SCAYL Pulse con expedientes sintéticos en producción](public/scayl-pulse-dashboard.png)
+
 ---
 
 ## ¿Qué es SCAYL Pulse?
@@ -95,6 +97,24 @@ tabla que la base de datos **impide** modificar o borrar.
 ## Cómo probarlo
 
 **En vivo:** https://scayl-pulse.vercel.app — pulsa un escenario y observa el expediente.
+
+### Recorrido recomendado para el jurado (3 minutos)
+
+1. En **Expedientes**, busca `PULSE-2026-FFAD10` y abre el caso verde: muestra
+   la verificación automática, las comprobaciones aplicadas y la notificación
+   simultánea a hospital y aseguradora.
+2. Abre `PULSE-2026-D236B0`: el caso amarillo explica qué documentos son
+   obligatorios y por qué. Desde **Simular escenario**, ejecuta
+   «Documentos requeridos» con sus seguimientos para ver la reevaluación hasta
+   `VERIFIED` sin borrar la decisión anterior.
+3. Abre `PULSE-2026-6E9BC6`: el caso rojo conserva la incertidumbre y deriva la
+   decisión a revisión humana sin detener la atención de emergencia.
+4. Alterna **Hospital / Aseguradora** para comprobar que cada parte recibe la
+   misma alerta con el contexto que necesita.
+
+Los 55 expedientes visibles son datos sintéticos de demostración. Los tres
+anteriores se generaron al preparar la entrega para que el recorrido principal
+sea fácil de localizar sin borrar el historial de uso.
 
 **En local:**
 

@@ -139,6 +139,30 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
+### Preparación del recorrido del jurado — 2026-09-24
+
+**Qué funciona:** se preservó todo el historial sintético de producción y se
+generaron tres expedientes canónicos nuevos: `PULSE-2026-FFAD10` (`VERIFIED`),
+`PULSE-2026-D236B0` (`DOCUMENTS_REQUIRED`) y `PULSE-2026-6E9BC6`
+(`HUMAN_REVIEW`). El README incluye una captura real del dashboard y un
+recorrido de tres minutos para encontrarlos y demostrar el expediente vivo.
+
+**Qué falta:** ninguna funcionalidad. En el cierre de entrega todavía hay que
+generar el PDF final y hacer público el repositorio.
+
+**Archivos modificados:** `README.md`, `public/scayl-pulse-dashboard.png`,
+`docs/STATUS.md`, `docs/HANDOFF.md`, `docs/AI_USAGE_LOG.md`.
+
+**Próximo paso exacto:** integrar este commit en `main` y conservar el feature
+freeze.
+
+**Tests:** `npm run verify` correcto: 128 passing / 0 failing, typecheck y lint
+limpios.
+
+**Riesgos:** los endpoints de demo siguen siendo públicos a propósito; el tope
+de 200 casos evita crecimiento ilimitado. Todos los expedientes visibles son
+sintéticos.
+
 ### Actualización del entregable de IA — 2026-09-24
 
 **Qué funciona:** la fuente viva y la plantilla del PDF ya incluyen el trabajo
