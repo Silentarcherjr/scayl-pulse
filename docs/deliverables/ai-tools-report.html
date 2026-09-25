@@ -8,11 +8,11 @@
   * { box-sizing: border-box; }
   body {
     font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    color: #14171f; line-height: 1.55; font-size: 10.5pt; margin: 0;
+    color: #14171f; line-height: 1.5; font-size: 10pt; margin: 0;
   }
   h1 { font-size: 21pt; margin: 0 0 4px; letter-spacing: -0.4px; }
   h2 {
-    font-size: 13pt; margin: 26px 0 10px; padding-bottom: 5px;
+    font-size: 13pt; margin: 22px 0 9px; padding-bottom: 5px;
     border-bottom: 2px solid #0f62d6; page-break-after: avoid;
   }
   h3 { font-size: 11pt; margin: 16px 0 6px; color: #0f3d8a; page-break-after: avoid; }
@@ -37,7 +37,9 @@
   li { margin-bottom: 3px; }
   code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 9pt; background: #eef2f8; padding: 1px 4px; border-radius: 3px; }
   .note { background: #fff8e6; border: 1px solid #e8d48a; padding: 9px 12px; margin: 12px 0; page-break-inside: avoid; }
-  .tool { page-break-inside: avoid; }
+  /* Las secciones largas pueden continuar en la página siguiente; los
+     encabezados y bloques críticos conservan sus propias reglas de corte. */
+  .tool { page-break-inside: auto; }
   footer { margin-top: 26px; padding-top: 9px; border-top: 1px solid #d8dce4; color: #5d6474; font-size: 8.5pt; }
 </style>
 </head>
@@ -47,7 +49,7 @@
   <h1>SCAYL&nbsp;Pulse — Herramientas de IA utilizadas</h1>
   <p class="sub">Sistema de Alerta Temprana de Ingresos a Emergencias</p>
   <p class="meta">
-    hackIAthon Panamá · reto clasificatorio · 20 de septiembre de 2026<br>
+    hackIAthon Panamá · reto clasificatorio · septiembre de 2026<br>
     Repositorio: github.com/Silentarcherjr/scayl-pulse · Demostración: scayl-pulse.vercel.app
   </p>
 </header>
@@ -79,14 +81,15 @@ paralelo, y dejar el repositorio operativo para el resto del equipo.</div>
   <li><b>Safety Gate</b>: suelo determinístico sobre el que el modelo solo puede endurecer, nunca ampliar.</li>
   <li>Integración de Gemini detrás de un puerto, con salida estructurada, validación de esquema, cadena de modelos y presupuesto de tiempo.</li>
   <li>Esquema de Supabase con inmutabilidad del timeline forzada por <i>triggers</i> de PostgreSQL.</li>
-  <li>94 tests, incluidos los adversarios contra el Safety Gate; CI en GitHub Actions.</li>
+  <li>128 tests: dominio, proveedores adversarios, integración HTTP, concurrencia, frontend y estados degradados.</li>
   <li>Toda la documentación técnica y de coordinación del equipo.</li>
 </ul>
 
 <div class="field"><b>Resultados</b> Backend funcional de extremo a extremo, desplegado y verificado en
-producción con Supabase y Gemini reales: 12/12 comprobaciones automáticas. Los tres escenarios
-obligatorios son reproducibles y siguen dando el resultado correcto incluso con el proveedor de IA
-caído. 94/94 tests en verde.</div>
+producción con Supabase y Gemini reales. Los tres escenarios obligatorios son reproducibles y siguen
+dando el resultado correcto incluso con el proveedor de IA caído. La suite consolidada terminó con
+128/128 pruebas correctas y la auditoría de navegador contra producción validó 30/30 garantías
+críticas en escritorio y móvil.</div>
 
 <div class="field"><b>Validación humana</b> Revisión de arquitectura y decisiones antes de cada
 integración. Las decisiones no triviales están registradas en <code>docs/DECISIONS.md</code> con su
@@ -100,9 +103,23 @@ quedaron registradas como <code>PROPOSED</code> hasta que una persona las aprob�
 <div class="field"><b>Propósito</b> Implementar el frontend (Workstream B) y las integraciones, demo y
 QA (Workstream C) en paralelo al backend, guiados por un documento de instrucciones que detecta la
 rama activa y asigna el rol correspondiente.</div>
-<div class="field"><b>Aplicación</b> Pendiente de completar por los responsables de cada workstream.</div>
-<div class="field"><b>Resultados</b> Pendiente.</div>
-<div class="field"><b>Validación humana</b> Pendiente.</div>
+<div class="field"><b>Aplicación</b></div>
+<ul>
+  <li><b>Frontend:</b> dashboard para hospital y aseguradora; lista, búsqueda y filtros; detalle del expediente; timeline por secuencia y decisiones históricas; panel de doce comprobaciones del Safety Gate.</li>
+  <li>Simulador, ingreso libre, evidencia y reevaluación, resumen bajo demanda, cierre humano y Realtime con alternativa por polling.</li>
+  <li><b>Integrations / QA:</b> pruebas HTTP reales sobre Next local para cinco escenarios, evidencia incremental, notificación dual, errores, cierre terminal y veinte ingresos concurrentes.</li>
+  <li>Pruebas de presentación para diferenciar documentos obligatorios y recomendados, mostrar el origen real de la decisión y hacer visible cualquier corrección del Safety Gate.</li>
+</ul>
+<div class="field"><b>Resultados</b> Interfaz completa y responsive para dos audiencias, integrada en
+<code>main</code> y desplegada en producción. Codex aportó 13 pruebas específicas de frontend y 14
+pruebas HTTP de integración; junto con la suite del backend, el repositorio terminó con
+<b>128/128 pruebas correctas</b>. El timeline, la nueva evidencia, las notificaciones y el cierre
+humano se demuestran desde el navegador sin credenciales.</div>
+<div class="field"><b>Validación humana</b> Carlos autorizó el alcance y la publicación del frontend;
+Sebastián autorizó el alcance de Integrations y su suite. Anthony validó la configuración del
+despliegue y rotó la credencial de Gemini. Una auditoría posterior detectó dos fallos críticos de resiliencia —peticiones del
+navegador sin límite y un endpoint de salud que fallaba al degradarse Supabase—; ambos se corrigieron
+y se volvieron a verificar antes del feature freeze.</div>
 </div>
 
 <h2>3 · Google Gemini — componente del producto</h2>
@@ -121,6 +138,7 @@ Redacta además el resumen que lee un gestor de casos al abrir un expediente.</d
 </ul>
 
 <div class="field"><b>Resultados obtenidos</b> (medidos en producción)</div>
+<p class="meta">Corte de métricas: 20 de septiembre de 2026. Actualizar este cuadro solo si se realiza una nueva medición controlada antes de exportar el PDF final.</p>
 <table>
   <tr><th>Métrica</th><th style="width:26%">Valor</th></tr>
   <tr><td>Llamadas a Gemini</td><td class="num">16</td></tr>
