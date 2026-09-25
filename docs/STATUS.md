@@ -7,14 +7,14 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-24
+**Última actualización:** 2026-09-25
 **Deadline confirmado:** 2026-09-27 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
 | 1 · Repositorio GitHub con documentación clara | 🟡 Documentado y **auditado: sin secretos en el árbol ni en el historial**. Sigue privado: falta el cambio de visibilidad, que es manual |
 | 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · producto completo, **auditoría de navegador 30/30 contra producción** con Supabase y Gemini reales |
-| 3 · PDF de herramientas de IA | 🟡 plantilla y generador listos (`npm run build:pdf`) · **generar al cerrar**, con las cifras finales |
+| 3 · PDF de herramientas de IA | ✅ [PDF final de cuatro páginas](../output/pdf/SCAYL_Pulse_Herramientas_IA.pdf), generado y revisado visualmente |
 
 | Escenario obligatorio | Resultado | Verificado |
 |---|---|---|
@@ -26,7 +26,7 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
-**Última actualización:** 2026-09-24 22:11
+**Última actualización:** 2026-09-25 00:15
 
 ### Completed
 - Repositorio inicializado, GitHub `Silentarcherjr/scayl-pulse`, tres ramas de trabajo.
@@ -120,10 +120,10 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   `tests/configuration.test.ts` y son placeholders declarados (`…FAKE1111…`,
   `sb_secret_super_confidencial`). Ningún `.env` rastreado; `.env.example` sin
   un solo valor. **El repositorio puede hacerse público.**
-- **Fuente del PDF de herramientas de IA actualizada al 2026-09-24**: Codex e
+- **Fuente del PDF de herramientas de IA actualizada al 2026-09-25**: Codex e
   Integrations ya tienen propósito, aplicación, resultados y validación
-  humana; cifras alineadas con 128 tests y auditoría 30/30. Preview temporal
-  revisado visualmente en cuatro páginas; el PDF final se genera al cierre.
+  humana; cifras alineadas con 128 tests y auditoría 30/30. PDF final de cuatro
+  páginas generado y revisado visualmente, sin cortes ni contenido pendiente.
 - **Entrada de demo preparada para el jurado sin borrar historial:** tres casos
   canónicos recién generados en producción (`VERIFIED`, `DOCUMENTS_REQUIRED`
   y `HUMAN_REVIEW`), captura real del dashboard y recorrido recomendado de
@@ -138,10 +138,11 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 3. ~~Verificar el despliegue~~ ✅ **12/12 contra https://scayl-pulse.vercel.app con Supabase conectado**
 4. **Hacer el repositorio público justo antes de entregar** (entregable #1).
 5. ~~Conectar y rotar `GEMINI_API_KEY`~~ ✅ configurada, verificada y rotada.
-6. Exportar `AI_USAGE_LOG.md` a PDF al cerrar el desarrollo.
+6. ~~Exportar `AI_USAGE_LOG.md` a PDF al cerrar el desarrollo~~ ✅ generado y revisado.
 
 ### Blocked
-- Ninguno. Quedan únicamente las acciones de cierre del paquete de entrega.
+- Ninguno. Solo queda hacer público el repositorio el 26 de septiembre, por
+  decisión explícita del equipo.
 
 ### Tests
 **128 passing / 0 failing** · typecheck limpio · lint limpio · build de
@@ -173,23 +174,18 @@ producción correcto · auditoría de navegador **30/30 contra producción** ·
 - Código guardado en `4a1c2ba`; `origin/main` incorporado sin conflictos.
 
 ### In Progress
-- Entrega del frontend para revisión del equipo; sin cambios funcionales abiertos.
+- Nada abierto. El frontend está integrado en `main` y desplegado.
 
 ### Next
-1. Revisión visual y funcional de Carlos/equipo antes de integrar a `main`.
-2. Validar Realtime con Supabase real en el entorno acordado con Anthony.
-3. Acordar incorporar la suite de frontend al CI: hoy se ejecuta por separado.
+1. Mantener el feature freeze hasta la entrega.
 
 ### Blocked
-- Ningún bloqueo local. La validación de Realtime real requiere el entorno
-  configurado; el polling local y la suscripción simulada están comprobados.
+- Ninguno.
 
 ### Tests
-**108 passing / 0 failing** en `npm run verify` tras incorporar `main`;
-typecheck y lint correctos. **13 passing / 0 failing** adicionales con
-`npx vitest run --config src/components/frontend-tests/vitest.config.mts`.
-Build de producción y recorrido de navegador aprobados en la revisión local
-del 2026-09-21. El build limpio necesitó acceso a Google Fonts para Geist.
+Los 13 tests de frontend están incorporados a la suite consolidada:
+**128 passing / 0 failing**, typecheck y lint correctos. Build de producción y
+auditoría de navegador contra producción aprobados.
 
 ---
 
@@ -211,18 +207,15 @@ del 2026-09-21. El build limpio necesitó acceso a Google Fonts para Geist.
   en la respuesta. Documentado el modo local `DETERMINISTIC`.
 
 ### In Progress
-- Ninguna implementación abierta en esta entrega de QA HTTP.
+- Nada abierto. QA e Integrations están integrados en `main`.
 
 ### Next
-1. Sebastián: revisar el guion y ejecutar el recorrido visual con el frontend
-   de Carlos. La validación HTTP automatizada no sustituye esta revisión.
-2. Evaluar si la demo necesita más escenarios; mantener cada nuevo escenario
-   con su test y los datos TypeScript/SQL sincronizados.
+1. Mantener el feature freeze hasta la entrega.
 
 ### Blocked
 - Ninguno para QA local. Supabase y Gemini ya fueron verificados por A,
   según `HANDOFF.md`; no se accedió a esas cuentas en esta sesión.
 
 ### Tests
-**108 passing / 0 failing** · `npm run verify` correcto (typecheck, lint y
-tests). Base antes de los cambios: **94 passing / 0 failing**.
+Los 14 tests HTTP de Integrations están incorporados a la suite consolidada:
+**128 passing / 0 failing**, typecheck y lint correctos.

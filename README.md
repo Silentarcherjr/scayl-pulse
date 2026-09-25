@@ -4,10 +4,14 @@
 
 **hackIAthon Panamá · reto clasificatorio: Sistema de Alerta Temprana de Ingresos a Emergencias**
 
+[![CI](https://github.com/Silentarcherjr/scayl-pulse/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Silentarcherjr/scayl-pulse/actions/workflows/ci.yml)
+
 ### ▶ Pruébalo en vivo: https://scayl-pulse.vercel.app
 
 Abre el enlace y pulsa cualquier escenario. No hace falta registro ni
 explicación previa.
+
+**Entregable de IA:** [informe final en PDF](output/pdf/SCAYL_Pulse_Herramientas_IA.pdf)
 
 ![Dashboard de SCAYL Pulse con expedientes sintéticos en producción](public/scayl-pulse-dashboard.png)
 
@@ -198,6 +202,20 @@ real.
 
 ---
 
+## Alcance del prototipo
+
+La demostración modela el flujo completo y persiste las notificaciones para
+hospital y aseguradora dentro del expediente. No envía correo ni SMS reales,
+no procesa archivos clínicos mediante OCR y no se conecta todavía a sistemas
+HL7/FHIR. La autenticación y el aislamiento multicliente también quedan fuera
+del alcance de esta fase clasificatoria.
+
+Estas limitaciones no se ocultan: están separadas del núcleo que sí se
+demuestra de extremo a extremo —ingreso, validación, análisis asistido por IA,
+Safety Gate, notificación dual, evidencia, reevaluación y auditoría.
+
+---
+
 ## Arquitectura
 
 ```
@@ -219,8 +237,8 @@ Contrato de API: [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md)
 
 ## Stack
 
-**Next.js 16** · **TypeScript** · **Supabase / PostgreSQL** (fuente de verdad
-+ Realtime) · **Gemini** con salida estructurada, detrás de un puerto ·
+**Next.js 16** · **TypeScript** · **Supabase / PostgreSQL** (fuente de verdad +
+Realtime) · **Gemini** con salida estructurada, detrás de un puerto ·
 **Zod** para validar tanto el borde HTTP como la salida del modelo ·
 **Vitest** · **Vercel**.
 
@@ -290,13 +308,21 @@ Detalle: [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md)
 
 ## Equipo
 
-| | Workstream | Rama |
+| Integrante | Workstream | Rama |
 |---|---|---|
-| **Anthony Morell** | A — Backend core, arquitectura, Safety Gate | `anthony/backend-core` |
-| **Carlos** | B — Frontend, dashboards, timeline, UX | `workstream/frontend` |
-| **Sebastián** | C — Integraciones, demo, QA, dataset | `workstream/integrations` |
+| [**Anthony Morell**](https://github.com/Silentarcherjr) | A — Backend core, arquitectura, Safety Gate | `anthony/backend-core` |
+| [**Carlos**](https://github.com/frictionspp-svg) | B — Frontend, dashboards, timeline, UX | `workstream/frontend` |
+| [**Sebastián**](https://github.com/LowCrime) | C — Integraciones, demo, QA, dataset | `workstream/integrations` |
 
 Herramientas de IA usadas y su validación humana:
-[`docs/AI_USAGE_LOG.md`](docs/AI_USAGE_LOG.md)
+[`docs/AI_USAGE_LOG.md`](docs/AI_USAGE_LOG.md).
 
-**¿Te acabas de unir al proyecto?** → [`docs/TEAM_START.md`](docs/TEAM_START.md)
+Documentación técnica: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) ·
+[`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) ·
+[`docs/TEST_PLAN.md`](docs/TEST_PLAN.md).
+
+---
+
+© 2026 Equipo SCAYL Pulse. Todos los derechos reservados. Este repositorio se
+publica para evaluación del hackIAthon Panamá; no se concede licencia de uso,
+copia, modificación o distribución.

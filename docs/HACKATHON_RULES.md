@@ -30,7 +30,7 @@ Y debe notificar **simultáneamente**:
 |---|---|---|
 | 1 | Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado; **falta hacerlo público** (ver DEC-010) |
 | 2 | Enlace del agente desarrollado y en ejecución | ✅ [`scayl-pulse.vercel.app`](https://scayl-pulse.vercel.app), con Supabase y Gemini |
-| 3 | PDF detallando las herramientas de IA utilizadas | 🟡 Fuente viva en [`AI_USAGE_LOG.md`](AI_USAGE_LOG.md); falta exportar a PDF |
+| 3 | PDF detallando las herramientas de IA utilizadas | ✅ [PDF final de cuatro páginas](../output/pdf/SCAYL_Pulse_Herramientas_IA.pdf), generado y revisado visualmente |
 
 **No hay video obligatorio en esta fase.**
 
@@ -42,9 +42,8 @@ Para **cada herramienta**:
 - **Aplicación** — dónde y cómo se usó concretamente.
 - **Resultados obtenidos** — qué produjo, y qué validación humana recibió.
 
-`docs/AI_USAGE_LOG.md` está estructurado exactamente con esas columnas para
-que exportarlo sea mecánico. **Se llena durante el desarrollo, no el último
-día.**
+`docs/AI_USAGE_LOG.md` conserva la fuente viva y trazable usada para generar
+el entregable final. **Se llenó durante el desarrollo, no el último día.**
 
 ---
 

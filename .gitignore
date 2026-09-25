@@ -78,3 +78,6 @@ Thumbs.db
 
 # entregable generado: se regenera con `npm run build:pdf` al cerrar el proyecto
 docs/deliverables/*.pdf
+
+# renders temporales usados para inspección visual del PDF
+/tmp/

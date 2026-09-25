@@ -84,11 +84,12 @@ que se prueba el Safety Gate.
 
 ---
 
-## Qué falta (Workstream C)
+## Cobertura final (Workstream C)
 
 - [x] Tests de integración HTTP con `fetch` contra un servidor `next dev`
       propio: `tests/e2e/http.test.ts`. Incluidos en `npm run verify`.
-- [ ] Recorrido end-to-end de los tres escenarios desde la interfaz.
+- [x] Recorrido end-to-end de los tres escenarios desde la interfaz y
+      auditoría de navegador contra producción.
 - [x] Supabase real: ya aplicado y verificado por Workstream A, según
       `HANDOFF.md`. No se repite desde Integrations ni se requieren sus claves.
 - [x] Gemini real: integrado y medido por Workstream A, según
@@ -115,9 +116,9 @@ Los helpers de `tests/qa/assert-case.ts` verifican secuencias y notificaciones.
 La comprobación de carga es funcional; no mide capacidad de producción,
 latencia de Gemini ni concurrencia contra Postgres.
 
-## Qué falta (Workstream B)
+## Cobertura final (Workstream B)
 
-- [ ] Tests de componentes de los estados de caso.
-- [ ] Verificación de que la UI distingue `BLOCKING` de `ADVISORY`.
-- [ ] Verificación de que la UI muestra `gateOverrode` cuando es `true`.
-- [ ] Estados de error: API caída, caso inexistente, Realtime desconectado.
+- [x] Tests de presentación de los estados de caso.
+- [x] Verificación de que la UI distingue `BLOCKING` de `ADVISORY`.
+- [x] Verificación de que la UI muestra `gateOverrode` cuando es `true`.
+- [x] Estados de error: API caída, caso inexistente y recuperación del feed.
