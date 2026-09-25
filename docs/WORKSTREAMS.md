@@ -8,7 +8,7 @@ Tres agentes trabajan en paralelo. Esta página existe para que **no se pisen**.
 | **B — Frontend** | `workstream/frontend` | Compañero + Codex | Dashboards, timeline, simulador, UX hospital y aseguradora |
 | **C — Integrations / Demo / QA** | `workstream/integrations` | Compañero + Codex | Dataset, escenarios, notificaciones, seeds, QA end-to-end |
 
-> Asignación sugerida: **Carlos → Workstream B**, **Sebastián → Workstream C**.
+> Asignación sugerida: **Carlos González → Workstream B**, **Sebastián Sánchez → Workstream C**.
 > Es una sugerencia, no una restricción: lo que manda es la rama en la que
 > cada uno trabaje. Si la intercambian, no hay que cambiar nada en el repo.
 
