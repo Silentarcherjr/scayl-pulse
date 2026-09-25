@@ -109,6 +109,7 @@ rama activa y asigna el rol correspondiente.</div>
   <li>Simulador, ingreso libre, evidencia y reevaluación, resumen bajo demanda, cierre humano y Realtime con alternativa por polling.</li>
   <li><b>Integrations / QA:</b> pruebas HTTP reales sobre Next local para cinco escenarios, evidencia incremental, notificación dual, errores, cierre terminal y veinte ingresos concurrentes.</li>
   <li>Pruebas de presentación para diferenciar documentos obligatorios y recomendados, mostrar el origen real de la decisión y hacer visible cualquier corrección del Safety Gate.</li>
+  <li>Auditoría final del repositorio entregable: instalación reproducible, CI, build, enlaces, metadatos, documentación, producción y revisión visual del PDF.</li>
 </ul>
 <div class="field"><b>Resultados</b> Interfaz completa y responsive para dos audiencias, integrada en
 <code>main</code> y desplegada en producción. Codex aportó 13 pruebas específicas de frontend y 14
@@ -119,7 +120,8 @@ humano se demuestran desde el navegador sin credenciales.</div>
 Sebastián autorizó el alcance de Integrations y su suite. Anthony validó la configuración del
 despliegue y rotó la credencial de Gemini. Una auditoría posterior detectó dos fallos críticos de resiliencia —peticiones del
 navegador sin límite y un endpoint de salud que fallaba al degradarse Supabase—; ambos se corrigieron
-y se volvieron a verificar antes del feature freeze.</div>
+y se volvieron a verificar antes del feature freeze. Anthony autorizó la preparación final completa,
+manteniendo únicamente el cambio de visibilidad del repositorio para el día previo a la entrega.</div>
 </div>
 
 <h2>3 · Google Gemini — componente del producto</h2>
@@ -138,7 +140,7 @@ Redacta además el resumen que lee un gestor de casos al abrir un expediente.</d
 </ul>
 
 <div class="field"><b>Resultados obtenidos</b> (medidos en producción)</div>
-<p class="meta">Corte de métricas: 20 de septiembre de 2026. Actualizar este cuadro solo si se realiza una nueva medición controlada antes de exportar el PDF final.</p>
+<p class="meta">Corte de métricas auditables: 20 de septiembre de 2026.</p>
 <table>
   <tr><th>Métrica</th><th style="width:26%">Valor</th></tr>
   <tr><td>Llamadas a Gemini</td><td class="num">16</td></tr>

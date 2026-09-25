@@ -157,7 +157,7 @@ funciona. **No abordar durante la fase clasificatoria.**
 ---
 
 ## IDEA-006 — «¿Por qué tomó esta decisión?»
-**Status:** DONE (backend) — contrato entregado el 2026-09-20; falta el panel en Workstream B — propuesta y aprobada por Anthony el 2026-09-20
+**Status:** DONE — contrato y panel integrados en `main`; propuesta aprobada por Anthony el 2026-09-20
 **Implementa:** Workstream A (contrato) + Workstream B (panel)
 
 **Problem.** Hoy la decisión se explica en prosa: `reason` es un texto

@@ -183,4 +183,5 @@ Comprueba estados intermedios, decisiones anteriores intactas, orden por
 `seq`, evidencia del propio caso y notificaciones a ambas partes con el aviso
 de continuidad de atención. También cubre errores HTTP, cierre terminal y
 20 ingresos concurrentes. Esto valida la API; el recorrido visual con Carlos
-y la revisión humana del guion siguen pendientes.
+y la revisión visual quedaron cubiertos por la auditoría de navegador contra
+producción.

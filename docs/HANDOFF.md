@@ -11,7 +11,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 
 | # | Acción | Quién | Estado |
 |---|---|---|---|
-| 1 | **Hacer público el repositorio** antes de entregar | Anthony | ⬜ pendiente · bloquea el entregable #1 · **secret scan limpio: se puede publicar** |
+| 1 | **Hacer público el repositorio el 26 de septiembre** | Anthony | ⬜ pendiente por decisión explícita del equipo · evita exponer la idea antes del cierre · **secret scan limpio: se puede publicar** |
 | 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
@@ -139,6 +139,31 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 
 ## Workstream A — Backend Core · `anthony/backend-core`
 
+### Paquete profesional de entrega — 2026-09-25
+
+**Qué funciona:** README auditado para evaluación externa; CI visible; alcance
+del prototipo y limitaciones declarados; equipo enlazado; estados internos
+cerrados; temas del repositorio configurados; y PDF final de herramientas de
+IA generado, revisado visualmente y enlazado desde el README.
+
+**Qué falta:** únicamente hacer público el repositorio el 26 de septiembre y
+realizar una comprobación final del enlace como visitante anónimo. La
+visibilidad permanece privada por instrucción expresa de Anthony.
+
+**Archivos modificados:** `README.md`, `.gitignore`, documentación de estado,
+pruebas y entregables, `docs/deliverables/ai-tools-report.html` y
+`output/pdf/SCAYL_Pulse_Herramientas_IA.pdf`.
+
+**Próximo paso exacto:** integrar este paquete en `main`, conservar el feature
+freeze y publicar el repositorio el 26 de septiembre.
+
+**Tests:** `npm run verify` correcto: 128 passing / 0 failing, typecheck y lint
+limpios. Los enlaces Markdown locales también fueron verificados.
+
+**Riesgos:** no añadir funcionalidad nueva antes de la entrega. El repositorio
+privado no satisface todavía el entregable público, pero esa exposición se
+aplazó deliberadamente para reducir el riesgo de copia.
+
 ### Preparación del recorrido del jurado — 2026-09-24
 
 **Qué funciona:** se preservó todo el historial sintético de producción y se
@@ -147,8 +172,8 @@ generaron tres expedientes canónicos nuevos: `PULSE-2026-FFAD10` (`VERIFIED`),
 (`HUMAN_REVIEW`). El README incluye una captura real del dashboard y un
 recorrido de tres minutos para encontrarlos y demostrar el expediente vivo.
 
-**Qué falta:** ninguna funcionalidad. En el cierre de entrega todavía hay que
-generar el PDF final y hacer público el repositorio.
+**Qué falta:** ninguna funcionalidad. El PDF final ya está generado; solo hay
+que hacer público el repositorio el 26 de septiembre.
 
 **Archivos modificados:** `README.md`, `public/scayl-pulse-dashboard.png`,
 `docs/STATUS.md`, `docs/HANDOFF.md`, `docs/AI_USAGE_LOG.md`.
@@ -170,16 +195,15 @@ real de Claude Code, Codex frontend, Codex Integrations y Gemini. El preview
 temporal resultante ocupa cuatro páginas A4, sin cortes, solapamientos ni
 secciones pendientes.
 
-**Qué falta:** incorporar únicamente trabajo posterior al 24 de septiembre y,
-si se hace una nueva medición controlada, sustituir el cuadro de métricas de
-Gemini. Generar el PDF final al cerrar; no se dejó un PDF intermedio en Git.
+**Qué falta:** nada. Se incorporó el cierre profesional del 25 de septiembre y
+se generó el PDF final; no se incluyeron renders intermedios.
 
 **Archivos modificados:** `docs/AI_USAGE_LOG.md`,
 `docs/deliverables/ai-tools-report.html`, `docs/HACKATHON_RULES.md`,
 `docs/STATUS.md`, `docs/HANDOFF.md`.
 
-**Próximo paso exacto:** al declarar feature freeze final, revisar el corte de
-métricas y ejecutar `npm run build:pdf`.
+**Próximo paso exacto:** entregar el PDF generado y no modificar su contenido
+salvo que cambien cifras verificables antes del envío.
 
 **Tests:** `npm run verify` correcto: 128 passing / 0 failing, typecheck y lint
 limpios.
