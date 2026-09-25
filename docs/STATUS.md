@@ -124,6 +124,9 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
   Integrations ya tienen propósito, aplicación, resultados y validación
   humana; cifras alineadas con 128 tests y auditoría 30/30. PDF final de cuatro
   páginas generado y revisado visualmente, sin cortes ni contenido pendiente.
+- **Presentación final neutral respecto a versiones de modelo:** el entregable
+  identifica Claude Code, Codex y Google Gemini sin fijar versiones concretas;
+  créditos corregidos a Carlos González y Sebastián Sánchez.
 - **Entrada de demo preparada para el jurado sin borrar historial:** tres casos
   canónicos recién generados en producción (`VERIFIED`, `DOCUMENTS_REQUIRED`
   y `HUMAN_REVIEW`), captura real del dashboard y recorrido recomendado de

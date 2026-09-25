@@ -311,8 +311,8 @@ Detalle: [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md)
 | Integrante | Workstream | Rama |
 |---|---|---|
 | [**Anthony Morell**](https://github.com/Silentarcherjr) | A — Backend core, arquitectura, Safety Gate | `anthony/backend-core` |
-| [**Carlos**](https://github.com/frictionspp-svg) | B — Frontend, dashboards, timeline, UX | `workstream/frontend` |
-| [**Sebastián**](https://github.com/LowCrime) | C — Integraciones, demo, QA, dataset | `workstream/integrations` |
+| [**Carlos González**](https://github.com/frictionspp-svg) | B — Frontend, dashboards, timeline, UX | `workstream/frontend` |
+| [**Sebastián Sánchez**](https://github.com/LowCrime) | C — Integraciones, demo, QA, dataset | `workstream/integrations` |
 
 Herramientas de IA usadas y su validación humana:
 [`docs/AI_USAGE_LOG.md`](docs/AI_USAGE_LOG.md).

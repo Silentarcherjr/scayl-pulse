@@ -21,12 +21,12 @@ npm install
 
 ## 3. Cámbiate a tu rama
 
-**Carlos — Frontend:**
+**Carlos González — Frontend:**
 ```bash
 git checkout workstream/frontend
 ```
 
-**Sebastián — Integraciones / Demo / QA:**
+**Sebastián Sánchez — Integraciones / Demo / QA:**
 ```bash
 git checkout workstream/integrations
 ```
@@ -111,7 +111,7 @@ Y una regla de equipo:
 
 ## Tu primera sesión, en concreto
 
-### Carlos — Workstream B (Frontend)
+### Carlos González — Workstream B (Frontend)
 
 Lee `docs/API_CONTRACT.md` completo. Es tu contrato: tiene todas las
 respuestas con ejemplos, así que **no necesitas preguntarle nada al backend**.
@@ -134,7 +134,7 @@ Tres detalles que valen puntos con el jurado:
 - Distingue `BLOCKING` de `ADVISORY` en los documentos faltantes.
 - Si `decision.source === 'AI_UNAVAILABLE'`, dilo con honestidad.
 
-### Sebastián — Workstream C (Integraciones / Demo / QA)
+### Sebastián Sánchez — Workstream C (Integraciones / Demo / QA)
 
 Lee `docs/DEMO_SCENARIOS.md` y `docs/TEST_PLAN.md`.
 

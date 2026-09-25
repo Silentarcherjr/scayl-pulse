@@ -7,20 +7,18 @@ Para cada herramienta la organización exige: **propósito**, **aplicación** y
 **resultados obtenidos**. Añadimos **validación humana** porque es lo que
 distingue un proyecto serio de una demo generada.
 
-> **El PDF se genera al final, no ahora.** Este archivo y la plantilla ya
-> contienen el trabajo completado hasta el 24 de septiembre. Antes de exportar
-> solo hay que incorporar cualquier trabajo posterior y actualizar las
-> métricas de Gemini si se realiza una nueva medición controlada.
+> **PDF final generado.** El entregable revisado está en
+> [`output/pdf/SCAYL_Pulse_Herramientas_IA.pdf`](../output/pdf/SCAYL_Pulse_Herramientas_IA.pdf).
+> Este archivo conserva la fuente viva y trazable de su contenido.
 >
 > Cuando el proyecto esté cerrado, desde cualquier máquina con Chrome:
 > ```bash
-> npm run build:pdf   # → docs/deliverables/SCAYL_Pulse_Herramientas_IA.pdf
+> npm run build:pdf -- output/pdf/SCAYL_Pulse_Herramientas_IA.pdf
 > ```
 > **Sin Chrome, o desde el móvil:** lanza el workflow **«Generar PDF del
 > entregable»** en la pestaña Actions de GitHub y descarga el artefacto.
 > La plantilla es [`deliverables/ai-tools-report.html`](deliverables/ai-tools-report.html);
-> actualiza ahí las cifras finales antes de generar. El PDF está en
-> `.gitignore` a propósito: es un artefacto, no fuente.
+> actualiza ahí únicamente cifras verificables antes de volver a generar.
 
 ---
 
@@ -28,13 +26,13 @@ distingue un proyecto serio de una demo generada.
 
 | Herramienta | Rol en el proyecto | Workstream |
 |---|---|---|
-| **Claude Code (Opus 5)** | Technical Lead y Backend Lead: arquitectura, backend, Safety Gate, tests, documentación | A |
+| **Claude Code** | Technical Lead y Backend Lead: arquitectura, backend, Safety Gate, tests, documentación | A |
 | **Codex** | Implementación de frontend e integraciones sobre contratos cerrados | B, C |
 | **Google Gemini** | Componente de producto: analizador documental de evidencia dentro del agente | A (integración) |
 
 ---
 
-## 1. Claude Code — Anthropic (modelo Opus 5)
+## 1. Claude Code — Anthropic
 
 **Propósito.** Actuar como Technical Lead y Backend Lead: diseñar la
 arquitectura, implementar el backend completo, definir los contratos que
@@ -103,8 +101,8 @@ humana: las propuestas quedaron en `IDEAS.md` con estado `PROPOSED`.
 - Prueba de veinte ingresos concurrentes sin colisiones de identificadores ni
   secuencias, con aislamiento de evidencia entre casos.
 
-**Validación humana.** Carlos autorizó el alcance y la publicación del
-frontend; Sebastián autorizó el alcance de Integrations y la ejecución de su
+**Validación humana.** Carlos González autorizó el alcance y la publicación del
+frontend; Sebastián Sánchez autorizó el alcance de Integrations y la ejecución de su
 suite. Anthony validó la configuración del despliegue y rotó la credencial de
 Gemini antes de la entrega. La auditoría posterior encontró dos
 fallos críticos de resiliencia —peticiones de navegador sin límite y un
@@ -121,9 +119,8 @@ análisis estructurado: resumen, motivo, evidencia citada, documentos
 faltantes, condiciones potencialmente relacionadas y preguntas abiertas.
 
 **Aplicación.**
-- Cadena de modelos con `gemini-3.5-flash` como primario y
-  `gemini-2.5-flash` como respaldo, ambos con salida estructurada
-  (`responseMimeType: application/json` + `responseSchema`).
+- Cadena configurable de modelos primario y de respaldo, con salida
+  estructurada (`responseMimeType: application/json` + `responseSchema`).
 - Integrado detrás del puerto `AiProvider` (`src/core/ai/gemini-provider.ts`).
 - Recibe **hechos estructurados**, no prosa: la validez administrativa ya la
   resolvieron las reglas, de modo que el modelo hace análisis, no extracción
@@ -143,8 +140,8 @@ tabla `ai_interactions`, así que estas cifras son auditables y no estimadas.
 | Respuestas válidas contra el esquema | 8 (**50 %**) |
 | Latencia media de una respuesta válida | **12,6 s** |
 | Latencia máxima | 19,5 s |
-| Modelo primario (`gemini-3.5-flash`) con 503 *high demand* | 3 |
-| Resueltas por el **fallback de modelo** a `gemini-2.5-flash` | 7 de 8 |
+| Solicitudes al modelo primario con 503 *high demand* | 3 |
+| Resueltas por la **cadena de respaldo** | 7 de 8 |
 | Decisiones etiquetadas `AI_ASSISTED` | 5 |
 | **Veces que el Safety Gate tuvo que corregir al modelo** | **0** |
 
@@ -202,15 +199,16 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 
 | Fecha | Herramienta | Workstream | Qué se hizo | Validado por |
 |---|---|---|---|---|
+| 2026-09-25 | Codex | A — Anthony | Ajustó el paquete final para identificar las herramientas de IA sin publicitar versiones concretas de modelos; corrigió los nombres de Carlos González y Sebastián Sánchez; regeneró y revisó visualmente las cuatro páginas del PDF. | Anthony solicitó ambos cambios; PDF sin nombres de modelo específicos, enlaces verificados y 128 tests en verde |
 | 2026-09-25 | Codex | A — Anthony | Auditoría profesional completa del repositorio y la entrega: instalación reproducible, dependencias, CI, build, enlaces, metadatos, documentación, producción y expedientes recomendados; corrigió inconsistencias documentales, presentación del README y cerró el PDF definitivo. | Anthony autorizó toda la preparación excepto hacer público el repositorio; `npm audit` sin vulnerabilidades, 128 tests y CI de `main` en verde |
 | 2026-09-24 | Codex | A — Anthony | Preparó la entrada de evaluación sin añadir funcionalidad: conservó el historial sintético, generó tres casos canónicos en producción, capturó el dashboard real y añadió al README un recorrido de tres minutos para el jurado. | Anthony aprobó proceder y prefirió conservar los casos existentes para que el jurado pudiera ver uso real; estados de los tres casos validados contra la API |
 | 2026-09-24 | Codex | A — Anthony | Actualización de la fuente y plantilla del PDF: incorporó resultados finales de frontend e Integrations, 128 tests, auditoría 30/30 y fecha confirmada; generó un preview temporal y corrigió la paginación de cinco a cuatro páginas. | Anthony solicitó la actualización; revisión final de contenido pendiente al cierre del desarrollo |
-| 2026-09-21 | Codex | B — Carlos | Frontend del expediente vivo sobre la API existente: dashboard, timeline, Safety Gate, ingreso libre, evidencia, reevaluación, resumen y cierre. 13 tests de frontend, recorrido de navegador y build aprobados; `npm run verify` con 108 tests tras incorporar main. Documentación de entrega actualizada sin modificar la sección C. | Carlos autorizó alcance y publicación; revisión humana final de código/UX pendiente |
-| 2026-09-19 | Claude Code (Opus 5) | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
-| 2026-09-20 | Claude Code (Opus 5) | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
-| 2026-09-21 | Claude Code (Opus 5) | A | Cierre pre-entrega: merge a `main`, espera del despliegue y **auditoría de 30 comprobaciones con navegador real contra producción** (30/30, Supabase y Gemini reales). Secret scan de 566 blobs sobre todo el historial y el árbol: limpio. Documentación de entrega alineada con producción. | Anthony (pendiente de revisión) |
-| 2026-09-21 | Claude Code (Opus 5) | A | Auditoría final pre-entrega bajo feature freeze: 27 comprobaciones de navegador (incógnito, cold start, escritorio, móvil, refresh directo), GREEN/YELLOW/RED de extremo a extremo, evidencia y reevaluación, Supabase caído y `/api/health` caído. Dos P0 corregidos (peticiones sin tope de tiempo; `/api/health` devolvía 500 con la persistencia caída) más P1 de copy. 128 tests, build de producción correcto. | Anthony (pendiente de revisión) |
-| 2026-09-20 | Codex | C — Sebastián | Clon en rama Integrations; 14 tests HTTP contra Next local para cinco escenarios, reevaluación, notificaciones, errores, cierre y 20 ingresos concurrentes; guion y documentación QA. Resultado automatizado: `npm run verify`, 108 passing / 0 failing, typecheck y lint correctos. Sin llamadas a Gemini/Supabase ni cambios al frontend. | Sebastián autorizó alcance y clonación; revisión humana de código, resultados y demo pendiente |
+| 2026-09-21 | Codex | B — Carlos González | Frontend del expediente vivo sobre la API existente: dashboard, timeline, Safety Gate, ingreso libre, evidencia, reevaluación, resumen y cierre. 13 tests de frontend, recorrido de navegador y build aprobados; `npm run verify` con 108 tests tras incorporar main. Documentación de entrega actualizada sin modificar la sección C. | Carlos González autorizó alcance y publicación; revisión humana final de código/UX pendiente |
+| 2026-09-19 | Claude Code | A | Bootstrap completo: repo, arquitectura, backend core, Safety Gate, Gemini, Supabase, 42 tests, documentación | Anthony (pendiente de revisión) |
+| 2026-09-20 | Claude Code | A | Despliegue en Vercel, Supabase en producción, CI, tope de casos, integración Gemini funcionando de extremo a extremo, 72 tests | Anthony |
+| 2026-09-21 | Claude Code | A | Cierre pre-entrega: merge a `main`, espera del despliegue y **auditoría de 30 comprobaciones con navegador real contra producción** (30/30, Supabase y Gemini reales). Secret scan de 566 blobs sobre todo el historial y el árbol: limpio. Documentación de entrega alineada con producción. | Anthony (pendiente de revisión) |
+| 2026-09-21 | Claude Code | A | Auditoría final pre-entrega bajo feature freeze: 27 comprobaciones de navegador (incógnito, cold start, escritorio, móvil, refresh directo), GREEN/YELLOW/RED de extremo a extremo, evidencia y reevaluación, Supabase caído y `/api/health` caído. Dos P0 corregidos (peticiones sin tope de tiempo; `/api/health` devolvía 500 con la persistencia caída) más P1 de copy. 128 tests, build de producción correcto. | Anthony (pendiente de revisión) |
+| 2026-09-20 | Codex | C — Sebastián Sánchez | Clon en rama Integrations; 14 tests HTTP contra Next local para cinco escenarios, reevaluación, notificaciones, errores, cierre y 20 ingresos concurrentes; guion y documentación QA. Resultado automatizado: `npm run verify`, 108 passing / 0 failing, typecheck y lint correctos. Sin llamadas a Gemini/Supabase ni cambios al frontend. | Sebastián Sánchez autorizó alcance y clonación; revisión humana de código, resultados y demo pendiente |
 
 ### Incidencias reales durante la integración (útiles para el informe)
 
@@ -221,13 +219,13 @@ integración de escaparate:
    (*standard keys*) a `AQ.` (*authorization keys*) durante 2026. Nuestra
    validación reconocía solo el formato antiguo y rechazaba una clave válida.
    Corregido: ahora reconoce ambos e informa del formato detectado.
-2. **Modelo en retirada.** El modelo elegido inicialmente, `gemini-2.5-flash`,
-   se apaga el 16 de octubre de 2026. Se cambió el predeterminado a
-   `gemini-3.5-flash` y se dejó el anterior como respaldo mientras siga vivo.
-3. **Saturación del proveedor.** `gemini-3.5-flash` devuelve `503 high demand`
-   con frecuencia. Reintentar el mismo modelo no sirve —devuelve 503 otra
-   vez—, así que el sistema recorre una cadena de modelos. 7 de 8 respuestas
-   válidas llegaron por esa vía.
+2. **Compatibilidad de modelos.** El proveedor anunció la retirada del modelo
+   elegido inicialmente. Se trasladó la selección a configuración y se dejó
+   una cadena de respaldo para poder migrar sin modificar el dominio.
+3. **Saturación del proveedor.** El modelo primario devuelve `503 high demand`
+   con frecuencia. Reintentarlo no sirve —devuelve 503 otra vez—, así que el
+   sistema recorre una cadena de modelos. 7 de 8 respuestas válidas llegaron
+   por esa vía.
 4. **Presupuesto de tiempo.** Un timeout fijo demasiado corto convirtió un
    servicio lento en uno que fallaba siempre. Se sustituyó por un presupuesto
    total repartido entre los pasos de un escenario.

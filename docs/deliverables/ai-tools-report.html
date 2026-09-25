@@ -63,12 +63,12 @@ auditables, no estimadas.</p>
 
 <table>
   <tr><th>Herramienta</th><th>Rol</th><th>Workstream</th></tr>
-  <tr><td>Claude Code (Opus 5)</td><td>Technical Lead y Backend Lead</td><td>A — Backend</td></tr>
+  <tr><td>Claude Code</td><td>Technical Lead y Backend Lead</td><td>A — Backend</td></tr>
   <tr><td>Codex</td><td>Frontend e integraciones</td><td>B y C</td></tr>
   <tr><td>Google Gemini</td><td>Componente del producto: analizador documental</td><td>Integrado en A</td></tr>
 </table>
 
-<h2>1 · Claude Code — Anthropic, modelo Opus 5</h2>
+<h2>1 · Claude Code — Anthropic</h2>
 <div class="tool">
 <div class="field"><b>Propósito</b> Actuar como Technical Lead y Backend Lead: diseñar la arquitectura,
 implementar el backend, definir los contratos que permiten a los otros dos workstreams trabajar en
@@ -116,8 +116,8 @@ rama activa y asigna el rol correspondiente.</div>
 pruebas HTTP de integración; junto con la suite del backend, el repositorio terminó con
 <b>128/128 pruebas correctas</b>. El timeline, la nueva evidencia, las notificaciones y el cierre
 humano se demuestran desde el navegador sin credenciales.</div>
-<div class="field"><b>Validación humana</b> Carlos autorizó el alcance y la publicación del frontend;
-Sebastián autorizó el alcance de Integrations y su suite. Anthony validó la configuración del
+<div class="field"><b>Validación humana</b> Carlos González autorizó el alcance y la publicación del frontend;
+Sebastián Sánchez autorizó el alcance de Integrations y su suite. Anthony validó la configuración del
 despliegue y rotó la credencial de Gemini. Una auditoría posterior detectó dos fallos críticos de resiliencia —peticiones del
 navegador sin límite y un endpoint de salud que fallaba al degradarse Supabase—; ambos se corrigieron
 y se volvieron a verificar antes del feature freeze. Anthony autorizó la preparación final completa,
@@ -184,7 +184,7 @@ y citó únicamente registros existentes en la base de datos.</p>
 <table>
   <tr><th style="width:27%">Incidencia</th><th>Diagnóstico y resolución</th></tr>
   <tr><td>Formato de clave</td><td>Google migró las claves de Gemini de <code>AIza</code> a <code>AQ.</code> durante 2026. La validación reconocía solo el formato antiguo y rechazaba una clave válida. Corregido: reconoce ambos e informa del formato detectado.</td></tr>
-  <tr><td>Modelo en retirada</td><td><code>gemini-2.5-flash</code> se apaga el 16 de octubre de 2026. El predeterminado pasó a <code>gemini-3.5-flash</code>, con el anterior como respaldo mientras siga vivo.</td></tr>
+  <tr><td>Compatibilidad de modelos</td><td>El proveedor anunció la retirada del modelo elegido inicialmente. La selección se trasladó a configuración y se añadió una cadena de respaldo para migrar sin modificar el dominio.</td></tr>
   <tr><td>Saturación del proveedor</td><td><code>503 high demand</code> frecuente. Reintentar el mismo modelo devuelve 503 de nuevo, así que el sistema recorre una cadena de modelos: 7 de 8 respuestas válidas llegaron por esa vía.</td></tr>
   <tr><td>Presupuesto de tiempo</td><td>Un tiempo de espera fijo demasiado corto convirtió un servicio lento en uno que fallaba siempre. Sustituido por un presupuesto total repartido entre los pasos de un escenario.</td></tr>
 </table>
@@ -200,7 +200,7 @@ y citó únicamente registros existentes en la base de datos.</p>
 </ul>
 
 <footer>
-  SCAYL Pulse · hackIAthon Panamá 2026 · Equipo: Anthony Morell, Carlos, Sebastián<br>
+  SCAYL Pulse · hackIAthon Panamá 2026 · Equipo: Anthony Morell, Carlos González, Sebastián Sánchez<br>
   Fuente viva de este informe: <code>docs/AI_USAGE_LOG.md</code> en el repositorio.
 </footer>
 

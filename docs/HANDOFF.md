@@ -17,7 +17,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
 | 5 | `GEMINI_API_KEY` | Anthony | ✅ configurada, verificada en producción y rotada el 2026-09-24 |
 | 6 | **Confirmar con la organización la fecha real de entrega** (23 vs. 27 de septiembre) | Anthony | ✅ confirmado por la organización: último día 27 de septiembre |
-| 7 | Invitar a Carlos y Sebastián | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
+| 7 | Invitar a Carlos González y Sebastián Sánchez | Anthony | ✅ `frictionspp-svg` y `LowCrime` invitados con permiso de escritura · pendientes de aceptar |
 
 ### Reiniciar los datos de demo
 
@@ -144,7 +144,9 @@ gh api -X PUT repos/Silentarcherjr/scayl-pulse/collaborators/<usuario-github> -f
 **Qué funciona:** README auditado para evaluación externa; CI visible; alcance
 del prototipo y limitaciones declarados; equipo enlazado; estados internos
 cerrados; temas del repositorio configurados; y PDF final de herramientas de
-IA generado, revisado visualmente y enlazado desde el README.
+IA generado, revisado visualmente y enlazado desde el README. La presentación
+identifica las herramientas sin publicitar versiones concretas de modelos y
+acredita a Carlos González y Sebastián Sánchez con sus nombres completos.
 
 **Qué falta:** únicamente hacer público el repositorio el 26 de septiembre y
 realizar una comprobación final del enlace como visitante anónimo. La
@@ -373,7 +375,7 @@ Documentación: solo la sección B de `STATUS.md` y `HANDOFF.md` y el registro
 propio en `AI_USAGE_LOG.md`. Sin cambios propios en backend, contratos,
 `AGENTS.md` ni archivos del Workstream C.
 
-**Próximo paso exacto:** Carlos/equipo debe revisar el diff de
+**Próximo paso exacto:** Carlos González/equipo debe revisar el diff de
 `workstream/frontend` contra `main` y aprobar la interfaz antes de fusionar.
 
 **Tests passing:** 108 del repositorio tras incorporar `main` + 13 de frontend.
@@ -383,13 +385,13 @@ El recorrido cubre GREEN, YELLOW con dos aportaciones, RED con historial,
 resumen bajo demanda, cierre terminal, ingreso libre, recarga, teclado y responsive.
 **Bugs conocidos:** ninguno bloqueante detectado en los recorridos ejecutados;
 la comprobación adicional de búsqueda/filtros y errores en navegador fue
-interrumpida por petición de Carlos. Hay revisión de código y tests unitarios
+interrumpida por petición de Carlos González. Hay revisión de código y tests unitarios
 de errores HTTP, presentación y actualización del expediente.
 **Riesgos:** Realtime está probado con cliente simulado, no con Supabase real;
 el build descarga Geist de Google Fonts y requiere conectividad. Las vistas
 hospital/aseguradora son de demostración, sin autenticación, según el alcance MVP.
 
-**Validación humana:** Carlos autorizó el alcance y la publicación de su parte;
+**Validación humana:** Carlos González autorizó el alcance y la publicación de su parte;
 no se registra como realizada una revisión humana de código o UX aún pendiente.
 
 ---
@@ -416,8 +418,8 @@ con evidencia posterior como por el runner de demo. Se verifican historial
 intacto, secuencias por caso, notificaciones duales, errores 422/404/409,
 cierre terminal y 20 ingresos concurrentes con evidencia aislada.
 
-**Qué falta:** recorrido visual y revisión humana del guion con Sebastián y
-Carlos; valorar más escenarios solo si aportan a la demo. No se modificó el
+**Qué falta:** recorrido visual y revisión humana del guion con Sebastián Sánchez y
+Carlos González; valorar más escenarios solo si aportan a la demo. No se modificó el
 frontend, el backend ni el contrato de API.
 
 ⚠️ **No intentes las tareas que necesitan Supabase o Gemini**: esas cuentas son
@@ -429,7 +431,7 @@ en local sin una sola credencial.
 `tests/e2e/local-server.ts`, `tests/qa/assert-case.ts`,
 `docs/DEMO_SCENARIOS.md`, `docs/TEST_PLAN.md`, sección C de `docs/STATUS.md`
 y `docs/HANDOFF.md`, entrada de sesión en `docs/AI_USAGE_LOG.md`.
-**Próximo paso exacto:** Sebastián y Carlos deben ejecutar YELLOW desde la
+**Próximo paso exacto:** Sebastián Sánchez y Carlos González deben ejecutar YELLOW desde la
 interfaz y comprobar que las tres decisiones permanecen visibles.
 **Tests passing:** 108 · **Tests failing:** 0. `npm run verify` correcto.
 Base inicial: 94 tests, typecheck y lint correctos.
@@ -441,7 +443,7 @@ producción ni concurrencia en Postgres. Ejecutar una suite HTTP por checkout
 porque Next usa `.next/dev`. Next también añade automáticamente un bloque
 administrado a `AGENTS.md` al arrancar; se retiró únicamente ese cambio
 generado antes del commit, conservando las instrucciones originales.
-**Validación humana:** pendiente; Sebastián autorizó alcance y clonación,
+**Validación humana:** pendiente; Sebastián Sánchez autorizó alcance y clonación,
 pero no ha revisado los resultados ni hecho el recorrido visual.
 
 ---
