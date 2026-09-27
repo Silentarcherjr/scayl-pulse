@@ -184,6 +184,8 @@ consultable por el jurado.
 
 **Comando:** `gh repo edit Silentarcherjr/scayl-pulse --visibility public --accept-visibility-change-consequences`
 
+**Ejecutado:** 2026-09-26, por Anthony. El repositorio es público.
+
 ---
 
 ## DEC-011 — El cierre del caso es humano y terminal

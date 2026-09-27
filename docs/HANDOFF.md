@@ -11,7 +11,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 
 | # | Acción | Quién | Estado |
 |---|---|---|---|
-| 1 | **Hacer público el repositorio el 26 de septiembre** | Anthony | ⬜ pendiente por decisión explícita del equipo · evita exponer la idea antes del cierre · **secret scan limpio: se puede publicar** |
+| 1 | Hacer público el repositorio el 26 de septiembre | Anthony | ✅ público desde el 2026-09-26 · falta `bash scripts/protect-main.sh` |
 | 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
@@ -230,9 +230,15 @@ viven en `tests/configuration.test.ts` y son placeholders declarados. Ningún
 > sintética, no una clave. El mensaje exagera lo ocurrido. Lo que sí pasó de
 > verdad, y está documentado en el propio test, es que una clave real se pegó
 > en `GEMINI_MODEL` en Vercel y `/api/health` la devolvió literalmente
-> (corregido en `0a0ef16`). Esa exposición fue **por el endpoint, nunca por
-> git**. Aun así, **rotar esa clave de Gemini sigue siendo lo prudente**: el
-> repositorio no la contiene, pero estuvo servida en abierto.
+> (corregido en `0a0ef16`). ~~Esa exposición fue por el endpoint, nunca por
+> git.~~ **Corrección del 2026-09-26:** sí llegó a git. El commit `5ca3f8e`
+> (anterior a la reescritura de autoría) escribió esa clave real
+> (`AIzaSyDV4L…`) como valor de `GEMINI_MODEL` en un test. La reescritura la
+> dejó fuera de todas las ramas y PRs, por eso el escaneo salió limpio, pero
+> GitHub sigue sirviendo el commit si se pide por su hash. La clave se rotó el
+> 2026-09-24 y la vieja se eliminó en Google AI Studio antes de publicar el
+> repo, así que ya no sirve. Purgar el commit de GitHub requiere pedirlo a su
+> soporte.
 
 **Herramienta nueva:** `npm run` no la necesita, pero existe el workflow manual
 **Auditoría de producción** (`audit-production.yml`). `verify:deployment`

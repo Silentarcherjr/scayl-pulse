@@ -199,6 +199,7 @@ decisión se marca `AI_UNAVAILABLE` en lugar de fingir que hubo modelo.
 
 | Fecha | Herramienta | Workstream | Qué se hizo | Validado por |
 |---|---|---|---|---|
+| 2026-09-26 | Claude Code | A | Revisión de publicación: `npm run verify` 128/128, producción sana, secretos buscados también en commits huérfanos de GitHub (encontró la clave antigua, ya revocada, en `5ca3f8e`). Pulió el formato del PDF (separadores sueltos, encabezados huérfanos) sin cambiar contenido. | Anthony: confirmó la clave eliminada e hizo público el repositorio |
 | 2026-09-25 | Codex | A — Anthony | Ajustó el paquete final para identificar las herramientas de IA sin publicitar versiones concretas de modelos; corrigió los nombres de Carlos González y Sebastián Sánchez; regeneró y revisó visualmente las cuatro páginas del PDF. | Anthony solicitó ambos cambios; PDF sin nombres de modelo específicos, enlaces verificados y 128 tests en verde |
 | 2026-09-25 | Codex | A — Anthony | Auditoría profesional completa del repositorio y la entrega: instalación reproducible, dependencias, CI, build, enlaces, metadatos, documentación, producción y expedientes recomendados; corrigió inconsistencias documentales, presentación del README y cerró el PDF definitivo. | Anthony autorizó toda la preparación excepto hacer público el repositorio; `npm audit` sin vulnerabilidades, 128 tests y CI de `main` en verde |
 | 2026-09-24 | Codex | A — Anthony | Preparó la entrada de evaluación sin añadir funcionalidad: conservó el historial sintético, generó tres casos canónicos en producción, capturó el dashboard real y añadió al README un recorrido de tres minutos para el jurado. | Anthony aprobó proceder y prefirió conservar los casos existentes para que el jurado pudiera ver uso real; estados de los tres casos validados contra la API |
@@ -241,7 +242,10 @@ integración de escaparate:
    retirado «una clave real de API» del repositorio. El escaneo del historial
    completo mostró que el valor sustituido era una secuencia sintética. Lo que
    sí ocurrió fue una clave real pegada en la variable equivocada de Vercel y
-   servida por `/api/health`: una exposición por el endpoint, nunca por git.
+   servida por `/api/health`. La primera auditoría concluyó que nunca llegó a
+   git; la revisión previa a publicar (2026-09-26) encontró que sí estuvo en un
+   commit anterior a la reescritura del historial, ya fuera de toda rama. La
+   clave estaba rotada y eliminada, así que no quedó exposición activa.
    Merece estar en el informe porque muestra la diferencia entre auditar y
    creerse la propia documentación.
 8. **El detector que se delata solo.** La primera versión del escáner de
