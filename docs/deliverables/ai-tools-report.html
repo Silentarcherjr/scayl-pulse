@@ -26,9 +26,9 @@
   td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .field { margin: 10px 0; }
   .field > b { color: #0f3d8a; }
-  .field > b::after { content: " · "; color: #a8b0bf; font-weight: 400; }
-  /* Sin separador cuando la etiqueta encabeza una lista y no un párrafo. */
-  .field > b:only-child::after { content: ""; }
+  .field > b:first-child { margin-right: 3px; }
+  /* Mantiene juntos una etiqueta o encabezado y el bloque que introduce. */
+  .keep { page-break-inside: avoid; break-inside: avoid; }
   blockquote {
     margin: 10px 0; padding: 9px 13px; background: #f5f7fb;
     border-left: 3px solid #0f62d6; font-style: italic; page-break-inside: avoid;
@@ -118,9 +118,9 @@ pruebas HTTP de integración; junto con la suite del backend, el repositorio ter
 humano se demuestran desde el navegador sin credenciales.</div>
 <div class="field"><b>Validación humana</b> Carlos González autorizó el alcance y la publicación del frontend;
 Sebastián Sánchez autorizó el alcance de Integrations y su suite. Anthony validó la configuración del
-despliegue y rotó la credencial de Gemini. Una auditoría posterior detectó dos fallos críticos de resiliencia —peticiones del
-navegador sin límite y un endpoint de salud que fallaba al degradarse Supabase—; ambos se corrigieron
-y se volvieron a verificar antes del feature freeze. Anthony autorizó la preparación final completa,
+despliegue y rotó la credencial de Gemini. Una auditoría posterior detectó dos fallos críticos de resiliencia (peticiones del
+navegador sin límite y un endpoint de salud que fallaba al degradarse Supabase); ambos se corrigieron
+y se volvieron a verificar antes de congelar el alcance. Anthony autorizó la preparación final completa,
 manteniendo únicamente el cambio de visibilidad del repositorio para el día previo a la entrega.</div>
 </div>
 
@@ -139,18 +139,20 @@ Redacta además el resumen que lee un gestor de casos al abrir un expediente.</d
   <li>Sus citas de evidencia se verifican contra los registros reales del caso; las que apuntan a registros inexistentes se descartan antes de llegar a la interfaz.</li>
 </ul>
 
+<div class="keep">
 <div class="field"><b>Resultados obtenidos</b> (medidos en producción)</div>
 <p class="meta">Corte de métricas auditables: 20 de septiembre de 2026.</p>
 <table>
   <tr><th>Métrica</th><th style="width:26%">Valor</th></tr>
   <tr><td>Llamadas a Gemini</td><td class="num">16</td></tr>
-  <tr><td>Respuestas válidas contra el esquema</td><td class="num">8 · 50 %</td></tr>
+  <tr><td>Respuestas válidas contra el esquema</td><td class="num">8 (50 %)</td></tr>
   <tr><td>Respuestas que fallaron la validación de esquema</td><td class="num">0</td></tr>
   <tr><td>Latencia media de una respuesta válida</td><td class="num">12,6 s</td></tr>
   <tr><td>Modelo primario con <code>503 high demand</code></td><td class="num">3</td></tr>
   <tr><td>Resueltas por la cadena de modelos de respaldo</td><td class="num">7 de 8</td></tr>
   <tr><td><b>Veces que el Safety Gate corrigió al modelo</b></td><td class="num"><b>0</b></td></tr>
 </table>
+</div>
 
 <p><b>Lectura honesta de estas cifras.</b> La tasa de validez del 50 % <i>no</i> mide la calidad del
 modelo: mide la carga de la infraestructura de Google durante la prueba. Los fallos fueron
@@ -179,6 +181,7 @@ y citó únicamente registros existentes en la base de datos.</p>
 </ul>
 </div>
 
+<div class="keep">
 <h2>4 · Incidencias reales durante la integración</h2>
 <p>Se documentan porque evidencian verificación real y no una integración de escaparate.</p>
 <table>
@@ -188,6 +191,7 @@ y citó únicamente registros existentes en la base de datos.</p>
   <tr><td>Saturación del proveedor</td><td><code>503 high demand</code> frecuente. Reintentar el mismo modelo devuelve 503 de nuevo, así que el sistema recorre una cadena de modelos: 7 de 8 respuestas válidas llegaron por esa vía.</td></tr>
   <tr><td>Presupuesto de tiempo</td><td>Un tiempo de espera fijo demasiado corto convirtió un servicio lento en uno que fallaba siempre. Sustituido por un presupuesto total repartido entre los pasos de un escenario.</td></tr>
 </table>
+</div>
 
 <h2>5 · Principios aplicados al uso de IA</h2>
 <ul>
