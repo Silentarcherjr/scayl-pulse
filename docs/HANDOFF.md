@@ -11,7 +11,7 @@ Cosas que **un agente no puede hacer** y que bloquean entregables.
 
 | # | Acción | Quién | Estado |
 |---|---|---|---|
-| 1 | Hacer público el repositorio el 26 de septiembre | Anthony | ✅ público desde el 2026-09-26 · falta `bash scripts/protect-main.sh` |
+| 1 | Hacer público el repositorio el 26 de septiembre | Anthony | ✅ público desde el 2026-09-26 · `main` protegida el mismo día con `scripts/protect-main.sh` |
 | 2 | Desplegar en Vercel | Anthony | ✅ **https://scayl-pulse.vercel.app** |
 | 3 | Aplicar el esquema en Supabase | Anthony | ✅ hecho y **verificado contra Postgres 17** (proyecto `Pulse`, ref `yextrojwkgdyefkxbsne`) |
 | 4 | Cargar las 3 variables de Supabase en Vercel | Anthony | ✅ verificado: `persistence: supabase` |
@@ -56,7 +56,7 @@ las tablas creadas, cada ingreso falla contra tablas inexistentes.
 gh repo edit Silentarcherjr/scayl-pulse --visibility public --accept-visibility-change-consequences
 ```
 
-**Y justo después, protege `main`:**
+**Y justo después, protege `main`** (✅ hecho el 2026-09-26)**:**
 ```bash
 bash scripts/protect-main.sh
 ```
