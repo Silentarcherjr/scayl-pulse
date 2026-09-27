@@ -28,7 +28,7 @@ Y debe notificar **simultáneamente**:
 
 | # | Entregable | Estado |
 |---|---|---|
-| 1 | Repositorio GitHub con documentación clara | 🟡 Repo creado y documentado; **falta hacerlo público** (ver DEC-010) |
+| 1 | Repositorio GitHub con documentación clara | ✅ [`github.com/Silentarcherjr/scayl-pulse`](https://github.com/Silentarcherjr/scayl-pulse), **público desde el 2026-09-26** (ver DEC-010) |
 | 2 | Enlace del agente desarrollado y en ejecución | ✅ [`scayl-pulse.vercel.app`](https://scayl-pulse.vercel.app), con Supabase y Gemini |
 | 3 | PDF detallando las herramientas de IA utilizadas | ✅ [PDF final de cuatro páginas](../output/pdf/SCAYL_Pulse_Herramientas_IA.pdf), generado y revisado visualmente |
 

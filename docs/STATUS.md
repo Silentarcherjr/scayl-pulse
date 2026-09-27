@@ -7,12 +7,12 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 
 ## Resumen del proyecto
 
-**Última actualización:** 2026-09-25
+**Última actualización:** 2026-09-26
 **Deadline confirmado:** 2026-09-27 23:59 (ver `HACKATHON_RULES.md`)
 
 | Entregable del reto | Estado |
 |---|---|
-| 1 · Repositorio GitHub con documentación clara | 🟡 Documentado y **auditado: sin secretos en el árbol ni en el historial**. Sigue privado: falta el cambio de visibilidad, que es manual |
+| 1 · Repositorio GitHub con documentación clara | ✅ **Público desde el 2026-09-26** · https://github.com/Silentarcherjr/scayl-pulse · sin secretos en el árbol ni en ninguna rama (ver matiz sobre `5ca3f8e` en `HANDOFF.md`) |
 | 2 · Enlace del agente en ejecución | ✅ **https://scayl-pulse.vercel.app** · producto completo, **auditoría de navegador 30/30 contra producción** con Supabase y Gemini reales |
 | 3 · PDF de herramientas de IA | ✅ [PDF final de cuatro páginas](../output/pdf/SCAYL_Pulse_Herramientas_IA.pdf), generado y revisado visualmente |
 
@@ -139,13 +139,12 @@ evitar conflictos de merge. Actualízala antes de cerrar cada sesión.
 1. ~~Aplicar el esquema en Supabase~~ ✅
 2. ~~Cargar las variables en Vercel~~ ✅
 3. ~~Verificar el despliegue~~ ✅ **12/12 contra https://scayl-pulse.vercel.app con Supabase conectado**
-4. **Hacer el repositorio público justo antes de entregar** (entregable #1).
+4. ~~Hacer el repositorio público justo antes de entregar~~ ✅ público el 2026-09-26.
 5. ~~Conectar y rotar `GEMINI_API_KEY`~~ ✅ configurada, verificada y rotada.
 6. ~~Exportar `AI_USAGE_LOG.md` a PDF al cerrar el desarrollo~~ ✅ generado y revisado.
 
 ### Blocked
-- Ninguno. Solo queda hacer público el repositorio el 26 de septiembre, por
-  decisión explícita del equipo.
+- Ninguno. Los tres entregables están listos; solo queda el envío por correo.
 
 ### Tests
 **128 passing / 0 failing** · typecheck limpio · lint limpio · build de
